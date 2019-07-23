@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "chneau_autotool",
+  "version": "${version}",
+  "name": "Autotool",
+  "description": "Autotool changes the tool when you need it",
+  "authors": [
+    "chneau"
+  ],
+  "contact": {
+    "homepage": "https://github.com/chneau/mc-autotool",
+    "sources": "https://github.com/chneau/mc-autotool",
+    "issues": "https://github.com/chneau/mc-autotool/issues"
+  },
+  "license": "MIT",
+  "icon": "assets/modid/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "chneau.autotool.Main"
+    ]
+  },
+  "mixins": [],
+  "depends": {
+    "fabric": "*"
+  },
+  "custom": {
+    "modmenu:clientsideOnly": true
+  }
+}
