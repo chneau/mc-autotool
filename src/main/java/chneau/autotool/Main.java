@@ -40,7 +40,7 @@ public class Main implements ClientModInitializer {
 				return;
 			}
 			if (!(inventory.main.get(inventory.selectedSlot).getItem() instanceof ToolItem)) {
-				return;
+				return; // do nothing if you don't hold a tool already (including sword)
 			}
 			if (type == Type.ENTITY) {
 				EntityHitResult eHitRes = (EntityHitResult) hitResult;
@@ -68,7 +68,7 @@ public class Main implements ClientModInitializer {
 	}
 
 	/**
-	 * Select the first sword on your inventory
+	 * Select the first sword on your inventory.
 	 *
 	 * @param inventory
 	 */
@@ -105,6 +105,8 @@ public class Main implements ClientModInitializer {
 	}
 
 	/**
+	 * Get the targeted BlockState.
+	 *
 	 * @param client
 	 * @param hitResult
 	 * @param cameraEntity
