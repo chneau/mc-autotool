@@ -77,6 +77,7 @@ public class Main implements ClientModInitializer {
 			ItemStack itemStack = inventory.main.get(i);
 			Item item = itemStack.getItem();
 			if (item instanceof SwordItem) {
+				System.out.println("Selected Sword: " + item.getName().asString());
 				inventory.selectedSlot = i;
 				break;
 			}
@@ -97,6 +98,7 @@ public class Main implements ClientModInitializer {
 			if (item instanceof ToolItem) {
 				float miningSpeed = item.getMiningSpeed(new ItemStack(targetItem), bState);
 				if (miningSpeed > 1) {
+					System.out.println("Selected Tool: " + item.getName().asString());
 					inventory.selectedSlot = i;
 					return;
 				}
