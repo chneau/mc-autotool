@@ -13,7 +13,7 @@
     "issues": "https://github.com/chneau/mc-autotool/issues"
   },
   "license": "MIT",
-  "icon": "assets/modid/icon.png",
+  "icon": "icon.png",
   "environment": "client",
   "entrypoints": {
     "client": [
