@@ -26,15 +26,19 @@ import net.minecraft.world.World;
 public class Autotool implements AttackBlockCallback, AttackEntityCallback, ClientTickCallback {
     private int lastPosition = -1;
     private final Select select;
-    private final ClientPlayNetworkHandler cpnh;
 
     public Autotool(Select select) {
         this.select = select;
-        cpnh = MinecraftClient.getInstance().player.networkHandler;
     }
 
     private void updateServer(int position) {
-        this.cpnh.sendPacket(new UpdateSelectedSlotC2SPacket(position));
+        ClientPlayerEntity player = MinecraftClient.getInstance().player;
+        if (player == null)
+            return;
+        if (player.networkHandler == null)
+            return;
+        player.tick();
+        player.networkHandler.sendPacket(new UpdateSelectedSlotC2SPacket(position));
     }
 
     @Override
@@ -42,9 +46,6 @@ public class Autotool implements AttackBlockCallback, AttackEntityCallback, Clie
         if (lastPosition == -1)
             lastPosition = player.inventory.selectedSlot;
         BlockState bState = world.getBlockState(pos);
-        Block block = bState.getBlock();
-        Item targetItem = block.asItem();
-        System.out.println(targetItem.getName().asString());
         int selectFirstTool = select.selectTool(player.inventory, bState);
         if (selectFirstTool == -1 || player.inventory.selectedSlot == selectFirstTool)
             return ActionResult.PASS;
@@ -58,7 +59,6 @@ public class Autotool implements AttackBlockCallback, AttackEntityCallback, Clie
         if (lastPosition == -1)
             lastPosition = player.inventory.selectedSlot;
         int selectFirstSword = select.selectWeapon(player.inventory);
-        System.out.println(entity.getName().asString());
         if (selectFirstSword == -1 || player.inventory.selectedSlot == selectFirstSword)
             return ActionResult.PASS;
         player.inventory.selectedSlot = selectFirstSword;

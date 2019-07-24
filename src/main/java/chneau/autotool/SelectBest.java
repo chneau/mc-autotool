@@ -25,7 +25,6 @@ public class SelectBest implements Select {
         for (int i = 0; i < HOTBAR_SIZE; i++) {
             Item item = inv.main.get(i).getItem();
             float speed = item.getMiningSpeed(itemStack, bState);
-            System.out.println(item.getName().asString() + " " + speed);
             if (bestSpeed < speed) {
                 bestSpeed = speed;
                 bestIndex = i;
