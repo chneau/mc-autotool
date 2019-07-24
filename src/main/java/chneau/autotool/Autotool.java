@@ -90,7 +90,7 @@ public class Autotool implements AttackBlockCallback, AttackEntityCallback, Clie
         if (player.inventory.main.get(player.inventory.selectedSlot).getItem() instanceof SwordItem == false)
             return;
         long now = System.currentTimeMillis();
-        if (lastAttack - now < 625)
+        if (now - lastAttack < 625)
             return;
         client.interactionManager.attackEntity(player, ((EntityHitResult) client.hitResult).getEntity());
         player.resetLastAttackedTicks();
