@@ -1,17 +1,17 @@
 package chneau.autotool;
 
+import java.util.Date;
+
 import net.fabricmc.fabric.api.event.client.ClientTickCallback;
 import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
 import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.Item;
+import net.minecraft.item.SwordItem;
 import net.minecraft.server.network.packet.UpdateSelectedSlotC2SPacket;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
@@ -19,13 +19,15 @@ import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
+import net.minecraft.util.hit.HitResult;
 
 /**
  * Autotool
  */
 public class Autotool implements AttackBlockCallback, AttackEntityCallback, ClientTickCallback {
-    private int lastPosition = -1;
+    private int last = -1;
     private final Select select;
+    private long lastAttack = System.currentTimeMillis();
 
     public Autotool(Select select) {
         this.select = select;
@@ -35,6 +37,7 @@ public class Autotool implements AttackBlockCallback, AttackEntityCallback, Clie
         ClientPlayerEntity player = MinecraftClient.getInstance().player;
         if (player == null)
             return;
+        player.inventory.selectedSlot = position;
         if (player.networkHandler == null)
             return;
         player.networkHandler.sendPacket(new UpdateSelectedSlotC2SPacket(position)); // not sure if it works
@@ -43,27 +46,25 @@ public class Autotool implements AttackBlockCallback, AttackEntityCallback, Clie
 
     @Override
     public ActionResult interact(PlayerEntity player, World world, Hand h, BlockPos pos, Direction d) {
-        if (lastPosition == -1)
-            lastPosition = player.inventory.selectedSlot;
+        if (last == -1)
+            last = player.inventory.selectedSlot;
         BlockState bState = world.getBlockState(pos);
-        int selectFirstTool = select.selectTool(player.inventory, bState);
-        if (selectFirstTool == -1 || player.inventory.selectedSlot == selectFirstTool)
+        int tool = select.selectTool(player.inventory, bState);
+        if (tool == -1 || player.inventory.selectedSlot == tool)
             return ActionResult.PASS;
-        player.inventory.selectedSlot = selectFirstTool;
-        this.updateServer(selectFirstTool);
+        this.updateServer(tool);
         return ActionResult.PASS;
     }
 
     @Override
     public ActionResult interact(PlayerEntity player, World w, Hand h, Entity entity, EntityHitResult hr) {
-        if (lastPosition == -1)
-            lastPosition = player.inventory.selectedSlot;
-        int selectFirstSword = select.selectWeapon(player.inventory);
-        if (selectFirstSword == -1 || player.inventory.selectedSlot == selectFirstSword)
+        if (last == -1)
+            last = player.inventory.selectedSlot;
+        int sword = select.selectWeapon(player.inventory);
+        if (sword == -1 || player.inventory.selectedSlot == sword)
             return ActionResult.PASS;
-        player.inventory.selectedSlot = selectFirstSword;
-        lastPosition = selectFirstSword;
-        this.updateServer(selectFirstSword);
+        last = sword;
+        this.updateServer(sword);
         return ActionResult.PASS;
     }
 
@@ -75,15 +76,26 @@ public class Autotool implements AttackBlockCallback, AttackEntityCallback, Clie
         PlayerInventory inventory = player.inventory;
         boolean wasLeftButtonClicked = client.mouse.wasLeftButtonClicked();
         if (wasLeftButtonClicked == false) {
-            if (lastPosition != -1) {
-                inventory.selectedSlot = lastPosition;
-                this.updateServer(lastPosition);
-            }
-            lastPosition = -1;
+            if (last != -1)
+                this.updateServer(last);
+            last = -1;
         } else {
-            if (lastPosition == -1)
-                lastPosition = inventory.selectedSlot;
+            if (last == -1)
+                last = inventory.selectedSlot;
         }
+        if (client.hitResult == null)
+            return;
+        if (client.hitResult.getType() != HitResult.Type.ENTITY)
+            return;
+        if (player.inventory.main.get(player.inventory.selectedSlot).getItem() instanceof SwordItem == false)
+            return;
+        long now = System.currentTimeMillis();
+        if (lastAttack - now < 625)
+            return;
+        client.interactionManager.attackEntity(player, ((EntityHitResult) client.hitResult).getEntity());
+        player.resetLastAttackedTicks();
+        player.swingHand(Hand.MAIN_HAND);
+        lastAttack = now;
     }
 
 }
