@@ -37,8 +37,8 @@ public class Autotool implements AttackBlockCallback, AttackEntityCallback, Clie
         Block block = bState.getBlock();
         Item targetItem = block.asItem();
         System.out.println(targetItem.getName().asString());
-        Integer selectFirstTool = select.selectTool(player.inventory, bState);
-        if (selectFirstTool == null || player.inventory.selectedSlot == selectFirstTool)
+        int selectFirstTool = select.selectTool(player.inventory, bState);
+        if (selectFirstTool == -1 || player.inventory.selectedSlot == selectFirstTool)
             return ActionResult.PASS;
         player.inventory.selectedSlot = selectFirstTool;
         return ActionResult.PASS;
@@ -48,9 +48,9 @@ public class Autotool implements AttackBlockCallback, AttackEntityCallback, Clie
     public ActionResult interact(PlayerEntity player, World w, Hand h, Entity entity, EntityHitResult hr) {
         if (lastPosition == null)
             lastPosition = player.inventory.selectedSlot;
-        Integer selectFirstSword = select.selectWeapon(player.inventory);
+        int selectFirstSword = select.selectWeapon(player.inventory);
         System.out.println(entity.getName().asString());
-        if (selectFirstSword == null || player.inventory.selectedSlot == selectFirstSword)
+        if (selectFirstSword == -1 || player.inventory.selectedSlot == selectFirstSword)
             return ActionResult.PASS;
         player.inventory.selectedSlot = selectFirstSword;
         lastPosition = selectFirstSword;
