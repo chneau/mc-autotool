@@ -37,8 +37,8 @@ public class Autotool implements AttackBlockCallback, AttackEntityCallback, Clie
             return;
         if (player.networkHandler == null)
             return;
-        player.tick();
-        player.networkHandler.sendPacket(new UpdateSelectedSlotC2SPacket(position));
+        player.networkHandler.sendPacket(new UpdateSelectedSlotC2SPacket(position)); // not sure if it works
+        player.tick(); // not sure if too heavy
     }
 
     @Override
