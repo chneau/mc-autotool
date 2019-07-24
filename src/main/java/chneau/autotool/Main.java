@@ -2,127 +2,105 @@ package chneau.autotool;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.event.client.ClientTickCallback;
+import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
+import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.SwordItem;
 import net.minecraft.item.ToolItem;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.Hand;
 import net.minecraft.util.hit.EntityHitResult;
-import net.minecraft.util.hit.HitResult;
-import net.minecraft.util.hit.HitResult.Type;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.Direction;
+import net.minecraft.world.World;
 
-public class Main implements ClientModInitializer {
-	private final double wee = 1e-4;
-	private String old;
+public class Main implements ClientModInitializer, AttackBlockCallback, AttackEntityCallback, ClientTickCallback {
+	private Integer lastPosition;
 
 	@Override
 	public void onInitializeClient() {
-		System.out.println("Hello Fabric world!");
-		ClientTickCallback.EVENT.register(client -> {
-			HitResult hitResult = client.hitResult;
-			Entity cameraEntity = client.cameraEntity;
-			ClientPlayerEntity player = client.player;
-			if (hitResult == null || cameraEntity == null || player == null || player.inventory == null) {
-				old = null;
-				return;
-			}
-			PlayerInventory inventory = player.inventory;
-			Type type = hitResult.getType();
-			if (type == Type.MISS) {
-				old = null;
-				return;
-			}
-			if (!(inventory.main.get(inventory.selectedSlot).getItem() instanceof ToolItem)) {
-				return; // do nothing if you don't hold a tool already (including sword)
-			}
-			if (type == Type.ENTITY) {
-				EntityHitResult eHitRes = (EntityHitResult) hitResult;
-				Entity entity = eHitRes.getEntity();
-				String entityName = entity.getName().asString();
-				if (entityName.equals(old)) {
-					return;
-				}
-				selectFirstSword(inventory);
-				System.out.println("Entity: " + entityName);
-				old = entityName;
-				return;
-			}
-			BlockState bState = getTargetBS(client, hitResult, cameraEntity);
-			Block block = bState.getBlock();
-			Item targetItem = block.asItem();
-			String itemName = targetItem.getName().asString();
-			if (itemName.equals(old)) {
-				return;
-			}
-			selectFirstTool(inventory, bState, targetItem);
-			System.out.println("Item: " + itemName);
-			old = itemName;
-		});
+		AttackBlockCallback.EVENT.register(this);
+		AttackEntityCallback.EVENT.register(this);
+		ClientTickCallback.EVENT.register(this);
 	}
 
-	/**
-	 * Select the first sword on your inventory.
-	 *
-	 * @param inventory
-	 */
-	private void selectFirstSword(PlayerInventory inventory) {
+	// Returns the index of the first sword on your hotbar.
+	private Integer selectFirstSword(PlayerInventory inventory) {
 		for (int i = 0; i < 9; i++) {
 			ItemStack itemStack = inventory.main.get(i);
 			Item item = itemStack.getItem();
 			if (item instanceof SwordItem) {
-				System.out.println("Selected Sword: " + item.getName().asString());
-				inventory.selectedSlot = i;
-				break;
+				return i;
 			}
 		}
+		return null;
 	}
 
-	/**
-	 * Select the first right tool for the selected block.
-	 *
-	 * @param inventory  the player inventory so that we can select the best item
-	 * @param bState     the selected block (usually what you are looking at)
-	 * @param targetItem the item of the selected block
-	 */
-	private void selectFirstTool(PlayerInventory inventory, BlockState bState, Item targetItem) {
+	// Returns the index of the first good enough tool for the selected block.
+	private Integer selectFirstTool(PlayerInventory inventory, BlockState bState, Item targetItem) {
 		for (int i = 0; i < 9; i++) {
 			ItemStack itemStack = inventory.main.get(i);
 			Item item = itemStack.getItem();
 			if (item instanceof ToolItem) {
 				float miningSpeed = item.getMiningSpeed(new ItemStack(targetItem), bState);
 				if (miningSpeed > 1) {
-					System.out.println("Selected Tool: " + item.getName().asString());
-					inventory.selectedSlot = i;
-					return;
+					return i;
 				}
 			}
 		}
+		return null;
 	}
 
-	/**
-	 * Get the targeted BlockState.
-	 *
-	 * @param client
-	 * @param hitResult
-	 * @param cameraEntity
-	 * @return the targeted (the block you are looking at) block state.
-	 */
-	private BlockState getTargetBS(MinecraftClient client, HitResult hitResult, Entity cameraEntity) {
-		Vec3d camera = cameraEntity.getCameraPosVec(1);
-		Vec3d pos = hitResult.getPos();
-		double x = (pos.x - camera.x > 0) ? wee : -wee;
-		double y = (pos.y - camera.y > 0) ? wee : -wee;
-		double z = (pos.z - camera.z > 0) ? wee : -wee;
-		pos = pos.add(x, y, z);
-		BlockPos bPos = new BlockPos(pos);
-		BlockState bState = client.world.getBlockState(bPos);
-		return bState;
+	@Override
+	public ActionResult interact(PlayerEntity player, World world, Hand h, BlockPos pos, Direction d) {
+		if (lastPosition == null)
+			lastPosition = player.inventory.selectedSlot;
+		BlockState bState = world.getBlockState(pos);
+		Block block = bState.getBlock();
+		Item targetItem = block.asItem();
+		System.out.println(targetItem.getName().asString());
+		Integer selectFirstTool = selectFirstTool(player.inventory, bState, targetItem);
+		if (selectFirstTool == null || player.inventory.selectedSlot == selectFirstTool)
+			return ActionResult.PASS;
+		player.inventory.selectedSlot = selectFirstTool;
+		return ActionResult.PASS;
+	}
+
+	@Override
+	public ActionResult interact(PlayerEntity player, World w, Hand h, Entity entity, EntityHitResult hr) {
+		if (lastPosition == null)
+			lastPosition = player.inventory.selectedSlot;
+		Integer selectFirstSword = selectFirstSword(player.inventory);
+		System.out.println(entity.getName().asString());
+		if (selectFirstSword == null || player.inventory.selectedSlot == selectFirstSword)
+			return ActionResult.PASS;
+		player.inventory.selectedSlot = selectFirstSword;
+		lastPosition = selectFirstSword;
+		return ActionResult.PASS;
+	}
+
+	@Override
+	public void tick(MinecraftClient client) {
+		ClientPlayerEntity player = client.player;
+		if (player == null || player.inventory == null)
+			return;
+		PlayerInventory inventory = player.inventory;
+		boolean wasLeftButtonClicked = client.mouse.wasLeftButtonClicked();
+		if (wasLeftButtonClicked == false) {
+			if (lastPosition != null)
+				inventory.selectedSlot = lastPosition;
+			lastPosition = null;
+		} else {
+			if (lastPosition == null)
+				lastPosition = inventory.selectedSlot;
+		}
 	}
 }
