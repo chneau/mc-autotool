@@ -23,16 +23,15 @@ cache:
 
 before_deploy:
   - mv ./build/libs/mc-autotool-0.0.1.jar ./build/libs/autotool.jar
-  - cp ./build/libs/autotool.jar ./build/libs/autotool-mc$TRAVIS_BRANCH.jar
   - rm -f ./build/libs/*-*.jar
+  - cp ./build/libs/autotool.jar ./build/libs/autotool-mc$TRAVIS_BRANCH.jar
 
 deploy:
   provider: releases
   overwrite: true
   api_key: "$GH_TOKEN"
   target_commitish: $TRAVIS_COMMIT
-  name: For minecraft $TRAVIS_BRANCH
-  body: So this is it, huh?
+  name: For mc-$TRAVIS_BRANCH
   file_glob: true
   file: ./build/libs/*.jar
   on:
