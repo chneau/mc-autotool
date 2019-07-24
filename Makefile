@@ -23,3 +23,5 @@ genSources:
 runServer:
 	bash gradlew runServer
 
+getVersion:
+	curl -sSL https://meta.fabricmc.net/v1/versions/loader/${MC} | jq -r '. | map(select(.loader.stable==true)) | "yarn_mappings="+.[0].loader.version , "loader_version="+.[0].mappings.version'
