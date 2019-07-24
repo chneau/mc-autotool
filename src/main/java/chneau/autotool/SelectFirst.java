@@ -1,20 +1,16 @@
 package chneau.autotool;
 
-import java.util.stream.IntStream;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.SwordItem;
 import net.minecraft.item.ToolItem;
-import java.util.function.Supplier;
 
 /**
  * SelectFirst
  */
 public class SelectFirst implements ISelect {
-    static final Supplier<IntStream> HOTBAR_SUPPLIER = () -> IntStream.range(0, PlayerInventory.getHotbarSize());
-
     @Override
     public int selectTool(PlayerInventory inv, BlockState bState) {
         Item targetItem = bState.getBlock().asItem();
@@ -32,5 +28,4 @@ public class SelectFirst implements ISelect {
     public int selectWeapon(PlayerInventory inv) {
         return HOTBAR_SUPPLIER.get().filter(i -> inv.main.get(i).getItem() instanceof SwordItem).findFirst().orElse(-1);
     }
-
 }
