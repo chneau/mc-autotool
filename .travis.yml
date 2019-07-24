@@ -21,11 +21,10 @@ cache:
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/
 
-
 before_deploy:
   - mv ./build/libs/mc-autotool-0.0.1.jar ./build/libs/autotool.jar
+  - cp ./build/libs/autotool.jar ./build/libs/autotool-mc$TRAVIS_BRANCH.jar
   - rm -f ./build/libs/*-*.jar
-
 
 deploy:
   provider: releases
@@ -35,7 +34,7 @@ deploy:
   name: For minecraft $TRAVIS_BRANCH
   body: So this is it, huh?
   file_glob: true
-  file: ./build/libs/autotool.jar
+  file: ./build/libs/*.jar
   on:
     tags: true
   skip_cleanup: true
