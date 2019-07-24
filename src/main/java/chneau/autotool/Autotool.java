@@ -23,9 +23,9 @@ import net.minecraft.world.World;
  */
 public class Autotool implements AttackBlockCallback, AttackEntityCallback, ClientTickCallback {
     private Integer lastPosition;
-    private final ISelect select;
+    private final Select select;
 
-    public Autotool(ISelect select) {
+    public Autotool(Select select) {
         this.select = select;
     }
 

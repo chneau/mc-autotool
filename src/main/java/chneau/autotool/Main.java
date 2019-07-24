@@ -9,7 +9,7 @@ public class Main implements ClientModInitializer {
 
 	@Override
 	public void onInitializeClient() {
-		Autotool autotool = new Autotool(new SelectFirst());
+		Autotool autotool = new Autotool(new SelectBest());
 		AttackBlockCallback.EVENT.register(autotool);
 		AttackEntityCallback.EVENT.register(autotool);
 		ClientTickCallback.EVENT.register(autotool);

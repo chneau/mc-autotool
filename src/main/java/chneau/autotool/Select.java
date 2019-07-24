@@ -6,9 +6,9 @@ import net.minecraft.entity.player.PlayerInventory;
 import java.util.function.Supplier;
 
 /**
- * ISelect
+ * Select
  */
-public interface ISelect {
+public interface Select {
     static final int HOTBAR_SIZE = PlayerInventory.getHotbarSize();
     static final Supplier<IntStream> HOTBAR_SUPPLIER = () -> IntStream.range(0, HOTBAR_SIZE);
 
