@@ -128,6 +128,8 @@ public class Autotool implements AttackBlockCallback, AttackEntityCallback, Clie
                 return;
             networkHandler.sendPacket(new PlayerActionC2SPacket(PlayerActionC2SPacket.Action.START_DESTROY_BLOCK,
                     blockPos, bhr.getSide()));
+            networkHandler.sendPacket(new PlayerInteractBlockC2SPacket(Hand.MAIN_HAND,
+                    new BlockHitResult(bhr.getPos(), Direction.UP, blockPos.down(), true)));
             player.swingHand(Hand.MAIN_HAND);
         default:
             break;
