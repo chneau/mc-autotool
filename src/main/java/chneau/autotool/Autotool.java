@@ -7,13 +7,18 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.CropBlock;
+import net.minecraft.block.NetherWartBlock;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.AliasedBlockItem;
+import net.minecraft.item.Item;
 import net.minecraft.item.SwordItem;
+import net.minecraft.server.network.packet.PlayerActionC2SPacket;
+import net.minecraft.server.network.packet.PlayerInteractBlockC2SPacket;
 import net.minecraft.server.network.packet.UpdateSelectedSlotC2SPacket;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
@@ -44,8 +49,7 @@ public class Autotool implements AttackBlockCallback, AttackEntityCallback, Clie
         player.inventory.selectedSlot = position;
         if (player.networkHandler == null)
             return;
-        player.networkHandler.sendPacket(new UpdateSelectedSlotC2SPacket(position)); // not sure if it works
-        player.tick(); // not sure if too heavy
+        player.networkHandler.sendPacket(new UpdateSelectedSlotC2SPacket(position));
     }
 
     @Override
@@ -78,20 +82,13 @@ public class Autotool implements AttackBlockCallback, AttackEntityCallback, Clie
         if (player == null || player.inventory == null)
             return;
         PlayerInventory inventory = player.inventory;
-        boolean wasLeftButtonClicked = client.mouse.wasLeftButtonClicked();
-        if (wasLeftButtonClicked == false) {
-            if (last != -1)
-                this.updateServer(last);
-            last = -1;
-        } else {
-            if (last == -1)
-                last = inventory.selectedSlot;
-        }
+        updateLast(inventory, client.mouse.wasLeftButtonClicked());
         if (client.hitResult == null)
             return;
+        Item itemMainHand = player.inventory.main.get(player.inventory.selectedSlot).getItem();
         switch (client.hitResult.getType()) {
         case ENTITY:
-            if (player.inventory.main.get(player.inventory.selectedSlot).getItem() instanceof SwordItem == false)
+            if (itemMainHand instanceof SwordItem == false)
                 return;
             long now = System.currentTimeMillis();
             if (now - lastAttack < 625)
@@ -102,36 +99,62 @@ public class Autotool implements AttackBlockCallback, AttackEntityCallback, Clie
             lastAttack = now;
             break;
         case BLOCK:
-            if (player.inventory.main.get(player.inventory.selectedSlot).getItem() instanceof AliasedBlockItem == false)
+            if (itemMainHand instanceof AliasedBlockItem == false)
                 return;
-            Vec3d cameraPos = client.cameraEntity.getCameraPosVec(1);
-            Vec3d pos = client.hitResult.getPos();
-            double x = (pos.x - cameraPos.x > 0) ? wee : -wee;
-            double y = (pos.y - cameraPos.y > 0) ? wee : -wee;
-            double z = (pos.z - cameraPos.z > 0) ? wee : -wee;
-            pos = pos.add(x, y, z);
-            BlockPos blockPos = new BlockPos(pos);
+            ClientPlayNetworkHandler networkHandler = client.getNetworkHandler();
+            if (networkHandler == null)
+                return;
+            BlockPos blockPos = getTargetedBlock(client);
             BlockState state = client.world.getBlockState(blockPos);
-            if (state == null)
-                return;
             Block block = state.getBlock();
             BlockHitResult bhr = (BlockHitResult) client.hitResult;
-            if (block == Blocks.FARMLAND) {
-                client.interactionManager.interactBlock(player, client.world, Hand.MAIN_HAND, bhr);
+            if (block == Blocks.FARMLAND || block == Blocks.SOUL_SAND) {
+                networkHandler.sendPacket(new PlayerInteractBlockC2SPacket(Hand.MAIN_HAND, bhr));
                 player.swingHand(Hand.MAIN_HAND);
                 return;
             }
-            if (block instanceof CropBlock == false)
+            int maxAge = 0;
+            int age = 0;
+            if (block instanceof NetherWartBlock) {
+                maxAge = 3;
+                age = state.get(NetherWartBlock.AGE);
+            } else if (block instanceof CropBlock) {
+                CropBlock cropBlock = (CropBlock) block;
+                maxAge = cropBlock.getMaxAge();
+                age = state.get(cropBlock.getAgeProperty());
+            } else
                 return;
-            CropBlock cropBlock = (CropBlock) block;
-            int maxAge = cropBlock.getMaxAge();
-            int age = state.get(cropBlock.getAgeProperty());
             if (age != maxAge)
                 return;
-            client.interactionManager.attackBlock(blockPos, bhr.getSide());
+            networkHandler.sendPacket(new PlayerActionC2SPacket(PlayerActionC2SPacket.Action.START_DESTROY_BLOCK,
+                    blockPos, bhr.getSide()));
+            networkHandler.sendPacket(new PlayerInteractBlockC2SPacket(Hand.MAIN_HAND,
+                    new BlockHitResult(bhr.getPos(), Direction.UP, blockPos.down(), true)));
             player.swingHand(Hand.MAIN_HAND);
         default:
             break;
+        }
+    }
+
+    private BlockPos getTargetedBlock(MinecraftClient client) {
+        Vec3d cameraPos = client.cameraEntity.getCameraPosVec(1);
+        Vec3d pos = client.hitResult.getPos();
+        double x = (pos.x - cameraPos.x > 0) ? wee : -wee;
+        double y = (pos.y - cameraPos.y > 0) ? wee : -wee;
+        double z = (pos.z - cameraPos.z > 0) ? wee : -wee;
+        pos = pos.add(x, y, z);
+        BlockPos blockPos = new BlockPos(pos);
+        return blockPos;
+    }
+
+    private void updateLast(PlayerInventory inventory, boolean wasLeftButtonClicked) {
+        if (wasLeftButtonClicked == false) {
+            if (last != -1)
+                this.updateServer(last);
+            last = -1;
+        } else {
+            if (last == -1)
+                last = inventory.selectedSlot;
         }
     }
 
