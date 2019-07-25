@@ -1,25 +1,28 @@
 package chneau.autotool;
 
-import java.util.Date;
-
 import net.fabricmc.fabric.api.event.client.ClientTickCallback;
 import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
 import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.CropBlock;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.item.AliasedBlockItem;
 import net.minecraft.item.SwordItem;
 import net.minecraft.server.network.packet.UpdateSelectedSlotC2SPacket;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import net.minecraft.util.hit.HitResult;
 
 /**
  * Autotool
@@ -28,6 +31,7 @@ public class Autotool implements AttackBlockCallback, AttackEntityCallback, Clie
     private int last = -1;
     private final Select select;
     private long lastAttack = System.currentTimeMillis();
+    private final static double wee = 1e-6;
 
     public Autotool(Select select) {
         this.select = select;
@@ -85,17 +89,50 @@ public class Autotool implements AttackBlockCallback, AttackEntityCallback, Clie
         }
         if (client.hitResult == null)
             return;
-        if (client.hitResult.getType() != HitResult.Type.ENTITY)
-            return;
-        if (player.inventory.main.get(player.inventory.selectedSlot).getItem() instanceof SwordItem == false)
-            return;
-        long now = System.currentTimeMillis();
-        if (now - lastAttack < 625)
-            return;
-        client.interactionManager.attackEntity(player, ((EntityHitResult) client.hitResult).getEntity());
-        player.resetLastAttackedTicks();
-        player.swingHand(Hand.MAIN_HAND);
-        lastAttack = now;
+        switch (client.hitResult.getType()) {
+        case ENTITY:
+            if (player.inventory.main.get(player.inventory.selectedSlot).getItem() instanceof SwordItem == false)
+                return;
+            long now = System.currentTimeMillis();
+            if (now - lastAttack < 625)
+                return;
+            client.interactionManager.attackEntity(player, ((EntityHitResult) client.hitResult).getEntity());
+            player.resetLastAttackedTicks();
+            player.swingHand(Hand.MAIN_HAND);
+            lastAttack = now;
+            break;
+        case BLOCK:
+            if (player.inventory.main.get(player.inventory.selectedSlot).getItem() instanceof AliasedBlockItem == false)
+                return;
+            Vec3d cameraPos = client.cameraEntity.getCameraPosVec(1);
+            Vec3d pos = client.hitResult.getPos();
+            double x = (pos.x - cameraPos.x > 0) ? wee : -wee;
+            double y = (pos.y - cameraPos.y > 0) ? wee : -wee;
+            double z = (pos.z - cameraPos.z > 0) ? wee : -wee;
+            pos = pos.add(x, y, z);
+            BlockPos blockPos = new BlockPos(pos);
+            BlockState state = client.world.getBlockState(blockPos);
+            if (state == null)
+                return;
+            Block block = state.getBlock();
+            BlockHitResult bhr = (BlockHitResult) client.hitResult;
+            if (block == Blocks.FARMLAND) {
+                client.interactionManager.interactBlock(player, client.world, Hand.MAIN_HAND, bhr);
+                player.swingHand(Hand.MAIN_HAND);
+                return;
+            }
+            if (block instanceof CropBlock == false)
+                return;
+            CropBlock cropBlock = (CropBlock) block;
+            int maxAge = cropBlock.getMaxAge();
+            int age = state.get(cropBlock.getAgeProperty());
+            if (age != maxAge)
+                return;
+            client.interactionManager.attackBlock(blockPos, bhr.getSide());
+            player.swingHand(Hand.MAIN_HAND);
+        default:
+            break;
+        }
     }
 
 }
