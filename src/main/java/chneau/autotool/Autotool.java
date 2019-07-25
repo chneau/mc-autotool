@@ -7,6 +7,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.CropBlock;
+import net.minecraft.block.NetherWartBlock;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -112,11 +113,17 @@ public class Autotool implements AttackBlockCallback, AttackEntityCallback, Clie
                 player.swingHand(Hand.MAIN_HAND);
                 return;
             }
-            if (block instanceof CropBlock == false)
+            int maxAge = 0;
+            int age = 0;
+            if (block instanceof NetherWartBlock) {
+                maxAge = 3;
+                age = state.get(NetherWartBlock.AGE);
+            } else if (block instanceof CropBlock) {
+                CropBlock cropBlock = (CropBlock) block;
+                maxAge = cropBlock.getMaxAge();
+                age = state.get(cropBlock.getAgeProperty());
+            } else
                 return;
-            CropBlock cropBlock = (CropBlock) block;
-            int maxAge = cropBlock.getMaxAge();
-            int age = state.get(cropBlock.getAgeProperty());
             if (age != maxAge)
                 return;
             networkHandler.sendPacket(new PlayerActionC2SPacket(PlayerActionC2SPacket.Action.START_DESTROY_BLOCK,
