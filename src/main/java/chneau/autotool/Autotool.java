@@ -107,7 +107,7 @@ public class Autotool implements AttackBlockCallback, AttackEntityCallback, Clie
             BlockState state = client.world.getBlockState(blockPos);
             Block block = state.getBlock();
             BlockHitResult bhr = (BlockHitResult) client.hitResult;
-            if (block == Blocks.FARMLAND) {
+            if (block == Blocks.FARMLAND || block == Blocks.SOUL_SAND) {
                 networkHandler.sendPacket(new PlayerInteractBlockC2SPacket(Hand.MAIN_HAND, bhr));
                 player.swingHand(Hand.MAIN_HAND);
                 return;
