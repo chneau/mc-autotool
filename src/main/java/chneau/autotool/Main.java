@@ -8,8 +8,8 @@ public class Main implements ClientModInitializer {
 	public void onInitializeClient() {
 		(new Autotool(new SelectBest())).register();
 		(new Autofarm()).register();
-		(new Autoswap()).register();
 		(new Autoattack()).register();
+		// (new Autoswap()).register(); # Using Mouse Wheelie at the moment !
 	}
 
 }

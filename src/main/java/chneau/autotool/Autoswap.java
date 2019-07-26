@@ -21,8 +21,9 @@ public class Autoswap implements UseBlockCallback {
         ItemStack itemStack = p.inventory.main.get(p.inventory.selectedSlot);
         int maxCount = itemStack.getMaxCount();
         int count = itemStack.getCount();
-        System.out.println(maxCount + " " + count);
-        // p.inventory.main.
+        if (count == maxCount)
+            return ActionResult.PASS;
+        p.inventory.takeInvStack(1, 2);
         return ActionResult.PASS;
     }
 
