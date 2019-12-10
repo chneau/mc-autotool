@@ -29,11 +29,11 @@ public class Autofarm implements ClientTickCallback {
     @Override
     public void tick(MinecraftClient c) {
         ClientPlayerEntity player = c.player;
-        if (player == null || c.hitResult == null || player.inventory == null)
+        if (player == null || c.crosshairTarget == null || player.inventory == null)
             return;
         PlayerInventory inventory = player.inventory;
         Item itemMainHand = inventory.main.get(inventory.selectedSlot).getItem();
-        if (c.hitResult.getType() == Type.BLOCK) {
+        if (c.crosshairTarget.getType() == Type.BLOCK) {
             if (itemMainHand instanceof AliasedBlockItem == false)
                 return;
             ClientPlayNetworkHandler networkHandler = c.getNetworkHandler();
@@ -42,7 +42,7 @@ public class Autofarm implements ClientTickCallback {
             BlockPos blockPos = Util.getTargetedBlock(c);
             BlockState state = c.world.getBlockState(blockPos);
             Block block = state.getBlock();
-            BlockHitResult bhr = (BlockHitResult) c.hitResult;
+            BlockHitResult bhr = (BlockHitResult) c.crosshairTarget;
             if (block == Blocks.FARMLAND || block == Blocks.SOUL_SAND) {
                 networkHandler.sendPacket(new PlayerInteractBlockC2SPacket(Hand.MAIN_HAND, bhr));
                 player.swingHand(Hand.MAIN_HAND);

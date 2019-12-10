@@ -9,7 +9,7 @@ public class Util {
 
     public static BlockPos getTargetedBlock(MinecraftClient c) {
         Vec3d cameraPos = c.cameraEntity.getCameraPosVec(1);
-        Vec3d pos = c.hitResult.getPos();
+        Vec3d pos = c.crosshairTarget.getPos();
         double x = (pos.x - cameraPos.x > 0) ? wee : -wee;
         double y = (pos.y - cameraPos.y > 0) ? wee : -wee;
         double z = (pos.z - cameraPos.z > 0) ? wee : -wee;

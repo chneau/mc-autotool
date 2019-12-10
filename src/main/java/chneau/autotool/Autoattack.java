@@ -22,16 +22,16 @@ public class Autoattack implements ClientTickCallback {
     @Override
     public void tick(MinecraftClient c) {
         ClientPlayerEntity player = c.player;
-        if (player == null || c.hitResult == null || player.inventory == null)
+        if (player == null || c.crosshairTarget == null || player.inventory == null)
             return;
         Item itemMainHand = player.inventory.main.get(player.inventory.selectedSlot).getItem();
-        if (c.hitResult.getType() == Type.ENTITY) {
+        if (c.crosshairTarget.getType() == Type.ENTITY) {
             if (itemMainHand instanceof SwordItem == false)
                 return;
             long now = System.currentTimeMillis();
             if (now - lastAttack < 625)
                 return;
-            c.interactionManager.attackEntity(player, ((EntityHitResult) c.hitResult).getEntity());
+            c.interactionManager.attackEntity(player, ((EntityHitResult) c.crosshairTarget).getEntity());
             player.resetLastAttackedTicks();
             player.swingHand(Hand.MAIN_HAND);
             lastAttack = now;
