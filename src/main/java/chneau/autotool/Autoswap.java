@@ -16,6 +16,8 @@ public class Autoswap implements UseBlockCallback {
 
     @Override
     public ActionResult interact(PlayerEntity p, World w, Hand h, BlockHitResult bhr) {
+        if (!Util.isCurrentPlayer(p))
+            return ActionResult.PASS;
         if (h != Hand.MAIN_HAND)
             return ActionResult.PASS;
         ItemStack itemStack = p.inventory.main.get(p.inventory.selectedSlot);

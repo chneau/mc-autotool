@@ -1,9 +1,10 @@
 package chneau.autotool;
 
+import java.util.function.Supplier;
 import java.util.stream.IntStream;
+
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerInventory;
-import java.util.function.Supplier;
 
 /**
  * Select

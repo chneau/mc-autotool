@@ -12,8 +12,8 @@ import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.AliasedBlockItem;
 import net.minecraft.item.Item;
-import net.minecraft.server.network.packet.PlayerActionC2SPacket;
-import net.minecraft.server.network.packet.PlayerInteractBlockC2SPacket;
+import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket;
+import net.minecraft.network.packet.c2s.play.PlayerInteractBlockC2SPacket;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult.Type;
@@ -28,12 +28,14 @@ public class Autofarm implements ClientTickCallback {
 
     @Override
     public void tick(MinecraftClient c) {
-        ClientPlayerEntity player = c.player;
-        if (player == null || c.hitResult == null || player.inventory == null)
+        ClientPlayerEntity p = c.player;
+        if (p == null || c.crosshairTarget == null || p.inventory == null)
             return;
-        PlayerInventory inventory = player.inventory;
+        if (!Util.isCurrentPlayer(p))
+            return;
+        PlayerInventory inventory = p.inventory;
         Item itemMainHand = inventory.main.get(inventory.selectedSlot).getItem();
-        if (c.hitResult.getType() == Type.BLOCK) {
+        if (c.crosshairTarget.getType() == Type.BLOCK) {
             if (itemMainHand instanceof AliasedBlockItem == false)
                 return;
             ClientPlayNetworkHandler networkHandler = c.getNetworkHandler();
@@ -42,10 +44,10 @@ public class Autofarm implements ClientTickCallback {
             BlockPos blockPos = Util.getTargetedBlock(c);
             BlockState state = c.world.getBlockState(blockPos);
             Block block = state.getBlock();
-            BlockHitResult bhr = (BlockHitResult) c.hitResult;
+            BlockHitResult bhr = (BlockHitResult) c.crosshairTarget;
             if (block == Blocks.FARMLAND || block == Blocks.SOUL_SAND) {
                 networkHandler.sendPacket(new PlayerInteractBlockC2SPacket(Hand.MAIN_HAND, bhr));
-                player.swingHand(Hand.MAIN_HAND);
+                p.swingHand(Hand.MAIN_HAND);
                 return;
             }
             int maxAge = 0;
@@ -65,7 +67,7 @@ public class Autofarm implements ClientTickCallback {
                     blockPos, bhr.getSide()));
             networkHandler.sendPacket(new PlayerInteractBlockC2SPacket(Hand.MAIN_HAND,
                     new BlockHitResult(bhr.getPos(), Direction.UP, blockPos.down(), true)));
-            player.swingHand(Hand.MAIN_HAND);
+            p.swingHand(Hand.MAIN_HAND);
         }
     }
 

@@ -9,24 +9,17 @@ import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.Item;
-import net.minecraft.item.SwordItem;
-import net.minecraft.server.network.packet.UpdateSelectedSlotC2SPacket;
+import net.minecraft.network.packet.c2s.play.UpdateSelectedSlotC2SPacket;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.EntityHitResult;
-import net.minecraft.util.hit.HitResult.Type;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 
-/**
- * Autotool
- */
 public class Autotool implements AttackBlockCallback, AttackEntityCallback, ClientTickCallback {
     private int last = -1;
     private final Select select;
-    private long lastAttack = System.currentTimeMillis();
 
     public Autotool(Select select) {
         this.select = select;
@@ -40,6 +33,8 @@ public class Autotool implements AttackBlockCallback, AttackEntityCallback, Clie
 
     @Override
     public ActionResult interact(PlayerEntity p, World w, Hand h, BlockPos bp, Direction d) {
+        if (!Util.isCurrentPlayer(p))
+            return ActionResult.PASS;
         if (h != Hand.MAIN_HAND)
             return ActionResult.PASS;
         if (last == -1)
@@ -54,6 +49,8 @@ public class Autotool implements AttackBlockCallback, AttackEntityCallback, Clie
 
     @Override
     public ActionResult interact(PlayerEntity p, World w, Hand h, Entity e, EntityHitResult ehr) {
+        if (!Util.isCurrentPlayer(p))
+            return ActionResult.PASS;
         if (h != Hand.MAIN_HAND)
             return ActionResult.PASS;
         if (last == -1)
@@ -69,31 +66,11 @@ public class Autotool implements AttackBlockCallback, AttackEntityCallback, Clie
     @Override
     public void tick(MinecraftClient c) {
         ClientPlayerEntity player = c.player;
-        if (player == null || c.hitResult == null || player.inventory == null)
+        if (player == null || c.crosshairTarget == null || player.inventory == null)
+            return;
+        if (!Util.isCurrentPlayer(player))
             return;
         updateLast(player.inventory, c.mouse.wasLeftButtonClicked());
-        Item itemMainHand = player.inventory.main.get(player.inventory.selectedSlot).getItem();
-        if (c.hitResult.getType() == Type.ENTITY) {
-            if (itemMainHand instanceof SwordItem == false)
-                return;
-            long now = System.currentTimeMillis();
-            if (now - lastAttack < 625)
-                return;
-            c.interactionManager.attackEntity(player, ((EntityHitResult) c.hitResult).getEntity());
-            player.resetLastAttackedTicks();
-            player.swingHand(Hand.MAIN_HAND);
-            lastAttack = now;
-        }
-    }
-
-    private void updateServer(int pos) {
-        ClientPlayerEntity player = MinecraftClient.getInstance().player;
-        if (player == null)
-            return;
-        player.inventory.selectedSlot = pos;
-        if (player.networkHandler == null)
-            return;
-        player.networkHandler.sendPacket(new UpdateSelectedSlotC2SPacket(pos));
     }
 
     private void updateLast(PlayerInventory i, boolean lbClicked) {
@@ -105,5 +82,16 @@ public class Autotool implements AttackBlockCallback, AttackEntityCallback, Clie
             if (last == -1)
                 last = i.selectedSlot;
         }
+    }
+
+    private void updateServer(int pos) {
+        MinecraftClient instance = MinecraftClient.getInstance();
+        ClientPlayerEntity player = instance.player;
+        if (player == null)
+            return;
+        player.inventory.selectedSlot = pos;
+        if (player.networkHandler == null)
+            return;
+        player.networkHandler.sendPacket(new UpdateSelectedSlotC2SPacket(pos));
     }
 }

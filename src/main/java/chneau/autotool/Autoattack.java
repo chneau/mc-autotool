@@ -9,9 +9,6 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult.Type;
 
-/**
- * Autotool
- */
 public class Autoattack implements ClientTickCallback {
     private long lastAttack = System.currentTimeMillis();
 
@@ -21,19 +18,21 @@ public class Autoattack implements ClientTickCallback {
 
     @Override
     public void tick(MinecraftClient c) {
-        ClientPlayerEntity player = c.player;
-        if (player == null || c.hitResult == null || player.inventory == null)
+        ClientPlayerEntity p = c.player;
+        if (p == null || c.crosshairTarget == null || p.inventory == null)
             return;
-        Item itemMainHand = player.inventory.main.get(player.inventory.selectedSlot).getItem();
-        if (c.hitResult.getType() == Type.ENTITY) {
+        if (!Util.isCurrentPlayer(p))
+            return;
+        Item itemMainHand = p.inventory.main.get(p.inventory.selectedSlot).getItem();
+        if (c.crosshairTarget.getType() == Type.ENTITY) {
             if (itemMainHand instanceof SwordItem == false)
                 return;
             long now = System.currentTimeMillis();
             if (now - lastAttack < 625)
                 return;
-            c.interactionManager.attackEntity(player, ((EntityHitResult) c.hitResult).getEntity());
-            player.resetLastAttackedTicks();
-            player.swingHand(Hand.MAIN_HAND);
+            c.interactionManager.attackEntity(p, ((EntityHitResult) c.crosshairTarget).getEntity());
+            p.resetLastAttackedTicks();
+            p.swingHand(Hand.MAIN_HAND);
             lastAttack = now;
         }
     }
