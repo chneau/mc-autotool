@@ -20,9 +20,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 
-/**
- * Autotool
- */
 public class Autotool implements AttackBlockCallback, AttackEntityCallback, ClientTickCallback {
     private int last = -1;
     private final Select select;
@@ -87,7 +84,8 @@ public class Autotool implements AttackBlockCallback, AttackEntityCallback, Clie
     }
 
     private void updateServer(int pos) {
-        ClientPlayerEntity player = MinecraftClient.getInstance().player;
+        MinecraftClient instance = MinecraftClient.getInstance();
+        ClientPlayerEntity player = instance.player;
         if (player == null)
             return;
         player.inventory.selectedSlot = pos;

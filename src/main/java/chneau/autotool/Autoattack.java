@@ -9,9 +9,6 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult.Type;
 
-/**
- * Autotool
- */
 public class Autoattack implements ClientTickCallback {
     private long lastAttack = System.currentTimeMillis();
 
