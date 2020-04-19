@@ -22,7 +22,7 @@
   },
   "mixins": [],
   "depends": {
-    "fabric": "0.5.1+build.294-1.15"
+    "fabric": "0.4.3+build.247-1.14"
   },
   "custom": {
     "modmenu:clientsideOnly": true
