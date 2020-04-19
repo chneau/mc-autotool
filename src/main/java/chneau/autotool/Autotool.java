@@ -33,6 +33,8 @@ public class Autotool implements AttackBlockCallback, AttackEntityCallback, Clie
 
     @Override
     public ActionResult interact(PlayerEntity p, World w, Hand h, BlockPos bp, Direction d) {
+        if (!Util.isCurrentPlayer(p))
+            return ActionResult.PASS;
         if (h != Hand.MAIN_HAND)
             return ActionResult.PASS;
         if (last == -1)
@@ -47,6 +49,8 @@ public class Autotool implements AttackBlockCallback, AttackEntityCallback, Clie
 
     @Override
     public ActionResult interact(PlayerEntity p, World w, Hand h, Entity e, EntityHitResult ehr) {
+        if (!Util.isCurrentPlayer(p))
+            return ActionResult.PASS;
         if (h != Hand.MAIN_HAND)
             return ActionResult.PASS;
         if (last == -1)
@@ -63,6 +67,8 @@ public class Autotool implements AttackBlockCallback, AttackEntityCallback, Clie
     public void tick(MinecraftClient c) {
         ClientPlayerEntity player = c.player;
         if (player == null || c.crosshairTarget == null || player.inventory == null)
+            return;
+        if (!Util.isCurrentPlayer(player))
             return;
         updateLast(player.inventory, c.mouse.wasLeftButtonClicked());
     }

@@ -1,6 +1,8 @@
 package chneau.autotool;
 
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
@@ -16,5 +18,15 @@ public class Util {
         pos = pos.add(x, y, z);
         BlockPos blockPos = new BlockPos(pos);
         return blockPos;
+    }
+
+    public static boolean isCurrentPlayer(PlayerEntity other) {
+        MinecraftClient instance = MinecraftClient.getInstance();
+        ClientPlayerEntity player = instance.player;
+        if (player == null)
+            return false;
+        if (other == null)
+            return false;
+        return player.equals(other);
     }
 }

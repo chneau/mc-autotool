@@ -28,10 +28,12 @@ public class Autofarm implements ClientTickCallback {
 
     @Override
     public void tick(MinecraftClient c) {
-        ClientPlayerEntity player = c.player;
-        if (player == null || c.crosshairTarget == null || player.inventory == null)
+        ClientPlayerEntity p = c.player;
+        if (p == null || c.crosshairTarget == null || p.inventory == null)
             return;
-        PlayerInventory inventory = player.inventory;
+        if (!Util.isCurrentPlayer(p))
+            return;
+        PlayerInventory inventory = p.inventory;
         Item itemMainHand = inventory.main.get(inventory.selectedSlot).getItem();
         if (c.crosshairTarget.getType() == Type.BLOCK) {
             if (itemMainHand instanceof AliasedBlockItem == false)
@@ -45,7 +47,7 @@ public class Autofarm implements ClientTickCallback {
             BlockHitResult bhr = (BlockHitResult) c.crosshairTarget;
             if (block == Blocks.FARMLAND || block == Blocks.SOUL_SAND) {
                 networkHandler.sendPacket(new PlayerInteractBlockC2SPacket(Hand.MAIN_HAND, bhr));
-                player.swingHand(Hand.MAIN_HAND);
+                p.swingHand(Hand.MAIN_HAND);
                 return;
             }
             int maxAge = 0;
@@ -65,7 +67,7 @@ public class Autofarm implements ClientTickCallback {
                     blockPos, bhr.getSide()));
             networkHandler.sendPacket(new PlayerInteractBlockC2SPacket(Hand.MAIN_HAND,
                     new BlockHitResult(bhr.getPos(), Direction.UP, blockPos.down(), true)));
-            player.swingHand(Hand.MAIN_HAND);
+            p.swingHand(Hand.MAIN_HAND);
         }
     }
 
