@@ -117,6 +117,7 @@ quake pro
 # god stuff
 # SWORD + TOOLS
 /give @p diamond_sword{Unbreakable:1,Enchantments:[{id:sharpness,lvl:9},{id:fire_aspect,lvl:9},{id:looting,lvl:9},{id:sweeping,lvl:9}]}
+/give @p diamond_sword{Unbreakable:1,Enchantments:[{id:sharpness,lvl:9999},{id:fire_aspect,lvl:9},{id:looting,lvl:9},{id:sweeping,lvl:9}]}
 /give @p diamond_pickaxe{Unbreakable:1,Enchantments:[{id:efficiency,lvl:9},{id:fortune,lvl:9}]}
 /give @p diamond_shovel{Unbreakable:1,Enchantments:[{id:efficiency,lvl:9},{id:fortune,lvl:9}]}
 /give @p diamond_axe{Unbreakable:1,Enchantments:[{id:efficiency,lvl:9},{id:fortune,lvl:9}]}
@@ -130,11 +131,33 @@ quake pro
 
 # OTHER
 /give @p bow{Unbreakable:1,Enchantments:[{id:infinity,lvl:9},{id:flame,lvl:9},{id:punch,lvl:9},{id:power,lvl:9},{id:looting,lvl:9},{id:multishot,lvl:10},{id:piercing,lvl:10},{id:quick_charge,lvl:10}]}
+/give @p crossbow{Unbreakable:1,Enchantments:[{id:infinity,lvl:9},{id:flame,lvl:9},{id:punch,lvl:9},{id:power,lvl:9},{id:looting,lvl:9},{id:multishot,lvl:10},{id:piercing,lvl:10},{id:quick_charge,lvl:5}]}
 /give @p fishing_rod{Unbreakable:1,Enchantments:[{id:lure,lvl:9},{id:luck_of_the_sea,lvl:9},{id:vanishing_curse,lvl:9}]}
 /give @p spectral_arrow 64
 /give @p enchanted_golden_apple 64
 
 /give @p diamond_chestplate{Unbreakable:1,Enchantments:[{id:blast_protection,lvl:9},{id:fire_protection,lvl:9},{id:projectile_protection,lvl:9},{id:protection,lvl:9},{id:thorns,lvl:9}]}
+
+
+# EFFECTS
+/effect give @a haste 999999 255 true
+/effect give @a luck 999999 255 true
+/effect give @p night_vision 999999 255 true
+
+/effect give @p haste 999999 255 true
+/effect give @p luck 999999 255 true
+/effect give @p regeneration 999999 255 true
+
+/effect give @p invisibility 999999 255 true
+/effect give @p water_breathing 999999 255 true
+/effect give @p strength 999999 255 true
+/effect give @p instant_health 999999 255 true
+/effect give @p absorption 999999 255 true
+/effect give @p conduit_power 999999 255 true
+/effect give @p dolphins_grace 999999 255 true
+/effect give @p health_boost 999999 255 true
+/effect give @p speed 999999 255 true
+/effect clear @p
 ```
 ## take a look at 
 
