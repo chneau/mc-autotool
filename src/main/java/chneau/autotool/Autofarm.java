@@ -12,6 +12,7 @@ import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.AliasedBlockItem;
 import net.minecraft.item.Item;
+import net.minecraft.item.MiningToolItem;
 import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket;
 import net.minecraft.network.packet.c2s.play.PlayerInteractBlockC2SPacket;
 import net.minecraft.util.Hand;
@@ -36,7 +37,9 @@ public class Autofarm implements ClientTickCallback {
         PlayerInventory inventory = p.inventory;
         Item itemMainHand = inventory.main.get(inventory.selectedSlot).getItem();
         if (c.crosshairTarget.getType() == Type.BLOCK) {
-            if (itemMainHand instanceof AliasedBlockItem == false)
+            boolean isSeed = itemMainHand instanceof AliasedBlockItem;
+            boolean isTool = itemMainHand instanceof MiningToolItem;
+            if (!(isSeed || isTool))
                 return;
             ClientPlayNetworkHandler networkHandler = c.getNetworkHandler();
             if (networkHandler == null)
@@ -45,7 +48,7 @@ public class Autofarm implements ClientTickCallback {
             BlockState state = c.world.getBlockState(blockPos);
             Block block = state.getBlock();
             BlockHitResult bhr = (BlockHitResult) c.crosshairTarget;
-            if (block == Blocks.FARMLAND || block == Blocks.SOUL_SAND) {
+            if (isSeed && (block == Blocks.FARMLAND || block == Blocks.SOUL_SAND)) { // planting
                 networkHandler.sendPacket(new PlayerInteractBlockC2SPacket(Hand.MAIN_HAND, bhr));
                 p.swingHand(Hand.MAIN_HAND);
                 return;
@@ -65,8 +68,10 @@ public class Autofarm implements ClientTickCallback {
                 return;
             networkHandler.sendPacket(new PlayerActionC2SPacket(PlayerActionC2SPacket.Action.START_DESTROY_BLOCK,
                     blockPos, bhr.getSide()));
-            networkHandler.sendPacket(new PlayerInteractBlockC2SPacket(Hand.MAIN_HAND,
-                    new BlockHitResult(bhr.getPos(), Direction.UP, blockPos.down(), true)));
+            if (isSeed) {
+                networkHandler.sendPacket(new PlayerInteractBlockC2SPacket(Hand.MAIN_HAND,
+                new BlockHitResult(bhr.getPos(), Direction.UP, blockPos.down(), true)));
+            }
             p.swingHand(Hand.MAIN_HAND);
         }
     }
