@@ -7,6 +7,7 @@ Put your best tools on your hotbar and just forget about it.
 
 ## How it works
 
+- [ ] TODO: harvest with a tool with fortune [reddit](https://www.reddit.com/r/Minecraft/comments/27mkw2/til_fortune_tools_give_you_better_harvests/)
 - [ ] TODO: Auto refill of coal and easy refill of chest if item is in inventory and the chest
 New 2019/07/25: Auto harvesting/planting IF seeds on hand (still need some tweaks) AND IF looking at fully grown "plant" or farmland block.  
 New 2019/07/25: Auto attack entity if you have the sword pulled out and you can touch the entity.  
