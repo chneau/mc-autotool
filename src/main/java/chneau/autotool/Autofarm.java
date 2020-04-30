@@ -19,7 +19,6 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult.Type;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
 
 public class Autofarm implements ClientTickCallback {
 
@@ -45,25 +44,7 @@ public class Autofarm implements ClientTickCallback {
             if (networkHandler == null)
                 return;
             BlockPos blockPos = Util.getTargetedBlock(c);
-            BlockState state = c.world.getBlockState(blockPos);
-            Block block = state.getBlock();
             BlockHitResult bhr = (BlockHitResult) c.crosshairTarget;
-            if (isSeed && (block == Blocks.FARMLAND || block == Blocks.SOUL_SAND)) { // planting
-                BlockPos bp = bhr.getBlockPos();
-                plant(c, networkHandler, bp, bhr);
-                plant(c, networkHandler, bp.east(), bhr);
-                plant(c, networkHandler, bp.east().north(), bhr);
-                plant(c, networkHandler, bp.west(), bhr);
-                plant(c, networkHandler, bp.west().south(), bhr);
-                plant(c, networkHandler, bp.south(), bhr);
-                plant(c, networkHandler, bp.south().east(), bhr);
-                plant(c, networkHandler, bp.north(), bhr);
-                plant(c, networkHandler, bp.north().west(), bhr);
-                return;
-            }
-            if (!checkBlockIsHarvestable(c, blockPos)) {
-                return;
-            }
             harvest(c, networkHandler, blockPos, bhr);
             harvest(c, networkHandler, blockPos.east(), bhr);
             harvest(c, networkHandler, blockPos.east().north(), bhr);
@@ -74,8 +55,17 @@ public class Autofarm implements ClientTickCallback {
             harvest(c, networkHandler, blockPos.north(), bhr);
             harvest(c, networkHandler, blockPos.north().west(), bhr);
             if (isSeed) {
-                BlockPos bp = bhr.getBlockPos().down();
-                bhr = new BlockHitResult(bhr.getPos(), Direction.UP, blockPos.down(), bhr.isInsideBlock());
+                BlockPos bp = bhr.getBlockPos();
+                plant(c, networkHandler, bp, bhr);
+                plant(c, networkHandler, bp.east(), bhr);
+                plant(c, networkHandler, bp.east().north(), bhr);
+                plant(c, networkHandler, bp.west(), bhr);
+                plant(c, networkHandler, bp.west().south(), bhr);
+                plant(c, networkHandler, bp.south(), bhr);
+                plant(c, networkHandler, bp.south().east(), bhr);
+                plant(c, networkHandler, bp.north(), bhr);
+                plant(c, networkHandler, bp.north().west(), bhr);
+                bp = bp.down();
                 plant(c, networkHandler, bp, bhr);
                 plant(c, networkHandler, bp.east(), bhr);
                 plant(c, networkHandler, bp.east().north(), bhr);
