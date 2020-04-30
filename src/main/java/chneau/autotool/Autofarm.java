@@ -49,31 +49,83 @@ public class Autofarm implements ClientTickCallback {
             Block block = state.getBlock();
             BlockHitResult bhr = (BlockHitResult) c.crosshairTarget;
             if (isSeed && (block == Blocks.FARMLAND || block == Blocks.SOUL_SAND)) { // planting
-                networkHandler.sendPacket(new PlayerInteractBlockC2SPacket(Hand.MAIN_HAND, bhr));
-                p.swingHand(Hand.MAIN_HAND);
+                BlockPos bp = bhr.getBlockPos();
+                plant(c, networkHandler, bp, bhr);
+                plant(c, networkHandler, bp.east(), bhr);
+                plant(c, networkHandler, bp.east().north(), bhr);
+                plant(c, networkHandler, bp.west(), bhr);
+                plant(c, networkHandler, bp.west().south(), bhr);
+                plant(c, networkHandler, bp.south(), bhr);
+                plant(c, networkHandler, bp.south().east(), bhr);
+                plant(c, networkHandler, bp.north(), bhr);
+                plant(c, networkHandler, bp.north().west(), bhr);
                 return;
             }
-            int maxAge = 0;
-            int age = 0;
-            if (block instanceof NetherWartBlock) {
-                maxAge = 3;
-                age = state.get(NetherWartBlock.AGE);
-            } else if (block instanceof CropBlock) {
-                CropBlock cropBlock = (CropBlock) block;
-                maxAge = cropBlock.getMaxAge();
-                age = state.get(cropBlock.getAgeProperty());
-            } else
+            if (!checkBlockIsHarvestable(c, blockPos)) {
                 return;
-            if (age != maxAge)
-                return;
-            networkHandler.sendPacket(new PlayerActionC2SPacket(PlayerActionC2SPacket.Action.START_DESTROY_BLOCK,
-                    blockPos, bhr.getSide()));
+            }
+            harvest(c, networkHandler, blockPos, bhr);
+            harvest(c, networkHandler, blockPos.east(), bhr);
+            harvest(c, networkHandler, blockPos.east().north(), bhr);
+            harvest(c, networkHandler, blockPos.west(), bhr);
+            harvest(c, networkHandler, blockPos.west().south(), bhr);
+            harvest(c, networkHandler, blockPos.south(), bhr);
+            harvest(c, networkHandler, blockPos.south().east(), bhr);
+            harvest(c, networkHandler, blockPos.north(), bhr);
+            harvest(c, networkHandler, blockPos.north().west(), bhr);
             if (isSeed) {
-                networkHandler.sendPacket(new PlayerInteractBlockC2SPacket(Hand.MAIN_HAND,
-                new BlockHitResult(bhr.getPos(), Direction.UP, blockPos.down(), true)));
+                BlockPos bp = bhr.getBlockPos().down();
+                bhr = new BlockHitResult(bhr.getPos(), Direction.UP, blockPos.down(), bhr.isInsideBlock());
+                plant(c, networkHandler, bp, bhr);
+                plant(c, networkHandler, bp.east(), bhr);
+                plant(c, networkHandler, bp.east().north(), bhr);
+                plant(c, networkHandler, bp.west(), bhr);
+                plant(c, networkHandler, bp.west().south(), bhr);
+                plant(c, networkHandler, bp.south(), bhr);
+                plant(c, networkHandler, bp.south().east(), bhr);
+                plant(c, networkHandler, bp.north(), bhr);
+                plant(c, networkHandler, bp.north().west(), bhr);
             }
-            p.swingHand(Hand.MAIN_HAND);
         }
+    }
+
+    private void plant(MinecraftClient c, ClientPlayNetworkHandler networkHandler, BlockPos blockPos,
+            BlockHitResult bhr) {
+        Block above = c.world.getBlockState(blockPos.up()).getBlock();
+        if (!(above.equals(Blocks.AIR) || checkBlockIsHarvestable(c, blockPos.up())))
+            return;
+        Block block = c.world.getBlockState(blockPos).getBlock();
+        if (!(block.equals(Blocks.FARMLAND) || block.equals(Blocks.SOUL_SAND)))
+            return;
+        networkHandler.sendPacket(new PlayerInteractBlockC2SPacket(Hand.MAIN_HAND,
+                new BlockHitResult(bhr.getPos(), bhr.getSide(), blockPos, bhr.isInsideBlock())));
+    }
+
+    private void harvest(MinecraftClient c, ClientPlayNetworkHandler networkHandler, BlockPos blockPos,
+            BlockHitResult bhr) {
+        if (!checkBlockIsHarvestable(c, blockPos))
+            return;
+        networkHandler.sendPacket(
+                new PlayerActionC2SPacket(PlayerActionC2SPacket.Action.START_DESTROY_BLOCK, blockPos, bhr.getSide()));
+    }
+
+    private boolean checkBlockIsHarvestable(MinecraftClient c, BlockPos blockPos) {
+        BlockState state = c.world.getBlockState(blockPos);
+        Block block = state.getBlock();
+        int maxAge = 0;
+        int age = 0;
+        if (block instanceof NetherWartBlock) {
+            maxAge = 3;
+            age = state.get(NetherWartBlock.AGE);
+        } else if (block instanceof CropBlock) {
+            CropBlock cropBlock = (CropBlock) block;
+            maxAge = cropBlock.getMaxAge();
+            age = state.get(cropBlock.getAgeProperty());
+        } else
+            return false;
+        if (age != maxAge)
+            return false;
+        return true;
     }
 
 }
