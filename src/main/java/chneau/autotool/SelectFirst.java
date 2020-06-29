@@ -7,9 +7,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.MiningToolItem;
 import net.minecraft.item.SwordItem;
 
-/**
- * SelectFirst
- */
 public class SelectFirst implements Select {
     @Override
     public int selectTool(PlayerInventory inv, BlockState bState) {
@@ -18,7 +15,7 @@ public class SelectFirst implements Select {
             Item item = inv.main.get(i).getItem();
             if (item instanceof MiningToolItem == false)
                 return false;
-            if (item.getMiningSpeed(new ItemStack(targetItem), bState) > 1)
+            if (item.getMiningSpeedMultiplier(new ItemStack(targetItem), bState) > 1)
                 return true;
             return false;
         }).findFirst().orElse(-1);

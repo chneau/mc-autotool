@@ -1,6 +1,7 @@
 package chneau.autotool;
 
-import net.fabricmc.fabric.api.event.client.ClientTickCallback;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents.EndTick;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -20,14 +21,14 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult.Type;
 import net.minecraft.util.math.BlockPos;
 
-public class Autofarm implements ClientTickCallback {
+public class Autofarm implements EndTick {
 
     public void register() {
-        ClientTickCallback.EVENT.register(this);
+        ClientTickEvents.END_CLIENT_TICK.register(this);
     }
 
     @Override
-    public void tick(MinecraftClient c) {
+    public void onEndTick(MinecraftClient c) {
         ClientPlayerEntity p = c.player;
         if (p == null || c.crosshairTarget == null || p.inventory == null)
             return;

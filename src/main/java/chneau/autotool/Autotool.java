@@ -1,6 +1,7 @@
 package chneau.autotool;
 
-import net.fabricmc.fabric.api.event.client.ClientTickCallback;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents.EndTick;
 import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
 import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
 import net.minecraft.block.BlockState;
@@ -17,7 +18,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 
-public class Autotool implements AttackBlockCallback, AttackEntityCallback, ClientTickCallback {
+public class Autotool implements AttackBlockCallback, AttackEntityCallback, EndTick {
     private int last = -1;
     private final Select select;
 
@@ -28,7 +29,7 @@ public class Autotool implements AttackBlockCallback, AttackEntityCallback, Clie
     public void register() {
         AttackBlockCallback.EVENT.register(this);
         AttackEntityCallback.EVENT.register(this);
-        ClientTickCallback.EVENT.register(this);
+        ClientTickEvents.END_CLIENT_TICK.register(this);
     }
 
     @Override
@@ -64,7 +65,7 @@ public class Autotool implements AttackBlockCallback, AttackEntityCallback, Clie
     }
 
     @Override
-    public void tick(MinecraftClient c) {
+    public void onEndTick(MinecraftClient c) {
         ClientPlayerEntity player = c.player;
         if (player == null || c.crosshairTarget == null || player.inventory == null)
             return;
