@@ -120,18 +120,18 @@ quake pro
 
 # god stuff
 # SWORD + TOOLS
-/give @p diamond_sword{Unbreakable:1,Enchantments:[{id:sharpness,lvl:9},{id:fire_aspect,lvl:9},{id:looting,lvl:9},{id:sweeping,lvl:9}]}
-/give @p diamond_sword{Unbreakable:1,Enchantments:[{id:sharpness,lvl:9999},{id:fire_aspect,lvl:9},{id:looting,lvl:9},{id:sweeping,lvl:9}]}
-/give @p diamond_pickaxe{Unbreakable:1,Enchantments:[{id:efficiency,lvl:9},{id:fortune,lvl:9}]}
-/give @p diamond_shovel{Unbreakable:1,Enchantments:[{id:efficiency,lvl:5},{id:fortune,lvl:9}]}
-/give @p diamond_axe{Unbreakable:1,Enchantments:[{id:efficiency,lvl:9},{id:fortune,lvl:9}]}
-/give @p diamond_hoe{Unbreakable:1,Enchantments:[{id:efficiency,lvl:9},{id:fortune,lvl:9}]}
+/give @p netherite_sword{Unbreakable:1,Enchantments:[{id:sharpness,lvl:9},{id:fire_aspect,lvl:9},{id:looting,lvl:9},{id:sweeping,lvl:9}]}
+/give @p netherite_sword{Unbreakable:1,Enchantments:[{id:sharpness,lvl:9999},{id:fire_aspect,lvl:9},{id:looting,lvl:9},{id:sweeping,lvl:9}]}
+/give @p netherite_pickaxe{Unbreakable:1,Enchantments:[{id:efficiency,lvl:9},{id:fortune,lvl:9}]}
+/give @p netherite_shovel{Unbreakable:1,Enchantments:[{id:efficiency,lvl:5},{id:fortune,lvl:9}]}
+/give @p netherite_axe{Unbreakable:1,Enchantments:[{id:efficiency,lvl:9},{id:fortune,lvl:9}]}
+/give @p netherite_hoe{Unbreakable:1,Enchantments:[{id:efficiency,lvl:9},{id:fortune,lvl:9}]}
 
 # ARMOR WITH MODIFIED ELYTRA
-/give @p diamond_helmet{Unbreakable:1,Enchantments:[{id:aqua_affinity,lvl:9},{id:blast_protection,lvl:9},{id:fire_protection,lvl:9},{id:projectile_protection,lvl:9},{id:protection,lvl:9},{id:respiration,lvl:9},{id:thorns,lvl:9}]}
-/give @p elytra{Unbreakable:1,AttributeModifiers:[{AttributeName:"generic.armor",Amount:8,UUIDLeast:1,UUIDMost:1,Slot:"chest"}],Enchantments:[{id:fire_protection,lvl:9},{id:projectile_protection,lvl:9},{id:protection,lvl:9},{id:thorns,lvl:9}]}
-/give @p diamond_boots{Unbreakable:1,Enchantments:[{id:blast_protection,lvl:9},{id:depth_strider,lvl:9},{id:feather_falling,lvl:9},{id:fire_protection,lvl:9},{id:projectile_protection,lvl:9},{id:protection,lvl:9},{id:thorns,lvl:9}]}
-/give @p diamond_leggings{Unbreakable:1,Enchantments:[{id:blast_protection,lvl:9},{id:fire_protection,lvl:9},{id:projectile_protection,lvl:9},{id:protection,lvl:9},{id:thorns,lvl:9}]}
+/give @p netherite_helmet{Unbreakable:1,Enchantments:[{id:aqua_affinity,lvl:9},{id:blast_protection,lvl:9},{id:fire_protection,lvl:9},{id:projectile_protection,lvl:9},{id:protection,lvl:9},{id:respiration,lvl:9},{id:thorns,lvl:9}]}
+/give @p elytra{Unbreakable:1,AttributeModifiers:[{AttributeName:"generic.armor",Amount:12,UUIDLeast:1,UUIDMost:1,Slot:"chest"}],Enchantments:[{id:fire_protection,lvl:9},{id:projectile_protection,lvl:9},{id:protection,lvl:9},{id:thorns,lvl:9}]}
+/give @p netherite_boots{Unbreakable:1,Enchantments:[{id:blast_protection,lvl:9},{id:depth_strider,lvl:9},{id:feather_falling,lvl:9},{id:fire_protection,lvl:9},{id:projectile_protection,lvl:9},{id:protection,lvl:9},{id:thorns,lvl:9}]}
+/give @p netherite_leggings{Unbreakable:1,Enchantments:[{id:blast_protection,lvl:9},{id:fire_protection,lvl:9},{id:projectile_protection,lvl:9},{id:protection,lvl:9},{id:thorns,lvl:9}]}
 /give @p trident{Unbreakable:1,Enchantments:[{id:channeling,lvl:9},{id:impaling,lvl:9},{id:loyalty,lvl:9},{id:riptide,lvl:9},{id:sharpness,lvl:9},{id:looting,lvl:9}]}
 
 # epic with elytra
@@ -139,7 +139,7 @@ quake pro
 
 
 
-/give @p diamond_boots{Unbreakable:1,Enchantments:[{id:blast_protection,lvl:9},{id:depth_strider,lvl:9},{id:feather_falling,lvl:9},{id:fire_protection,lvl:9},{id:frost_walker,lvl:9},{id:projectile_protection,lvl:9},{id:protection,lvl:9},{id:thorns,lvl:9}]}
+/give @p netherite_boots{Unbreakable:1,Enchantments:[{id:blast_protection,lvl:9},{id:depth_strider,lvl:9},{id:feather_falling,lvl:9},{id:fire_protection,lvl:9},{id:frost_walker,lvl:9},{id:projectile_protection,lvl:9},{id:protection,lvl:9},{id:thorns,lvl:9}]}
 
 # OTHER
 /give @p bow{Unbreakable:1,Enchantments:[{id:infinity,lvl:9},{id:flame,lvl:9},{id:punch,lvl:9},{id:power,lvl:9},{id:looting,lvl:9},{id:multishot,lvl:10},{id:piercing,lvl:10},{id:quick_charge,lvl:10}]}
@@ -148,7 +148,7 @@ quake pro
 /give @p spectral_arrow 64
 /give @p enchanted_golden_apple 64
 
-/give @p diamond_chestplate{Unbreakable:1,Enchantments:[{id:blast_protection,lvl:9},{id:fire_protection,lvl:9},{id:projectile_protection,lvl:9},{id:protection,lvl:9},{id:thorns,lvl:9}]}
+/give @p netherite_chestplate{Unbreakable:1,Enchantments:[{id:blast_protection,lvl:9},{id:fire_protection,lvl:9},{id:projectile_protection,lvl:9},{id:protection,lvl:9},{id:thorns,lvl:9}]}
 
 
 # EFFECTS
