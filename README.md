@@ -8,6 +8,7 @@ Put your best tools on your hotbar and just forget about it.
 ## How it works
 
 - [ ] TODO: Auto refill of coal and easy refill of chest if item is in inventory and the chest
+- New 2020/06/29: Updated for 1.16
 - New 2020/04/30: Auto harvest with tools. If using a tool with fortune you get more harvest: [reddit](https://www.reddit.com/r/Minecraft/comments/27mkw2/til_fortune_tools_give_you_better_harvests/)
 - New 2019/07/25: Auto harvesting/planting IF seeds on hand (still need some tweaks) AND IF looking at fully grown "plant" or farmland block.
 - New 2019/07/25: Auto attack entity if you have the sword pulled out and you can touch the entity.
@@ -57,6 +58,7 @@ The travis build is there <https://travis-ci.org/chneau/mc-autotool/builds>.
 The code is on the other branches of this repo.  
 [1.14](https://github.com/chneau/mc-autotool/tree/1.14)  
 [1.15](https://github.com/chneau/mc-autotool/tree/1.15)  
+[1.15](https://github.com/chneau/mc-autotool/tree/1.16)  
 
 ## Inspiration
 
