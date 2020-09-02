@@ -34,7 +34,7 @@ Once finished, it will go back to the last item you were holding.
   Put the `jar` file on `%appdata%\.minecraft\mods\`.
 - [This mod](https://github.com/chneau/mc-autotool/releases)  
   Again, download a version appropriate for your minecraft version.  
-  Note: `autotool-mcv1.14.jar` is equivalent to `autotool.jar` if it is on the same mc version.  
+  Note: `autotool-mcv1.14.jar` is equivalent to `autotool.jar`  
   Put the `jar` file on `%appdata%\.minecraft\mods\`.
 
 ## Details on the logic of the mod
@@ -83,36 +83,26 @@ rm -rf .gradle bin build .project .classpath
 ## List of prefered mods
 
 ```bash
-# mods 1.14
-autotool-mcv1.14.4.jar
-fabric-api-0.4.0+build.240-1.14.jar
-fabricmod_VoxelMap-1.9.13_for_1.14.4.jar
-foamfix-0.12.1.jar
-modmenu-1.7.11+build.121.jar
-modnametooltip_1.14.3-1.12.1.jar
-mousewheelie-1.3.5+1.14.4.jar
-optifabric-0.5.2.jar
-OptiFine_1.14.4_HD_U_F3.jar
-
-# mods 1.15
-appleskin-mc1.15-fabric-1.0.8.jar
-autotool-mcv1.15.2.jar
-fabric-api-0.5.1+build.294-1.15.jar
-fabricmod_VoxelMap-1.9.16_for_1.15.2.jar
-modmenu-1.10.2+build.32.jar
-mousewheelie-1.4.5+mc1.15.2-pre1.jar
-optifabric-1.0.0-beta8.jar
-preview_OptiFine_1.15.2_HD_U_G1_pre13.jar
-durabilityviewer-1.15.2-fabric0.4.23-1.7.jar
+# mods 1.16
+appleskin-mc1.16-fabric-1.0.11.jar
+autotool-mcv1.16.jar
+durabilityviewer-1.16.2-fabric0.17.2-1.8.6.jar
+fabric-api-0.19.0+build.398-1.16.jar
+fabricmod_VoxelMap-1.10.10_for_1.16.2.jar
+modmenu-1.14.6+build.31.jar
+modnametooltip_1.16.2-1.15.0.jar
+mousewheelie-1.5.3+mc1.16.2-pre1.jar
+optifabric-1.4.3.jar
+OptiFine_1.16.2_HD_U_G3.jar
 
 # shaders
-Sildurs Vibrant Shaders v1.262 High.zip
+Sildurs Vibrant Shaders v1.28 High-Motionblur.zip
 
 # resource pack
 realistico 8
 
 # fov
-quake pro
+100
 
 # cool game rules to play with bebe
 # see more here https://minecraft.gamepedia.com/Commands/gamerule
