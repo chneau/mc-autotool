@@ -4,9 +4,7 @@
   "version": "${version}",
   "name": "Autotool",
   "description": "Autotool changes the tool when you need it",
-  "authors": [
-    "chneau"
-  ],
+  "authors": ["chneau"],
   "contact": {
     "homepage": "https://github.com/chneau/mc-autotool",
     "sources": "https://github.com/chneau/mc-autotool",
@@ -16,13 +14,11 @@
   "icon": "icon.png",
   "environment": "client",
   "entrypoints": {
-    "client": [
-      "chneau.autotool.Main"
-    ]
+    "client": ["chneau.autotool.Main"]
   },
   "mixins": [],
   "depends": {
-    "fabric": "0.14.0+build.371-1.16"
+    "fabric": "0.19.0+build.398-1.16"
   },
   "custom": {
     "modmenu:clientsideOnly": true
