@@ -7,20 +7,23 @@ Put your best tools on your hotbar and just forget about it.
 
 ## How it works
 
-- [ ] TODO: Auto refill of coal and easy refill of chest if item is in inventory and the chest
-- New 2020/06/29: Updated for 1.16
-- New 2020/04/30: Auto harvest with tools. If using a tool with fortune you get more harvest: [reddit](https://www.reddit.com/r/Minecraft/comments/27mkw2/til_fortune_tools_give_you_better_harvests/)
-- New 2019/07/25: Auto harvesting/planting IF seeds on hand (still need some tweaks) AND IF looking at fully grown "plant" or farmland block.
-- New 2019/07/25: Auto attack entity if you have the sword pulled out and you can touch the entity.
-- New 2019/07/25: Now it always choose the best tool.
-
-Mining? It takes your pickaxe.  
-Cutting woods? It takes your axe.  
-Digging? It takes your shovel.  
-Attacking? It takes your sword.
+- Mining? It takes your pickaxe.
+- Cutting woods? It takes your axe.
+- Digging? It takes your shovel.
+- Attacking? It takes your sword.
+- Farming? Do it 9x faster, do it right.
 
 Once finished, it will go back to the last item you were holding.  
 (except for the sword... need to think of a workaround for that)
+
+## Changelog
+
+- New 2020-09-02: Updated for 1.16.2
+- New 2020-06-29: Updated for 1.16
+- New 2020-04-30: Auto harvest with tools. If using a tool with fortune you get more harvest: [reddit](https://www.reddit.com/r/Minecraft/comments/27mkw2/til_fortune_tools_give_you_better_harvests/)
+- New 2019-07-25: Auto harvesting/planting IF seeds on hand (still need some tweaks) AND IF looking at fully grown "plant" or farmland block.
+- New 2019-07-25: Auto attack entity if you have the sword pulled out and you can touch the entity.
+- New 2019-07-25: Now it always choose the best tool.
 
 ## Installation
 
@@ -44,8 +47,7 @@ You are looking at a tree and you have a wooden axe and a iron axe, the tool wil
 The behaviour is different for entities, if you look at a pig and want to kill it, once you click on it, you will take a sword from your hotbar, but it won't go back to the last item you were holding.  
 (this is something I need to figure out)  
 Then, the tool will use the sword (generally, but if you don't have a sword possibly it will take an axe).  
-If it is a sword, it will attack the entity every 625ms (the time the sword takes to fully "charge").  
-
+If it is a sword, it will attack the entity every 625ms (the time the sword takes to fully "charge").
 
 This mod definitly won't suit everyone.  
 There is no configuration and won't have any configuration.
@@ -58,16 +60,18 @@ The travis build is there <https://travis-ci.org/chneau/mc-autotool/builds>.
 The code is on the other branches of this repo.  
 [1.14](https://github.com/chneau/mc-autotool/tree/1.14)  
 [1.15](https://github.com/chneau/mc-autotool/tree/1.15)  
-[1.16](https://github.com/chneau/mc-autotool/tree/1.16)  
+[1.16](https://github.com/chneau/mc-autotool/tree/1.16)
 
 ## Inspiration
 
 Thanks to the author of the `ControlPack`, it is a mod I discovered a long time ago (arround mc 1.9).  
 So far the best-mod-ever. True quality of life for Minecraft gameplay. <https://github.com/uyjulian/ControlPack>
 
-## Super useful:
+## Steps to update deps
 
-<https://modmuss50.me/fabric.html>
+- https://modmuss50.me/fabric.html for `gradle.properties` and `fabric.mod.json`
+- https://maven.fabricmc.net/fabric-loom/fabric-loom.gradle.plugin/ for `build.gradle`
+- run `make genSources` and then if there is no errors test with `make test`
 
 ## debugging vscode sources and other
 
@@ -134,7 +138,7 @@ quake pro
 /give @p netherite_leggings{Unbreakable:1,Enchantments:[{id:blast_protection,lvl:9},{id:fire_protection,lvl:9},{id:projectile_protection,lvl:9},{id:protection,lvl:9},{id:thorns,lvl:9}]}
 /give @p trident{Unbreakable:1,Enchantments:[{id:channeling,lvl:9},{id:impaling,lvl:9},{id:loyalty,lvl:9},{id:riptide,lvl:9},{id:sharpness,lvl:9},{id:looting,lvl:9}]}
 
-# epic with elytra
+# best used with elytra
 /give @p minecraft:firework_rocket 128
 
 
@@ -171,9 +175,11 @@ quake pro
 /effect give @p speed 999999 255 true
 /effect clear @p
 ```
-## take a look at 
 
-```java
-MinecraftClient.itemUseCooldown
-MinecraftClient.attackCooldown
+## Dropped ideas
+
+- [ ] TODO: Auto refill of coal and easy refill of chest if item is in inventory and the chest
+
+```bash
+# this idea looks like it is just not easily possible.
 ```
