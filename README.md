@@ -18,6 +18,7 @@ Once finished, it will go back to the last item you were holding.
 
 ## Changelog
 
+- New 2020-10-01: Updated for 1.16.3
 - New 2020-09-02: Updated for 1.16.2
 - New 2020-06-29: Updated for 1.16
 - New 2020-04-30: Auto harvest with tools. If using a tool with fortune you get more harvest: [reddit](https://www.reddit.com/r/Minecraft/comments/27mkw2/til_fortune_tools_give_you_better_harvests/)
