@@ -39,10 +39,10 @@ public class Autotool implements AttackBlockCallback, AttackEntityCallback, EndT
         if (h != Hand.MAIN_HAND)
             return ActionResult.PASS;
         if (last == -1)
-            last = p.inventory.selectedSlot;
+            last = p.getInventory().selectedSlot;
         BlockState bState = w.getBlockState(bp);
-        int tool = select.selectTool(p.inventory, bState);
-        if (tool == -1 || p.inventory.selectedSlot == tool)
+        int tool = select.selectTool(p.getInventory(), bState);
+        if (tool == -1 || p.getInventory().selectedSlot == tool)
             return ActionResult.PASS;
         this.updateServer(tool);
         return ActionResult.PASS;
@@ -55,9 +55,9 @@ public class Autotool implements AttackBlockCallback, AttackEntityCallback, EndT
         if (h != Hand.MAIN_HAND)
             return ActionResult.PASS;
         if (last == -1)
-            last = p.inventory.selectedSlot;
-        int sword = select.selectWeapon(p.inventory);
-        if (sword == -1 || p.inventory.selectedSlot == sword)
+            last = p.getInventory().selectedSlot;
+        int sword = select.selectWeapon(p.getInventory());
+        if (sword == -1 || p.getInventory().selectedSlot == sword)
             return ActionResult.PASS;
         last = sword;
         this.updateServer(sword);
@@ -66,12 +66,12 @@ public class Autotool implements AttackBlockCallback, AttackEntityCallback, EndT
 
     @Override
     public void onEndTick(MinecraftClient c) {
-        ClientPlayerEntity player = c.player;
-        if (player == null || c.crosshairTarget == null || player.inventory == null)
+        ClientPlayerEntity p = c.player;
+        if (p == null || c.crosshairTarget == null || p.getInventory() == null)
             return;
-        if (!Util.isCurrentPlayer(player))
+        if (!Util.isCurrentPlayer(p))
             return;
-        updateLast(player.inventory, c.mouse.wasLeftButtonClicked());
+        updateLast(p.getInventory(), c.mouse.wasLeftButtonClicked());
     }
 
     private void updateLast(PlayerInventory i, boolean lbClicked) {
@@ -87,12 +87,12 @@ public class Autotool implements AttackBlockCallback, AttackEntityCallback, EndT
 
     private void updateServer(int pos) {
         MinecraftClient instance = MinecraftClient.getInstance();
-        ClientPlayerEntity player = instance.player;
-        if (player == null)
+        ClientPlayerEntity p = instance.player;
+        if (p == null)
             return;
-        player.inventory.selectedSlot = pos;
-        if (player.networkHandler == null)
+        p.getInventory().selectedSlot = pos;
+        if (p.networkHandler == null)
             return;
-        player.networkHandler.sendPacket(new UpdateSelectedSlotC2SPacket(pos));
+        p.networkHandler.sendPacket(new UpdateSelectedSlotC2SPacket(pos));
     }
 }

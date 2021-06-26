@@ -30,11 +30,11 @@ public class Autofarm implements EndTick {
     @Override
     public void onEndTick(MinecraftClient c) {
         ClientPlayerEntity p = c.player;
-        if (p == null || c.crosshairTarget == null || p.inventory == null)
+        if (p == null || c.crosshairTarget == null || p.getInventory() == null)
             return;
         if (!Util.isCurrentPlayer(p))
             return;
-        PlayerInventory inventory = p.inventory;
+        PlayerInventory inventory = p.getInventory();
         Item itemMainHand = inventory.main.get(inventory.selectedSlot).getItem();
         if (c.crosshairTarget.getType() == Type.BLOCK) {
             boolean isSeed = itemMainHand instanceof AliasedBlockItem;

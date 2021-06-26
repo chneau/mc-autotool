@@ -20,12 +20,12 @@ public class Autoswap implements UseBlockCallback {
             return ActionResult.PASS;
         if (h != Hand.MAIN_HAND)
             return ActionResult.PASS;
-        ItemStack itemStack = p.inventory.main.get(p.inventory.selectedSlot);
+        ItemStack itemStack = p.getInventory().main.get(p.getInventory().selectedSlot);
         int maxCount = itemStack.getMaxCount();
         int count = itemStack.getCount();
         if (count == maxCount)
             return ActionResult.PASS;
-        p.inventory.removeStack(1, 2);
+        p.getInventory().removeStack(1, 2);
         return ActionResult.PASS;
     }
 
