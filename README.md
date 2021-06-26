@@ -5,7 +5,7 @@
 This mod takes the first good tool for the thing you're trying to mine.  
 Put your best tools on your hotbar and just forget about it.
 
-## How it works
+## What does this mod do?
 
 - Mining? It takes your pickaxe.
 - Cutting woods? It takes your axe.
@@ -18,6 +18,7 @@ Once finished, it will go back to the last item you were holding.
 
 ## Changelog
 
+- New 2021-06-26: Updated for 1.17
 - New 2020-10-01: Updated for 1.16.3
 - New 2020-09-02: Updated for 1.16.2
 - New 2020-06-29: Updated for 1.16
@@ -53,7 +54,7 @@ If it is a sword, it will attack the entity every 625ms (the time the sword take
 This mod definitly won't suit everyone.  
 There is no configuration and won't have any configuration.
 
-Please take a look at the source code, it's only arround 200 LOC (spread on about 4 files).
+Please take a look at the source code, it's only 387 LOC (spread on about 8 files).
 
 ## Other
 
