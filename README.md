@@ -58,7 +58,6 @@ Please take a look at the source code, it's only 387 LOC (spread on about 8 file
 
 ## Other
 
-The travis build is there <https://travis-ci.org/chneau/mc-autotool/builds>.  
 The code is on the other branches of this repo.  
 [1.14](https://github.com/chneau/mc-autotool/tree/1.14)  
 [1.15](https://github.com/chneau/mc-autotool/tree/1.15)  
