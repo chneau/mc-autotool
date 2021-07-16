@@ -4,9 +4,7 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents.EndTick;
 import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
 import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
-import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -33,66 +31,66 @@ public class Autotool implements AttackBlockCallback, AttackEntityCallback, EndT
     }
 
     @Override
-    public ActionResult interact(PlayerEntity p, World w, Hand h, BlockPos bp, Direction d) {
-        if (!Util.isCurrentPlayer(p))
+    public ActionResult interact(PlayerEntity player, World world, Hand hand, BlockPos blockPos, Direction direction) {
+        if (!Util.isCurrentPlayer(player))
             return ActionResult.PASS;
-        if (h != Hand.MAIN_HAND)
+        if (hand != Hand.MAIN_HAND)
             return ActionResult.PASS;
         if (last == -1)
-            last = p.getInventory().selectedSlot;
-        BlockState bState = w.getBlockState(bp);
-        int tool = select.selectTool(p.getInventory(), bState);
-        if (tool == -1 || p.getInventory().selectedSlot == tool)
+            last = player.getInventory().selectedSlot;
+        var bState = world.getBlockState(blockPos);
+        var tool = select.selectTool(player.getInventory(), bState);
+        if (tool == -1 || player.getInventory().selectedSlot == tool)
             return ActionResult.PASS;
-        this.updateServer(tool);
+        updateServer(tool);
         return ActionResult.PASS;
     }
 
     @Override
-    public ActionResult interact(PlayerEntity p, World w, Hand h, Entity e, EntityHitResult ehr) {
-        if (!Util.isCurrentPlayer(p))
+    public ActionResult interact(PlayerEntity player, World world, Hand hand, Entity entity, EntityHitResult ehr) {
+        if (!Util.isCurrentPlayer(player))
             return ActionResult.PASS;
-        if (h != Hand.MAIN_HAND)
+        if (hand != Hand.MAIN_HAND)
             return ActionResult.PASS;
         if (last == -1)
-            last = p.getInventory().selectedSlot;
-        int sword = select.selectWeapon(p.getInventory());
-        if (sword == -1 || p.getInventory().selectedSlot == sword)
+            last = player.getInventory().selectedSlot;
+        var sword = select.selectWeapon(player.getInventory());
+        if (sword == -1 || player.getInventory().selectedSlot == sword)
             return ActionResult.PASS;
         last = sword;
-        this.updateServer(sword);
+        updateServer(sword);
         return ActionResult.PASS;
     }
 
     @Override
-    public void onEndTick(MinecraftClient c) {
-        ClientPlayerEntity p = c.player;
-        if (p == null || c.crosshairTarget == null || p.getInventory() == null)
+    public void onEndTick(MinecraftClient client) {
+        var player = client.player;
+        if (player == null || client.crosshairTarget == null || player.getInventory() == null)
             return;
-        if (!Util.isCurrentPlayer(p))
+        if (!Util.isCurrentPlayer(player))
             return;
-        updateLast(p.getInventory(), c.mouse.wasLeftButtonClicked());
+        updateLast(player.getInventory(), client.mouse.wasLeftButtonClicked());
     }
 
-    private void updateLast(PlayerInventory i, boolean lbClicked) {
+    private void updateLast(PlayerInventory inventory, boolean lbClicked) {
         if (lbClicked == false) {
             if (last != -1)
                 this.updateServer(last);
             last = -1;
         } else {
             if (last == -1)
-                last = i.selectedSlot;
+                last = inventory.selectedSlot;
         }
     }
 
     private void updateServer(int pos) {
-        MinecraftClient instance = MinecraftClient.getInstance();
-        ClientPlayerEntity p = instance.player;
-        if (p == null)
+        var instance = MinecraftClient.getInstance();
+        var player = instance.player;
+        if (player == null)
             return;
-        p.getInventory().selectedSlot = pos;
-        if (p.networkHandler == null)
+        player.getInventory().selectedSlot = pos;
+        if (player.networkHandler == null)
             return;
-        p.networkHandler.sendPacket(new UpdateSelectedSlotC2SPacket(pos));
+        player.networkHandler.sendPacket(new UpdateSelectedSlotC2SPacket(pos));
     }
 }

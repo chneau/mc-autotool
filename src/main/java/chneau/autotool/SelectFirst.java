@@ -2,17 +2,16 @@ package chneau.autotool;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.MiningToolItem;
 import net.minecraft.item.SwordItem;
 
 public class SelectFirst implements Select {
     @Override
-    public int selectTool(PlayerInventory inv, BlockState bState) {
-        Item targetItem = bState.getBlock().asItem();
+    public int selectTool(PlayerInventory inventory, BlockState bState) {
+        var targetItem = bState.getBlock().asItem();
         return HOTBAR_SUPPLIER.get().filter(i -> {
-            Item item = inv.main.get(i).getItem();
+            var item = inventory.main.get(i).getItem();
             if (item instanceof MiningToolItem == false)
                 return false;
             if (item.getMiningSpeedMultiplier(new ItemStack(targetItem), bState) > 1)
@@ -22,7 +21,8 @@ public class SelectFirst implements Select {
     }
 
     @Override
-    public int selectWeapon(PlayerInventory inv) {
-        return HOTBAR_SUPPLIER.get().filter(i -> inv.main.get(i).getItem() instanceof SwordItem).findFirst().orElse(-1);
+    public int selectWeapon(PlayerInventory inventory) {
+        return HOTBAR_SUPPLIER.get().filter(i -> inventory.main.get(i).getItem() instanceof SwordItem).findFirst()
+                .orElse(-1);
     }
 }

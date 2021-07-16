@@ -2,17 +2,12 @@ package chneau.autotool;
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents.EndTick;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.CropBlock;
 import net.minecraft.block.NetherWartBlock;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.AliasedBlockItem;
-import net.minecraft.item.Item;
 import net.minecraft.item.MiningToolItem;
 import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket;
 import net.minecraft.network.packet.c2s.play.PlayerInteractBlockC2SPacket;
@@ -28,88 +23,86 @@ public class Autofarm implements EndTick {
     }
 
     @Override
-    public void onEndTick(MinecraftClient c) {
-        ClientPlayerEntity p = c.player;
-        if (p == null || c.crosshairTarget == null || p.getInventory() == null)
+    public void onEndTick(MinecraftClient client) {
+        var player = client.player;
+        if (player == null || !Util.isCurrentPlayer(player) || client.crosshairTarget == null
+                || player.getInventory() == null)
             return;
-        if (!Util.isCurrentPlayer(p))
-            return;
-        PlayerInventory inventory = p.getInventory();
-        Item itemMainHand = inventory.main.get(inventory.selectedSlot).getItem();
-        if (c.crosshairTarget.getType() == Type.BLOCK) {
-            boolean isSeed = itemMainHand instanceof AliasedBlockItem;
-            boolean isTool = itemMainHand instanceof MiningToolItem;
+        var inventory = player.getInventory();
+        var itemMainHand = inventory.main.get(inventory.selectedSlot).getItem();
+        if (client.crosshairTarget.getType() == Type.BLOCK) {
+            var isSeed = itemMainHand instanceof AliasedBlockItem;
+            var isTool = itemMainHand instanceof MiningToolItem;
             if (!(isSeed || isTool))
                 return;
-            ClientPlayNetworkHandler networkHandler = c.getNetworkHandler();
+            var networkHandler = client.getNetworkHandler();
             if (networkHandler == null)
                 return;
-            BlockPos blockPos = Util.getTargetedBlock(c);
-            BlockHitResult bhr = (BlockHitResult) c.crosshairTarget;
-            harvest(c, networkHandler, blockPos, bhr);
-            harvest(c, networkHandler, blockPos.east(), bhr);
-            harvest(c, networkHandler, blockPos.east().north(), bhr);
-            harvest(c, networkHandler, blockPos.west(), bhr);
-            harvest(c, networkHandler, blockPos.west().south(), bhr);
-            harvest(c, networkHandler, blockPos.south(), bhr);
-            harvest(c, networkHandler, blockPos.south().east(), bhr);
-            harvest(c, networkHandler, blockPos.north(), bhr);
-            harvest(c, networkHandler, blockPos.north().west(), bhr);
+            var blockPos = Util.getTargetedBlock(client);
+            var bhr = (BlockHitResult) client.crosshairTarget;
+            harvest(client, networkHandler, blockPos, bhr);
+            harvest(client, networkHandler, blockPos.east(), bhr);
+            harvest(client, networkHandler, blockPos.east().north(), bhr);
+            harvest(client, networkHandler, blockPos.west(), bhr);
+            harvest(client, networkHandler, blockPos.west().south(), bhr);
+            harvest(client, networkHandler, blockPos.south(), bhr);
+            harvest(client, networkHandler, blockPos.south().east(), bhr);
+            harvest(client, networkHandler, blockPos.north(), bhr);
+            harvest(client, networkHandler, blockPos.north().west(), bhr);
             if (isSeed) {
-                BlockPos bp = bhr.getBlockPos();
-                plant(c, networkHandler, bp, bhr);
-                plant(c, networkHandler, bp.east(), bhr);
-                plant(c, networkHandler, bp.east().north(), bhr);
-                plant(c, networkHandler, bp.west(), bhr);
-                plant(c, networkHandler, bp.west().south(), bhr);
-                plant(c, networkHandler, bp.south(), bhr);
-                plant(c, networkHandler, bp.south().east(), bhr);
-                plant(c, networkHandler, bp.north(), bhr);
-                plant(c, networkHandler, bp.north().west(), bhr);
-                bp = bp.down();
-                plant(c, networkHandler, bp, bhr);
-                plant(c, networkHandler, bp.east(), bhr);
-                plant(c, networkHandler, bp.east().north(), bhr);
-                plant(c, networkHandler, bp.west(), bhr);
-                plant(c, networkHandler, bp.west().south(), bhr);
-                plant(c, networkHandler, bp.south(), bhr);
-                plant(c, networkHandler, bp.south().east(), bhr);
-                plant(c, networkHandler, bp.north(), bhr);
-                plant(c, networkHandler, bp.north().west(), bhr);
+                blockPos = bhr.getBlockPos();
+                plant(client, networkHandler, blockPos, bhr);
+                plant(client, networkHandler, blockPos.east(), bhr);
+                plant(client, networkHandler, blockPos.east().north(), bhr);
+                plant(client, networkHandler, blockPos.west(), bhr);
+                plant(client, networkHandler, blockPos.west().south(), bhr);
+                plant(client, networkHandler, blockPos.south(), bhr);
+                plant(client, networkHandler, blockPos.south().east(), bhr);
+                plant(client, networkHandler, blockPos.north(), bhr);
+                plant(client, networkHandler, blockPos.north().west(), bhr);
+                blockPos = blockPos.down();
+                plant(client, networkHandler, blockPos, bhr);
+                plant(client, networkHandler, blockPos.east(), bhr);
+                plant(client, networkHandler, blockPos.east().north(), bhr);
+                plant(client, networkHandler, blockPos.west(), bhr);
+                plant(client, networkHandler, blockPos.west().south(), bhr);
+                plant(client, networkHandler, blockPos.south(), bhr);
+                plant(client, networkHandler, blockPos.south().east(), bhr);
+                plant(client, networkHandler, blockPos.north(), bhr);
+                plant(client, networkHandler, blockPos.north().west(), bhr);
             }
         }
     }
 
-    private void plant(MinecraftClient c, ClientPlayNetworkHandler networkHandler, BlockPos blockPos,
+    private void plant(MinecraftClient client, ClientPlayNetworkHandler networkHandler, BlockPos blockPos,
             BlockHitResult bhr) {
-        Block above = c.world.getBlockState(blockPos.up()).getBlock();
-        if (!(above.equals(Blocks.AIR) || checkBlockIsHarvestable(c, blockPos.up())))
+        var above = client.world.getBlockState(blockPos.up()).getBlock();
+        if (!(above.equals(Blocks.AIR) || checkBlockIsHarvestable(client, blockPos.up())))
             return;
-        Block block = c.world.getBlockState(blockPos).getBlock();
+        var block = client.world.getBlockState(blockPos).getBlock();
         if (!(block.equals(Blocks.FARMLAND) || block.equals(Blocks.SOUL_SAND)))
             return;
         networkHandler.sendPacket(new PlayerInteractBlockC2SPacket(Hand.MAIN_HAND,
                 new BlockHitResult(bhr.getPos(), bhr.getSide(), blockPos, bhr.isInsideBlock())));
     }
 
-    private void harvest(MinecraftClient c, ClientPlayNetworkHandler networkHandler, BlockPos blockPos,
+    private void harvest(MinecraftClient client, ClientPlayNetworkHandler networkHandler, BlockPos blockPos,
             BlockHitResult bhr) {
-        if (!checkBlockIsHarvestable(c, blockPos))
+        if (!checkBlockIsHarvestable(client, blockPos))
             return;
         networkHandler.sendPacket(
                 new PlayerActionC2SPacket(PlayerActionC2SPacket.Action.START_DESTROY_BLOCK, blockPos, bhr.getSide()));
     }
 
-    private boolean checkBlockIsHarvestable(MinecraftClient c, BlockPos blockPos) {
-        BlockState state = c.world.getBlockState(blockPos);
-        Block block = state.getBlock();
-        int maxAge = 0;
-        int age = 0;
+    private boolean checkBlockIsHarvestable(MinecraftClient client, BlockPos blockPos) {
+        var state = client.world.getBlockState(blockPos);
+        var block = state.getBlock();
+        var maxAge = 0;
+        var age = 0;
         if (block instanceof NetherWartBlock) {
             maxAge = 3;
             age = state.get(NetherWartBlock.AGE);
-        } else if (block instanceof CropBlock) {
-            CropBlock cropBlock = (CropBlock) block;
+        } else if (block instanceof CropBlock cropBlock) {
             maxAge = cropBlock.getMaxAge();
             age = state.get(cropBlock.getAgeProperty());
         } else
