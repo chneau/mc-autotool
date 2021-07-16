@@ -31,10 +31,10 @@ public class SelectBest implements Select {
         for (var i = 0; i < HOTBAR_SIZE; i++) {
             var item = inventory.main.get(i).getItem();
             var mm = item.getAttributeModifiers(EquipmentSlot.MAINHAND);
-            var atkDmg = 1
-                    + mm.get(EntityAttributes.GENERIC_ATTACK_DAMAGE).stream().mapToDouble(x -> x.getValue()).sum();
-            var atkSpd = 4
-                    + mm.get(EntityAttributes.GENERIC_ATTACK_SPEED).stream().mapToDouble(x -> x.getValue()).sum();
+            var atkAttribute = mm.get(EntityAttributes.GENERIC_ATTACK_DAMAGE);
+            var atkDmg = 1 + atkAttribute.stream().mapToDouble(x -> x.getValue()).sum();
+            var speedAttribute = mm.get(EntityAttributes.GENERIC_ATTACK_SPEED);
+            var atkSpd = 4 + speedAttribute.stream().mapToDouble(x -> x.getValue()).sum();
             var dps = atkDmg * atkSpd;
             if (bestDPS < dps) {
                 bestDPS = dps;

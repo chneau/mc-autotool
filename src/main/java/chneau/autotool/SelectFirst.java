@@ -8,21 +8,28 @@ import net.minecraft.item.SwordItem;
 
 public class SelectFirst implements Select {
     @Override
-    public int selectTool(PlayerInventory inventory, BlockState bState) {
-        var targetItem = bState.getBlock().asItem();
-        return HOTBAR_SUPPLIER.get().filter(i -> {
+    public int selectTool(PlayerInventory inventory, BlockState blockState) {
+        var targetItem = blockState.getBlock().asItem();
+
+        for (var i = 0; i < HOTBAR_SIZE; i++) {
             var item = inventory.main.get(i).getItem();
             if (item instanceof MiningToolItem == false)
-                return false;
-            if (item.getMiningSpeedMultiplier(new ItemStack(targetItem), bState) > 1)
-                return true;
-            return false;
-        }).findFirst().orElse(-1);
+                continue;
+            if (item.getMiningSpeedMultiplier(new ItemStack(targetItem), blockState) > 1)
+                return i;
+        }
+
+        return -1;
     }
 
     @Override
     public int selectWeapon(PlayerInventory inventory) {
-        return HOTBAR_SUPPLIER.get().filter(i -> inventory.main.get(i).getItem() instanceof SwordItem).findFirst()
-                .orElse(-1);
+        for (var i = 0; i < HOTBAR_SIZE; i++) {
+            var item = inventory.main.get(i).getItem();
+            if (item instanceof SwordItem)
+                return i;
+        }
+
+        return -1;
     }
 }
