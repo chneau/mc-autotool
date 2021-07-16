@@ -25,8 +25,9 @@ public class Autofarm implements EndTick {
     @Override
     public void onEndTick(MinecraftClient client) {
         var player = client.player;
-        if (player == null || !Util.isCurrentPlayer(player) || client.crosshairTarget == null
-                || player.getInventory() == null)
+        if (player == null || !Util.isCurrentPlayer(player))
+            return;
+        if (client.crosshairTarget == null || player.getInventory() == null)
             return;
         var inventory = player.getInventory();
         var itemMainHand = inventory.main.get(inventory.selectedSlot).getItem();
@@ -74,24 +75,23 @@ public class Autofarm implements EndTick {
         }
     }
 
-    private void plant(MinecraftClient client, ClientPlayNetworkHandler networkHandler, BlockPos blockPos,
-            BlockHitResult bhr) {
+    private void plant(MinecraftClient client, ClientPlayNetworkHandler nh, BlockPos blockPos, BlockHitResult bhr) {
         var above = client.world.getBlockState(blockPos.up()).getBlock();
         if (!(above.equals(Blocks.AIR) || checkBlockIsHarvestable(client, blockPos.up())))
             return;
         var block = client.world.getBlockState(blockPos).getBlock();
         if (!(block.equals(Blocks.FARMLAND) || block.equals(Blocks.SOUL_SAND)))
             return;
-        networkHandler.sendPacket(new PlayerInteractBlockC2SPacket(Hand.MAIN_HAND,
-                new BlockHitResult(bhr.getPos(), bhr.getSide(), blockPos, bhr.isInsideBlock())));
+        bhr = new BlockHitResult(bhr.getPos(), bhr.getSide(), blockPos, bhr.isInsideBlock());
+        nh.sendPacket(new PlayerInteractBlockC2SPacket(Hand.MAIN_HAND, bhr));
     }
 
     private void harvest(MinecraftClient client, ClientPlayNetworkHandler networkHandler, BlockPos blockPos,
             BlockHitResult bhr) {
         if (!checkBlockIsHarvestable(client, blockPos))
             return;
-        networkHandler.sendPacket(
-                new PlayerActionC2SPacket(PlayerActionC2SPacket.Action.START_DESTROY_BLOCK, blockPos, bhr.getSide()));
+        var action = PlayerActionC2SPacket.Action.START_DESTROY_BLOCK;
+        networkHandler.sendPacket(new PlayerActionC2SPacket(action, blockPos, bhr.getSide()));
     }
 
     private boolean checkBlockIsHarvestable(MinecraftClient client, BlockPos blockPos) {

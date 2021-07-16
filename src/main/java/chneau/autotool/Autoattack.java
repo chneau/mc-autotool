@@ -18,8 +18,9 @@ public class Autoattack implements EndTick {
     @Override
     public void onEndTick(MinecraftClient client) {
         var player = client.player;
-        if (player == null || !Util.isCurrentPlayer(player) || client.crosshairTarget == null
-                || player.getInventory() == null)
+        if (player == null || !Util.isCurrentPlayer(player))
+            return;
+        if (client.crosshairTarget == null || player.getInventory() == null)
             return;
         var itemMainHand = player.getInventory().main.get(player.getInventory().selectedSlot).getItem();
         if (client.crosshairTarget.getType() == Type.ENTITY) {
