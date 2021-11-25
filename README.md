@@ -17,6 +17,6 @@ Press Shift+Alt+U.
 
 ## Steps to update deps
 
-- https://modmuss50.me/fabric.html for `gradle.properties` and `fabric.mod.json`
+- https://modmuss50.me/fabric.html for `build.gradle` and `fabric.mod.json`
 - https://maven.fabricmc.net/fabric-loom/fabric-loom.gradle.plugin/ for `build.gradle`
 - run `make genSources` and then if there is no errors test with `make test`

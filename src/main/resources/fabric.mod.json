@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "chneau_autotool",
-  "version": "${version}",
+  "version": "1.0.0",
   "name": "Autotool",
   "description": "Autotool changes the tool when you need it",
   "authors": ["chneau"],
