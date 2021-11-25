@@ -16,7 +16,7 @@ Put your best tools on your hotbar and just forget about it.
   - Having a seed in your hand? It will plant the seed in large area and harvest only mature crops.
 
 Once finished, it will go back to the last item you were holding.  
-(except for the sword... need to think of a workaround for that)
+(except for the sword, so that you are in attack mode)
 
 ## Changelog
 
