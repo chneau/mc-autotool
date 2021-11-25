@@ -11,7 +11,9 @@ Put your best tools on your hotbar and just forget about it.
 - Cutting woods? It takes your axe.
 - Digging? It takes your shovel.
 - Attacking? It takes your sword.
+  - Having your sword in hand? It will attack efficiently if you target an entity in attack range.
 - Farming? Do it 9x faster, do it right.
+  - Having a seed in your hand? It will plant the seed in large area and harvest only mature crops.
 
 Once finished, it will go back to the last item you were holding.  
 (except for the sword... need to think of a workaround for that)
