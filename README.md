@@ -18,6 +18,7 @@ Once finished, it will go back to the last item you were holding.
 
 ## Changelog
 
+- New 2021-11-24: Updated for 1.18
 - New 2021-06-26: Updated for 1.17
 - New 2020-10-01: Updated for 1.16.3
 - New 2020-09-02: Updated for 1.16.2
