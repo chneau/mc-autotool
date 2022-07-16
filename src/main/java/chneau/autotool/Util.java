@@ -5,17 +5,19 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 
 public class Util {
-    private final static double wee = 1e-6;
+    private Util() {
+    }
+
+    private static final double WEE = 1e-6;
 
     public static BlockPos getTargetedBlock(MinecraftClient client) {
         var cameraPos = client.cameraEntity.getCameraPosVec(1);
         var pos = client.crosshairTarget.getPos();
-        var x = (pos.x - cameraPos.x > 0) ? wee : -wee;
-        var y = (pos.y - cameraPos.y > 0) ? wee : -wee;
-        var z = (pos.z - cameraPos.z > 0) ? wee : -wee;
+        var x = (pos.x - cameraPos.x > 0) ? WEE : -WEE;
+        var y = (pos.y - cameraPos.y > 0) ? WEE : -WEE;
+        var z = (pos.z - cameraPos.z > 0) ? WEE : -WEE;
         pos = pos.add(x, y, z);
-        var blockPos = new BlockPos(pos);
-        return blockPos;
+        return new BlockPos(pos);
     }
 
     public static boolean isCurrentPlayer(PlayerEntity other) {

@@ -73,13 +73,12 @@ public class Autotool implements AttackBlockCallback, AttackEntityCallback, EndT
     }
 
     private void updateLast(PlayerInventory inventory, boolean lbClicked) {
-        if (lbClicked == false) {
+        if (!lbClicked) {
             if (last != -1)
                 this.updateServer(last);
             last = -1;
-        } else {
-            if (last == -1)
-                last = inventory.selectedSlot;
+        } else if (last == -1) {
+            last = inventory.selectedSlot;
         }
     }
 

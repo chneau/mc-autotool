@@ -107,9 +107,7 @@ public class Autofarm implements EndTick {
             age = state.get(cropBlock.getAgeProperty());
         } else
             return false;
-        if (age != maxAge)
-            return false;
-        return true;
+        return age == maxAge;
     }
 
 }
