@@ -83,7 +83,7 @@ public class Autofarm implements EndTick {
         if (!(block.equals(Blocks.FARMLAND) || block.equals(Blocks.SOUL_SAND)))
             return;
         bhr = new BlockHitResult(bhr.getPos(), bhr.getSide(), blockPos, bhr.isInsideBlock());
-        nh.sendPacket(new PlayerInteractBlockC2SPacket(Hand.MAIN_HAND, bhr));
+        nh.sendPacket(new PlayerInteractBlockC2SPacket(Hand.MAIN_HAND, bhr, 0));
     }
 
     private void harvest(MinecraftClient client, ClientPlayNetworkHandler networkHandler, BlockPos blockPos,

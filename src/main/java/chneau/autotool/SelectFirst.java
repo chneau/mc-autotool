@@ -13,7 +13,7 @@ public class SelectFirst implements Select {
 
         for (var i = 0; i < HOTBAR_SIZE; i++) {
             var item = inventory.main.get(i).getItem();
-            if (item instanceof MiningToolItem == false)
+            if (!(item instanceof MiningToolItem))
                 continue;
             if (item.getMiningSpeedMultiplier(new ItemStack(targetItem), blockState) > 1)
                 return i;

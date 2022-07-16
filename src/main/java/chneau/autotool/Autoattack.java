@@ -24,7 +24,7 @@ public class Autoattack implements EndTick {
             return;
         var itemMainHand = player.getInventory().main.get(player.getInventory().selectedSlot).getItem();
         if (client.crosshairTarget.getType() == Type.ENTITY) {
-            if (itemMainHand instanceof SwordItem == false)
+            if (!(itemMainHand instanceof SwordItem))
                 return;
             var now = System.currentTimeMillis();
             if (now - lastAttack < 625)
