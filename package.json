@@ -1,0 +1,9 @@
+{
+  "scripts": {
+    "start": "./gradlew runClient",
+    "build": "./gradlew build",
+    "clean": "./gradlew clean",
+    "genSources": "./gradlew genSources",
+    "runServer": "./gradlew runServer"
+  }
+}
