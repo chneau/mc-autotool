@@ -1,8 +1,9 @@
 {
   "scripts": {
-    "start": "bash gradlew runClient",
-    "build": "bash gradlew build",
-    "clean": "bash gradlew clean",
-    "gen": "bash gradlew genSources"
+    "start": "gradle runClient",
+    "build": "gradle build",
+    "clean": "gradle clean",
+    "gen": "gradle genSources",
+    "cleanBuild": "gradle build --refresh-dependencies"
   }
 }
