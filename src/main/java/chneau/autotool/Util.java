@@ -3,6 +3,7 @@ package chneau.autotool;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3i;
 
 public class Util {
     private Util() {
@@ -17,7 +18,7 @@ public class Util {
         var y = (pos.y - cameraPos.y > 0) ? WEE : -WEE;
         var z = (pos.z - cameraPos.z > 0) ? WEE : -WEE;
         pos = pos.add(x, y, z);
-        return new BlockPos(pos);
+        return new BlockPos(new Vec3i((int) pos.x, (int) pos.y, (int) pos.z));
     }
 
     public static boolean isCurrentPlayer(PlayerEntity other) {
