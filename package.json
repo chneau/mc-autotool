@@ -4,6 +4,7 @@
     "build": "gradle build",
     "clean": "gradle clean",
     "gen": "gradle genSources",
+    "cleanBuild": "gradle build --refresh-dependencies",
     "upgrade": "gradle wrapper --gradle-version 8.4"
   }
 }
