@@ -17,7 +17,7 @@ public class Util {
         var y = (pos.y - cameraPos.y > 0) ? WEE : -WEE;
         var z = (pos.z - cameraPos.z > 0) ? WEE : -WEE;
         pos = pos.add(x, y, z);
-        return new BlockPos(pos);
+        return new BlockPos.Mutable(pos.x, pos.y, pos.z);
     }
 
     public static boolean isCurrentPlayer(PlayerEntity other) {
