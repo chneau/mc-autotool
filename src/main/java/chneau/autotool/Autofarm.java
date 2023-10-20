@@ -104,7 +104,7 @@ public class Autofarm implements EndTick {
             age = state.get(NetherWartBlock.AGE);
         } else if (block instanceof CropBlock cropBlock) {
             maxAge = cropBlock.getMaxAge();
-            age = state.get(cropBlock.getAgeProperty());
+            age = cropBlock.getAge(state);
         } else
             return false;
         return age == maxAge;
