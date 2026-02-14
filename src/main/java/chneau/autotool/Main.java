@@ -23,6 +23,7 @@ public class Main implements ClientModInitializer {
         (new AutoFarm()).register();
         (new AutoAttack()).register();
         (new AutoSprint()).register();
+        (new AutoEat()).register();
 
         configKey = KeyBindingHelper.registerKeyBinding(new KeyMapping(
                 "key.mc-autotool.config",

@@ -31,9 +31,17 @@ public class Config {
         SMART  // Only refill when the held stack is down to the last item
     }
 
+    public enum EatMode {
+        OFF,    // Disable auto-eat
+        HUNGER, // Eat whenever hunger is missing
+        HEALTH, // Only eat when health is not full
+        SMART   // Optimize food usage and avoid over-eating
+    }
+
     public AttackMode autoAttack = AttackMode.SWORD;
     public FarmMode autoFarm = FarmMode.BOTH;
     public RefillMode autoRefill = RefillMode.ON;
     public SprintMode autoSprint = SprintMode.ON;
+    public EatMode autoEat = EatMode.SMART;
     public Strategy autoSwap = Strategy.BEST;
 }
