@@ -41,6 +41,7 @@
 
 - [ ] **11. `AutoEat`**
   - Automatically eats food when hunger falls below a certain threshold.
+  - **Logic**: Only triggers after the player has been inactive (not attacking/mining/interacting) for at least **1 second**.
   - **Default**: `SMART`
   - **Modes**:
     - `OFF`: Disabled.
