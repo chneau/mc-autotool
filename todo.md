@@ -36,3 +36,24 @@
 
 - [x] **10. Settings Shortcut Key**
   - Implement a shortcut key (e.g., `Ctrl + Shift + O`) to open the mod's configuration screen directly.
+
+## New Feature Ideas
+
+- [ ] **11. `AutoEat`**
+  - Automatically eats food when hunger falls below a certain threshold.
+  - Prioritizes food based on saturation or nutritional value.
+
+- [ ] **12. `AutoFish`**
+  - Automatically reels in and recasts the fishing rod when a fish is caught.
+
+- [ ] **13. `AutoArmor`**
+  - Automatically equips the best armor pieces from your inventory.
+
+- [ ] **14. `AutoTotem`**
+  - Automatically moves a Totem of Undying to the off-hand if the current one is used or missing.
+
+- [ ] **15. `AutoToolRepair` (Durability Protection)**
+  - Automatically stops using a tool (or switches to another) when its durability is extremely low to prevent it from breaking.
+
+- [ ] **16. `AutoLight`**
+  - Automatically places a torch when the light level at the player's position is too low.
