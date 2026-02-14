@@ -54,7 +54,7 @@
   - **Default**: `ON`
   - **Modes**: `OFF`, `ON`.
 
-- [ ] **13. `AutoArmor`**
+- [x] **13. `AutoArmor`**
   - Automatically equips the best armor pieces from your inventory.
   - **Default**: `SMART`
   - **Modes**:

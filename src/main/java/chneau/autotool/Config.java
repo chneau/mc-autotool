@@ -45,11 +45,18 @@ public class Config {
         BOTH       // Sort both hotbar and main inventory
     }
 
+    public enum ArmorMode {
+        OFF,    // Disable auto-armor
+        BETTER, // Equip armor with higher raw armor value
+        SMART   // Consider enchantments alongside armor value
+    }
+
     public AttackMode autoAttack = AttackMode.SWORD;
     public FarmMode autoFarm = FarmMode.BOTH;
     public RefillMode autoRefill = RefillMode.ON;
     public SprintMode autoSprint = SprintMode.ON;
     public EatMode autoEat = EatMode.SMART;
     public SortMode autoSort = SortMode.BOTH;
+    public ArmorMode autoArmor = ArmorMode.SMART;
     public Strategy autoSwap = Strategy.BEST;
 }

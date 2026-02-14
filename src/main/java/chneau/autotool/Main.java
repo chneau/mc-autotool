@@ -25,6 +25,7 @@ public class Main implements ClientModInitializer {
         (new AutoSprint()).register();
         (new AutoEat()).register();
         (new AutoSort()).register();
+        (new AutoArmor()).register();
 
         configKey = KeyBindingHelper.registerKeyBinding(new KeyMapping(
                 "key.mc-autotool.config",
@@ -42,7 +43,7 @@ public class Main implements ClientModInitializer {
                                 InputConstants.isKeyDown(window, GLFW.GLFW_KEY_RIGHT_SHIFT);
                 
                 if (ctrl && shift) {
-                    client.setScreen(new ConfigScreen(client.screen));
+                    client.setScreen(new ConfigScreen(client.screen, client.options));
                 }
             }
         });
