@@ -4,6 +4,7 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents.EndTick;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult.Type;
@@ -24,13 +25,16 @@ public class Autoattack implements EndTick {
             return;
         var itemStackMainHand = player.getInventory().getItem(player.getInventory().getSelectedSlot());
         if (client.hitResult.getType() == Type.ENTITY) {
+            var entity = ((EntityHitResult) client.hitResult).getEntity();
+            if (entity instanceof LivingEntity living && living.getHealth() <= 0)
+                return;
             if (!(itemStackMainHand.is(ItemTags.SWORDS)))
                 return;
             var now = System.currentTimeMillis();
             if (now - lastAttack < 625)
                 return;
             if (client.gameMode != null) {
-                client.gameMode.attack(player, ((EntityHitResult) client.hitResult).getEntity());
+                client.gameMode.attack(player, entity);
                 player.resetAttackStrengthTicker();
                 player.swing(InteractionHand.MAIN_HAND);
                 lastAttack = now;
