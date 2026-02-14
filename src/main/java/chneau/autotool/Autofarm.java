@@ -42,40 +42,28 @@ public class Autofarm implements EndTick {
             var networkHandler = client.getConnection();
             if (networkHandler == null)
                 return;
-            var blockPos = Util.getTargetedBlock(client);
-            if (blockPos == null)
+            var targetedBlock = Util.getTargetedBlock(client);
+            if (targetedBlock == null)
                 return;
             var bhr = (BlockHitResult) client.hitResult;
-            harvest(client, networkHandler, blockPos, bhr);
-            harvest(client, networkHandler, blockPos.east(), bhr);
-            harvest(client, networkHandler, blockPos.east().north(), bhr);
-            harvest(client, networkHandler, blockPos.west(), bhr);
-            harvest(client, networkHandler, blockPos.west().south(), bhr);
-            harvest(client, networkHandler, blockPos.south(), bhr);
-            harvest(client, networkHandler, blockPos.south().east(), bhr);
-            harvest(client, networkHandler, blockPos.north(), bhr);
-            harvest(client, networkHandler, blockPos.north().west(), bhr);
+
+            for (int dx = -1; dx <= 1; dx++) {
+                for (int dz = -1; dz <= 1; dz++) {
+                    var pos = targetedBlock.offset(dx, 0, dz);
+                    harvest(client, networkHandler, pos, bhr);
+                }
+            }
+
             if (isSeed) {
-                blockPos = bhr.getBlockPos();
-                plant(client, networkHandler, blockPos, bhr);
-                plant(client, networkHandler, blockPos.east(), bhr);
-                plant(client, networkHandler, blockPos.east().north(), bhr);
-                plant(client, networkHandler, blockPos.west(), bhr);
-                plant(client, networkHandler, blockPos.west().south(), bhr);
-                plant(client, networkHandler, blockPos.south(), bhr);
-                plant(client, networkHandler, blockPos.south().east(), bhr);
-                plant(client, networkHandler, blockPos.north(), bhr);
-                plant(client, networkHandler, blockPos.north().west(), bhr);
-                blockPos = blockPos.below();
-                plant(client, networkHandler, blockPos, bhr);
-                plant(client, networkHandler, blockPos.east(), bhr);
-                plant(client, networkHandler, blockPos.east().north(), bhr);
-                plant(client, networkHandler, blockPos.west(), bhr);
-                plant(client, networkHandler, blockPos.west().south(), bhr);
-                plant(client, networkHandler, blockPos.south(), bhr);
-                plant(client, networkHandler, blockPos.south().east(), bhr);
-                plant(client, networkHandler, blockPos.north(), bhr);
-                plant(client, networkHandler, blockPos.north().west(), bhr);
+                var basePos = bhr.getBlockPos();
+                for (int dy = -1; dy <= 0; dy++) {
+                    for (int dx = -1; dx <= 1; dx++) {
+                        for (int dz = -1; dz <= 1; dz++) {
+                            var pos = basePos.offset(dx, dy, dz);
+                            plant(client, networkHandler, pos, bhr);
+                        }
+                    }
+                }
             }
         }
     }

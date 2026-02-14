@@ -1,10 +1,10 @@
 # Suggested Improvements for mc-autotool
 
-- [ ] **1. Refactor `Autofarm.java` logic**
+- [x] **1. Refactor `Autofarm.java` logic**
   - Use a static array of `BlockPos` offsets and iterate through them.
   - Reduces code duplication and makes it easier to change the farm radius or pattern.
 
-- [ ] **2. Eliminate Magic Numbers**
+- [x] **2. Eliminate Magic Numbers**
   - Move the hardcoded `625` in `Autoattack.java` to a `private static final long ATTACK_DELAY_MS = 625;` constant.
   - Calculate delay based on the current item's attack speed attribute to support different weapons.
 
