@@ -25,7 +25,7 @@ public class AutoSwap implements AttackBlockCallback, AttackEntityCallback, EndT
     }
 
     private Select getSelect() {
-        return ConfigManager.getConfig().strategy == Config.Strategy.BEST ? best : first;
+        return ConfigManager.getConfig().autoSwap == Config.Strategy.BEST ? best : first;
     }
 
     public void register() {
@@ -36,7 +36,7 @@ public class AutoSwap implements AttackBlockCallback, AttackEntityCallback, EndT
 
     @Override
     public InteractionResult interact(Player player, Level world, InteractionHand hand, BlockPos blockPos, Direction direction) {
-        if (!ConfigManager.getConfig().autoSwapEnabled)
+        if (ConfigManager.getConfig().autoSwap == Config.Strategy.OFF)
             return InteractionResult.PASS;
         if (!Util.isCurrentPlayer(player))
             return InteractionResult.PASS;
@@ -54,7 +54,7 @@ public class AutoSwap implements AttackBlockCallback, AttackEntityCallback, EndT
 
     @Override
     public InteractionResult interact(Player player, Level world, InteractionHand hand, Entity entity, EntityHitResult ehr) {
-        if (!ConfigManager.getConfig().autoSwapEnabled)
+        if (ConfigManager.getConfig().autoSwap == Config.Strategy.OFF)
             return InteractionResult.PASS;
         if (!Util.isCurrentPlayer(player))
             return InteractionResult.PASS;

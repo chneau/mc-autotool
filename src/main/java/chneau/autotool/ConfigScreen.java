@@ -26,23 +26,20 @@ public class ConfigScreen extends Screen {
         this.addRenderableWidget(CycleButton.onOffBuilder(config.autoFarmEnabled)
                 .create(x, y + 24, 200, 20, Component.literal("Auto Farm"), (button, value) -> config.autoFarmEnabled = value));
 
-        this.addRenderableWidget(CycleButton.onOffBuilder(config.autoSwapEnabled)
-                .create(x, y + 48, 200, 20, Component.literal("Auto Swap"), (button, value) -> config.autoSwapEnabled = value));
-
         this.addRenderableWidget(CycleButton.onOffBuilder(config.autoRefillEnabled)
-                .create(x, y + 72, 200, 20, Component.literal("Auto Refill"), (button, value) -> config.autoRefillEnabled = value));
+                .create(x, y + 48, 200, 20, Component.literal("Auto Refill"), (button, value) -> config.autoRefillEnabled = value));
 
         this.addRenderableWidget(CycleButton.onOffBuilder(config.autoSprintEnabled)
-                .create(x, y + 96, 200, 20, Component.literal("Auto Sprint"), (button, value) -> config.autoSprintEnabled = value));
+                .create(x, y + 72, 200, 20, Component.literal("Auto Sprint"), (button, value) -> config.autoSprintEnabled = value));
 
-        this.addRenderableWidget(CycleButton.builder((Config.Strategy s) -> Component.literal(s.name()), config.strategy)
+        this.addRenderableWidget(CycleButton.builder((Config.Strategy s) -> Component.literal(s.name()), config.autoSwap)
                 .withValues(Config.Strategy.values())
-                .create(x, y + 120, 200, 20, Component.literal("Strategy"), (button, value) -> config.strategy = value));
+                .create(x, y + 96, 200, 20, Component.literal("Auto Swap"), (button, value) -> config.autoSwap = value));
 
         this.addRenderableWidget(Button.builder(Component.literal("Done"), (button) -> {
             ConfigManager.save();
             this.minecraft.setScreen(this.parent);
-        }).bounds(x, y + 154, 200, 20).build());
+        }).bounds(x, y + 130, 200, 20).build());
     }
 
     @Override
