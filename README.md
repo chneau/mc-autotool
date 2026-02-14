@@ -5,15 +5,11 @@ Put your best tools on your hotbar and just forget about it.
 
 ## Features
 
-- **Mining:** Automatically selects the best pickaxe.
-- **Lumbering:** Automatically selects the best axe.
-- **Digging:** Automatically selects the best shovel.
-- **Combat:** Automatically selects the best sword.
-  - Efficiently attacks if an entity is in range.
-- **Farming:** Fast harvesting and planting.
-  - Automatically harvests mature crops and replants if seeds are held.
-
-Once finished, it reverts to the last item held (except for swords, to keep you in combat mode).
+- **Smart Tool Selection (Autotool):** Automatically switches to the most effective tool in your hotbar for the block you are currently mining.
+- **Dynamic Combat (Autotool):** Instantly selects your best weapon when engaging an entity.
+- **Auto-Revert:** Automatically returns to your previously held item once you stop mining or attacking.
+- **Efficient Farming (Autofarm):** Automatically harvests mature crops and replants them in a 3x3 area around your target when holding seeds or a tool.
+- **Auto-Attack:** Automatically performs timed attacks (every 625ms) while holding a sword and looking at an entity, ensuring maximum damage efficiency.
 
 ## Installation
 
@@ -25,7 +21,9 @@ Once finished, it reverts to the last item held (except for swords, to keep you 
 
 The mod identifies the best tool in your hotbar for the block you are interacting with. For example, if you have bread in your hand and click a tree, it will switch to your best axe. Releasing the click returns the bread to your hand.
 
-For entities, it switches to a sword (or axe) and remains in that mode for continued combat. Swords are timed to attack every 625ms (full charge).
+For farming, looking at a mature crop and clicking will harvest it and its neighbors (3x3 area), and automatically replant if you are holding seeds.
+
+For entities, it switches to a sword and performs timed attacks every 625ms (full charge) to maximize damage per second.
 
 ## Changelog
 
