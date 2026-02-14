@@ -29,13 +29,30 @@ public class AutoEat implements EndTick {
         var player = client.player;
         if (player == null || !Util.isCurrentPlayer(player)) return;
 
-        // Activity check: Check for manual inputs that should interrupt eating
-        boolean isMoving = client.options.keyUp.isDown() || client.options.keyDown.isDown() || 
-                           client.options.keyLeft.isDown() || client.options.keyRight.isDown();
-        boolean manualInput = client.options.keyAttack.isDown() || client.options.keyJump.isDown() || 
-                             (client.options.keyUse.isDown() && !isEating);
+        // Activity check: Detect any manual input
+        long window = client.getWindow().handle();
+        boolean anyKeyDown = false;
         
-        if (manualInput || isMoving) {
+        for (int i = 32; i <= 348; i++) {
+            if (org.lwjgl.glfw.GLFW.glfwGetKey(window, i) == org.lwjgl.glfw.GLFW.GLFW_PRESS) {
+                if (isEating && client.options.keyUse.same(new net.minecraft.client.KeyMapping("", com.mojang.blaze3d.platform.InputConstants.Type.KEYSYM, i, net.minecraft.client.KeyMapping.Category.MISC))) continue;
+                
+                anyKeyDown = true;
+                break;
+            }
+        }
+
+        if (!anyKeyDown) {
+            for (int i = 0; i <= 7; i++) {
+                if (org.lwjgl.glfw.GLFW.glfwGetMouseButton(window, i) == org.lwjgl.glfw.GLFW.GLFW_PRESS) {
+                    if (isEating && client.options.keyUse.same(new net.minecraft.client.KeyMapping("", com.mojang.blaze3d.platform.InputConstants.Type.MOUSE, i, net.minecraft.client.KeyMapping.Category.MISC))) continue;
+                    anyKeyDown = true;
+                    break;
+                }
+            }
+        }
+        
+        if (anyKeyDown) {
             lastActivity = System.currentTimeMillis();
             if (isEating) stopEating(client);
             return;
