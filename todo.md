@@ -41,18 +41,21 @@
 
 - [ ] **11. `AutoEat`**
   - Automatically eats food when hunger falls below a certain threshold.
+  - **Default**: `SMART`
   - **Modes**:
     - `OFF`: Disabled.
     - `HUNGER`: Eat whenever hunger points are missing.
     - `HEALTH`: Only eat when health is not full (to maintain regeneration).
-    - `SMART`: Optimizes food usage based on saturation and hunger levels.
+    - `SMART`: Optimizes food usage based on saturation and hunger levels; **checks food value to avoid over-eating/wasting high-value food**.
 
 - [ ] **12. `AutoFish`**
   - Automatically reels in and recasts the fishing rod when a fish is caught.
+  - **Default**: `ON`
   - **Modes**: `OFF`, `ON`.
 
 - [ ] **13. `AutoArmor`**
   - Automatically equips the best armor pieces from your inventory.
+  - **Default**: `SMART`
   - **Modes**:
     - `OFF`: Disabled.
     - `BETTER`: Equips armor with higher raw armor value.
@@ -60,6 +63,7 @@
 
 - [ ] **14. `AutoTotem`**
   - Automatically moves a Totem of Undying to the off-hand.
+  - **Default**: `SMART`
   - **Modes**:
     - `OFF`: Disabled.
     - `ALWAYS`: Keeps a totem in the off-hand if one is available in inventory.
@@ -75,6 +79,7 @@
 
 - [ ] **16. `AutoLight`**
   - Automatically places a torch when it gets too dark.
+  - **Default**: `OFF`
   - **Modes**:
     - `OFF`: Disabled.
     - `PLAYER`: Places a torch at the player's current position when light level is < 7.
