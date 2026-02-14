@@ -8,7 +8,7 @@
   - Move the hardcoded `625` in `Autoattack.java` to a `private static final long ATTACK_DELAY_MS = 625;` constant.
   - Calculate delay based on the current item's attack speed attribute to support different weapons.
 
-- [ ] **3. Fix `Autoswap.java` logic**
+- [x] **3. Fix `Autoswap.java` logic**
   - Replace `player.getInventory().removeItem(1, 2);` with actual "Autorefill" logic.
   - Search the inventory for a matching `ItemStack` and move it to the hotbar when the current stack is low.
 
