@@ -12,7 +12,7 @@
   - Replace `player.getInventory().removeItem(1, 2);` with actual "Autorefill" logic.
   - Search the inventory for a matching `ItemStack` and move it to the hotbar when the current stack is low.
 
-- [ ] **4. Optimize `SelectBest.java`**
+- [x] **4. Optimize `SelectBest.java`**
   - Consider caching the "best" weapon index and only updating it when the inventory changes.
   - Minor performance gain and cleaner logic.
 
