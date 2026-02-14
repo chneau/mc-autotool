@@ -23,7 +23,7 @@
 - [ ] **6. Configuration System**
   - Implement a configuration file (e.g., Cloth Config or JSON) to allow users to toggle features and adjust values.
 
-- [ ] **7. `Autotool.java` Packet Efficiency**
+- [x] **7. `Autotool.java` Packet Efficiency**
   - Ensure `ServerboundSetCarriedItemPacket` is only sent if the slot has actually changed.
 
 - [ ] **8. General Code Style**

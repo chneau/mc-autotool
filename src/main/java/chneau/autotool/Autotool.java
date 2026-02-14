@@ -87,6 +87,8 @@ public class Autotool implements AttackBlockCallback, AttackEntityCallback, EndT
         var player = instance.player;
         if (player == null)
             return;
+        if (player.getInventory().getSelectedSlot() == pos)
+            return;
         player.getInventory().setSelectedSlot(pos);
         if (player.connection == null)
             return;
