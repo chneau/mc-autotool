@@ -69,7 +69,7 @@
     - `ALWAYS`: Keeps a totem in the off-hand if one is available in inventory.
     - `SMART`: Only moves a totem to the off-hand if health falls below 40% (4 hearts).
 
-- [ ] **15. `AutoToolRepair` (Durability Protection)**
+- [ ] **15. `AutoNoBreak` (Durability Protection)**
   - Prevents tools from breaking by monitoring durability.
   - **Modes**:
     - `OFF`: Disabled.
