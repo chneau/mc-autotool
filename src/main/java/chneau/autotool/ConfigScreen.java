@@ -20,8 +20,9 @@ public class ConfigScreen extends Screen {
         int y = this.height / 4;
         int x = this.width / 2 - 100;
 
-        this.addRenderableWidget(CycleButton.onOffBuilder(config.autoAttackEnabled)
-                .create(x, y, 200, 20, Component.literal("Auto Attack"), (button, value) -> config.autoAttackEnabled = value));
+        this.addRenderableWidget(CycleButton.builder((Config.AttackMode m) -> Component.literal(m.name()), config.autoAttack)
+                .withValues(Config.AttackMode.values())
+                .create(x, y, 200, 20, Component.literal("Auto Attack"), (button, value) -> config.autoAttack = value));
 
         this.addRenderableWidget(CycleButton.onOffBuilder(config.autoFarmEnabled)
                 .create(x, y + 24, 200, 20, Component.literal("Auto Farm"), (button, value) -> config.autoFarmEnabled = value));

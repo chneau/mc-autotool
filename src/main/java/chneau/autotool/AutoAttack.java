@@ -22,7 +22,8 @@ public class AutoAttack implements EndTick {
 
     @Override
     public void onEndTick(Minecraft client) {
-        if (!ConfigManager.getConfig().autoAttackEnabled)
+        var mode = ConfigManager.getConfig().autoAttack;
+        if (mode == Config.AttackMode.OFF)
             return;
         var player = client.player;
         if (player == null || !Util.isCurrentPlayer(player))
@@ -35,7 +36,8 @@ public class AutoAttack implements EndTick {
             var entity = ((EntityHitResult) client.hitResult).getEntity();
             if (entity instanceof LivingEntity living && living.getHealth() <= 0)
                 return;
-            if (!(itemStackMainHand.is(ItemTags.SWORDS)))
+            
+            if (mode == Config.AttackMode.SWORD && !itemStackMainHand.is(ItemTags.SWORDS))
                 return;
             
             var now = System.currentTimeMillis();
