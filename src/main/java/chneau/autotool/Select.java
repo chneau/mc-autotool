@@ -1,12 +1,12 @@
 package chneau.autotool;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.player.Inventory;
 
 public interface Select {
-    static final int HOTBAR_SIZE = PlayerInventory.getHotbarSize();
+    static final int HOTBAR_SIZE = Inventory.getSelectionSize();
 
-    public int selectTool(PlayerInventory inventory, BlockState bState);
+    public int selectTool(Inventory inventory, BlockState bState);
 
-    public int selectWeapon(PlayerInventory inventory);
+    public int selectWeapon(Inventory inventory);
 }

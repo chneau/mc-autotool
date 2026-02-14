@@ -2,11 +2,11 @@ package chneau.autotool;
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents.EndTick;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.item.SwordItem;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.EntityHitResult;
-import net.minecraft.util.hit.HitResult.Type;
+import net.minecraft.client.Minecraft;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult.Type;
 
 public class Autoattack implements EndTick {
     private long lastAttack = System.currentTimeMillis();
@@ -16,23 +16,25 @@ public class Autoattack implements EndTick {
     }
 
     @Override
-    public void onEndTick(MinecraftClient client) {
+    public void onEndTick(Minecraft client) {
         var player = client.player;
         if (player == null || !Util.isCurrentPlayer(player))
             return;
-        if (client.crosshairTarget == null || player.getInventory() == null)
+        if (client.hitResult == null || player.getInventory() == null)
             return;
-        var itemMainHand = player.getInventory().main.get(player.getInventory().selectedSlot).getItem();
-        if (client.crosshairTarget.getType() == Type.ENTITY) {
-            if (!(itemMainHand instanceof SwordItem))
+        var itemStackMainHand = player.getInventory().getItem(player.getInventory().getSelectedSlot());
+        if (client.hitResult.getType() == Type.ENTITY) {
+            if (!(itemStackMainHand.is(ItemTags.SWORDS)))
                 return;
             var now = System.currentTimeMillis();
             if (now - lastAttack < 625)
                 return;
-            client.interactionManager.attackEntity(player, ((EntityHitResult) client.crosshairTarget).getEntity());
-            player.resetLastAttackedTicks();
-            player.swingHand(Hand.MAIN_HAND);
-            lastAttack = now;
+            if (client.gameMode != null) {
+                client.gameMode.attack(player, ((EntityHitResult) client.hitResult).getEntity());
+                player.resetAttackStrengthTicker();
+                player.swing(InteractionHand.MAIN_HAND);
+                lastAttack = now;
+            }
         }
     }
 }

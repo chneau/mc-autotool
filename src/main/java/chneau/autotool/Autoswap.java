@@ -1,11 +1,11 @@
 package chneau.autotool;
 
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.level.Level;
 
 public class Autoswap implements UseBlockCallback {
 
@@ -14,18 +14,18 @@ public class Autoswap implements UseBlockCallback {
     }
 
     @Override
-    public ActionResult interact(PlayerEntity player, World world, Hand hand, BlockHitResult bhr) {
+    public InteractionResult interact(Player player, Level world, InteractionHand hand, BlockHitResult bhr) {
         if (!Util.isCurrentPlayer(player))
-            return ActionResult.PASS;
-        if (hand != Hand.MAIN_HAND)
-            return ActionResult.PASS;
-        var itemStack = player.getInventory().main.get(player.getInventory().selectedSlot);
-        var maxCount = itemStack.getMaxCount();
+            return InteractionResult.PASS;
+        if (hand != InteractionHand.MAIN_HAND)
+            return InteractionResult.PASS;
+        var itemStack = player.getInventory().getItem(player.getInventory().getSelectedSlot());
+        var maxCount = itemStack.getMaxStackSize();
         var count = itemStack.getCount();
         if (count == maxCount)
-            return ActionResult.PASS;
-        player.getInventory().removeStack(1, 2);
-        return ActionResult.PASS;
+            return InteractionResult.PASS;
+        player.getInventory().removeItem(1, 2);
+        return InteractionResult.PASS;
     }
 
 }

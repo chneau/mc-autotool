@@ -4,17 +4,17 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents.EndTick;
 import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
 import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.network.packet.c2s.play.UpdateSelectedSlotC2SPacket;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.EntityHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.world.World;
+import net.minecraft.client.Minecraft;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.network.protocol.game.ServerboundSetCarriedItemPacket;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.Level;
 
 public class Autotool implements AttackBlockCallback, AttackEntityCallback, EndTick {
     private int last = -1;
@@ -31,65 +31,65 @@ public class Autotool implements AttackBlockCallback, AttackEntityCallback, EndT
     }
 
     @Override
-    public ActionResult interact(PlayerEntity player, World world, Hand hand, BlockPos blockPos, Direction direction) {
+    public InteractionResult interact(Player player, Level world, InteractionHand hand, BlockPos blockPos, Direction direction) {
         if (!Util.isCurrentPlayer(player))
-            return ActionResult.PASS;
-        if (hand != Hand.MAIN_HAND)
-            return ActionResult.PASS;
+            return InteractionResult.PASS;
+        if (hand != InteractionHand.MAIN_HAND)
+            return InteractionResult.PASS;
         if (last == -1)
-            last = player.getInventory().selectedSlot;
+            last = player.getInventory().getSelectedSlot();
         var bState = world.getBlockState(blockPos);
         var tool = select.selectTool(player.getInventory(), bState);
-        if (tool == -1 || player.getInventory().selectedSlot == tool)
-            return ActionResult.PASS;
+        if (tool == -1 || player.getInventory().getSelectedSlot() == tool)
+            return InteractionResult.PASS;
         updateServer(tool);
-        return ActionResult.PASS;
+        return InteractionResult.PASS;
     }
 
     @Override
-    public ActionResult interact(PlayerEntity player, World world, Hand hand, Entity entity, EntityHitResult ehr) {
+    public InteractionResult interact(Player player, Level world, InteractionHand hand, Entity entity, EntityHitResult ehr) {
         if (!Util.isCurrentPlayer(player))
-            return ActionResult.PASS;
-        if (hand != Hand.MAIN_HAND)
-            return ActionResult.PASS;
+            return InteractionResult.PASS;
+        if (hand != InteractionHand.MAIN_HAND)
+            return InteractionResult.PASS;
         if (last == -1)
-            last = player.getInventory().selectedSlot;
+            last = player.getInventory().getSelectedSlot();
         var sword = select.selectWeapon(player.getInventory());
-        if (sword == -1 || player.getInventory().selectedSlot == sword)
-            return ActionResult.PASS;
+        if (sword == -1 || player.getInventory().getSelectedSlot() == sword)
+            return InteractionResult.PASS;
         last = sword;
         updateServer(sword);
-        return ActionResult.PASS;
+        return InteractionResult.PASS;
     }
 
     @Override
-    public void onEndTick(MinecraftClient client) {
+    public void onEndTick(Minecraft client) {
         var player = client.player;
-        if (player == null || client.crosshairTarget == null || player.getInventory() == null)
+        if (player == null || client.hitResult == null || player.getInventory() == null)
             return;
         if (!Util.isCurrentPlayer(player))
             return;
-        updateLast(player.getInventory(), client.mouse.wasLeftButtonClicked());
+        updateLast(player.getInventory(), client.mouseHandler.isLeftPressed());
     }
 
-    private void updateLast(PlayerInventory inventory, boolean lbClicked) {
+    private void updateLast(Inventory inventory, boolean lbClicked) {
         if (!lbClicked) {
             if (last != -1)
                 this.updateServer(last);
             last = -1;
         } else if (last == -1) {
-            last = inventory.selectedSlot;
+            last = inventory.getSelectedSlot();
         }
     }
 
     private void updateServer(int pos) {
-        var instance = MinecraftClient.getInstance();
+        var instance = Minecraft.getInstance();
         var player = instance.player;
         if (player == null)
             return;
-        player.getInventory().selectedSlot = pos;
-        if (player.networkHandler == null)
+        player.getInventory().setSelectedSlot(pos);
+        if (player.connection == null)
             return;
-        player.networkHandler.sendPacket(new UpdateSelectedSlotC2SPacket(pos));
+        player.connection.send(new ServerboundSetCarriedItemPacket(pos));
     }
 }
