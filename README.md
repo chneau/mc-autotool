@@ -20,6 +20,8 @@ Once finished, it will go back to the last item you were holding.
 
 ## Changelog
 
+- New 2026-02-14: Updated for 1.21
+- New 2023-10-20: Updated for 1.20
 - New 2023-03-13: Updated for 1.19.3
 - New 2021-11-24: Updated for 1.18
 - New 2021-06-26: Updated for 1.17
@@ -68,7 +70,9 @@ The code is on the other branches of this repo.
 [1.16](https://github.com/chneau/mc-autotool/tree/1.16)  
 [1.17](https://github.com/chneau/mc-autotool/tree/1.17)  
 [1.18](https://github.com/chneau/mc-autotool/tree/1.18)  
-[1.19](https://github.com/chneau/mc-autotool/tree/1.19)
+[1.19](https://github.com/chneau/mc-autotool/tree/1.19)  
+[1.20](https://github.com/chneau/mc-autotool/tree/1.20)  
+[1.21](https://github.com/chneau/mc-autotool/tree/1.21)
 
 ## Inspiration
 
