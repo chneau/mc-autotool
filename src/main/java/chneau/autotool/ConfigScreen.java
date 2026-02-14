@@ -40,14 +40,18 @@ public class ConfigScreen extends Screen {
                 .withValues(Config.EatMode.values())
                 .create(x, y + 96, 200, 20, Component.literal("Auto Eat"), (button, value) -> config.autoEat = value));
 
+        this.addRenderableWidget(CycleButton.builder((Config.SortMode m) -> Component.literal(m.name()), config.autoSort)
+                .withValues(Config.SortMode.values())
+                .create(x, y + 120, 200, 20, Component.literal("Auto Sort"), (button, value) -> config.autoSort = value));
+
         this.addRenderableWidget(CycleButton.builder((Config.Strategy s) -> Component.literal(s.name()), config.autoSwap)
                 .withValues(Config.Strategy.values())
-                .create(x, y + 120, 200, 20, Component.literal("Auto Swap"), (button, value) -> config.autoSwap = value));
+                .create(x, y + 144, 200, 20, Component.literal("Auto Swap"), (button, value) -> config.autoSwap = value));
 
         this.addRenderableWidget(Button.builder(Component.literal("Done"), (button) -> {
             ConfigManager.save();
             this.minecraft.setScreen(this.parent);
-        }).bounds(x, y + 154, 200, 20).build());
+        }).bounds(x, y + 178, 200, 20).build());
     }
 
     @Override

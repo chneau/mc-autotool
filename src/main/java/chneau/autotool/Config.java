@@ -38,10 +38,18 @@ public class Config {
         SMART   // Optimize food usage and avoid over-eating
     }
 
+    public enum SortMode {
+        OFF,       // Disable auto-sort
+        HOTBAR,    // Only sort the hotbar
+        INVENTORY, // Only sort the main inventory
+        BOTH       // Sort both hotbar and main inventory
+    }
+
     public AttackMode autoAttack = AttackMode.SWORD;
     public FarmMode autoFarm = FarmMode.BOTH;
     public RefillMode autoRefill = RefillMode.ON;
     public SprintMode autoSprint = SprintMode.ON;
     public EatMode autoEat = EatMode.SMART;
+    public SortMode autoSort = SortMode.BOTH;
     public Strategy autoSwap = Strategy.BEST;
 }

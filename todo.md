@@ -85,3 +85,14 @@
     - `OFF`: Disabled.
     - `PLAYER`: Places a torch at the player's current position when light level is < 7.
     - `TARGET`: Places a torch on the targeted block if the light level there is low.
+
+- [x] **17. `AutoSort`**
+  - Automatically sorts your inventory and hotbar.
+  - **Logic**: Triggers automatically when the inventory screen is opened (e.g., by pressing 'E').
+  - **Default**: `BOTH`
+  - **Modes**:
+    - `OFF`: Disabled.
+    - `HOTBAR`: Only sorts the 9 hotbar slots (e.g., Sword first, then Tools, then Food).
+    - `INVENTORY`: Only sorts the main 27 inventory slots.
+    - `BOTH`: Sorts the entire inventory.
+  - **Sorting Order**: Sorts by item category (Combat -> Tools -> Blocks -> Food -> Misc) and then by rarity or name.
