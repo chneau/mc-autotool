@@ -13,7 +13,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 
-public class Autoattack implements EndTick {
+public class AutoAttack implements EndTick {
     private static final long DEFAULT_ATTACK_DELAY_MS = 625; // 1.6 attack speed
     private long lastAttack = System.currentTimeMillis();
 

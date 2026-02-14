@@ -16,12 +16,12 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
 
-public class Autotool implements AttackBlockCallback, AttackEntityCallback, EndTick {
+public class AutoSwap implements AttackBlockCallback, AttackEntityCallback, EndTick {
     private int last = -1;
     private final Select best = new SelectBest();
     private final Select first = new SelectFirst();
 
-    public Autotool() {
+    public AutoSwap() {
     }
 
     private Select getSelect() {
@@ -36,7 +36,7 @@ public class Autotool implements AttackBlockCallback, AttackEntityCallback, EndT
 
     @Override
     public InteractionResult interact(Player player, Level world, InteractionHand hand, BlockPos blockPos, Direction direction) {
-        if (!ConfigManager.getConfig().autoToolEnabled)
+        if (!ConfigManager.getConfig().autoSwapEnabled)
             return InteractionResult.PASS;
         if (!Util.isCurrentPlayer(player))
             return InteractionResult.PASS;
@@ -54,7 +54,7 @@ public class Autotool implements AttackBlockCallback, AttackEntityCallback, EndT
 
     @Override
     public InteractionResult interact(Player player, Level world, InteractionHand hand, Entity entity, EntityHitResult ehr) {
-        if (!ConfigManager.getConfig().autoToolEnabled)
+        if (!ConfigManager.getConfig().autoSwapEnabled)
             return InteractionResult.PASS;
         if (!Util.isCurrentPlayer(player))
             return InteractionResult.PASS;

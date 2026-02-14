@@ -5,7 +5,7 @@ public class Config {
 
     public boolean autoAttackEnabled = true;
     public boolean autoFarmEnabled = true;
-    public boolean autoToolEnabled = true;
+    public boolean autoSwapEnabled = true;
     public boolean autoRefillEnabled = true;
     public long defaultAttackDelayMs = 625;
     public Strategy strategy = Strategy.BEST;

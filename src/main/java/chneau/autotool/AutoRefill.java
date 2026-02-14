@@ -8,7 +8,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.item.ItemStack;
 
-public class Autoswap implements UseBlockCallback {
+public class AutoRefill implements UseBlockCallback {
 
     public void register() {
         UseBlockCallback.EVENT.register(this);

@@ -18,9 +18,10 @@ public class Main implements ClientModInitializer {
     public void onInitializeClient() {
         LOGGER.info("Initializing mc-autotool...");
         ConfigManager.load();
-        (new Autotool()).register();
-        (new Autofarm()).register();
-        (new Autoattack()).register();
+        (new AutoSwap()).register();
+        (new AutoRefill()).register();
+        (new AutoFarm()).register();
+        (new AutoAttack()).register();
 
         configKey = KeyBindingHelper.registerKeyBinding(new KeyMapping(
                 "key.mc-autotool.config",

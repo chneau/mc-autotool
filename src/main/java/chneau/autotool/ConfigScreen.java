@@ -26,8 +26,8 @@ public class ConfigScreen extends Screen {
         this.addRenderableWidget(CycleButton.onOffBuilder(config.autoFarmEnabled)
                 .create(x, y + 24, 200, 20, Component.literal("Auto Farm"), (button, value) -> config.autoFarmEnabled = value));
 
-        this.addRenderableWidget(CycleButton.onOffBuilder(config.autoToolEnabled)
-                .create(x, y + 48, 200, 20, Component.literal("Auto Tool"), (button, value) -> config.autoToolEnabled = value));
+        this.addRenderableWidget(CycleButton.onOffBuilder(config.autoSwapEnabled)
+                .create(x, y + 48, 200, 20, Component.literal("Auto Swap"), (button, value) -> config.autoSwapEnabled = value));
 
         this.addRenderableWidget(CycleButton.onOffBuilder(config.autoRefillEnabled)
                 .create(x, y + 72, 200, 20, Component.literal("Auto Refill"), (button, value) -> config.autoRefillEnabled = value));
