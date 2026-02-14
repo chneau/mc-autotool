@@ -37,7 +37,7 @@ public class ConfigScreen extends OptionsSubScreen {
         return new OptionInstance<>(
                 name,
                 OptionInstance.noTooltip(),
-                (caption, value) -> Component.literal(name + ": " + value.name()),
+                (caption, value) -> Component.literal(value.name()),
                 new OptionInstance.Enum<>(Arrays.asList(values), Codec.INT.xmap(i -> values[i], Enum::ordinal)),
                 currentValue,
                 setter
