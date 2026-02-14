@@ -41,19 +41,41 @@
 
 - [ ] **11. `AutoEat`**
   - Automatically eats food when hunger falls below a certain threshold.
-  - Prioritizes food based on saturation or nutritional value.
+  - **Modes**:
+    - `OFF`: Disabled.
+    - `HUNGER`: Eat whenever hunger points are missing.
+    - `HEALTH`: Only eat when health is not full (to maintain regeneration).
+    - `SMART`: Optimizes food usage based on saturation and hunger levels.
 
 - [ ] **12. `AutoFish`**
   - Automatically reels in and recasts the fishing rod when a fish is caught.
+  - **Modes**: `OFF`, `ON`.
 
 - [ ] **13. `AutoArmor`**
   - Automatically equips the best armor pieces from your inventory.
+  - **Modes**:
+    - `OFF`: Disabled.
+    - `BETTER`: Equips armor with higher raw armor value.
+    - `SMART`: Considers enchantments (e.g., Protection, Mending) alongside armor value.
 
 - [ ] **14. `AutoTotem`**
-  - Automatically moves a Totem of Undying to the off-hand if the current one is used or missing.
+  - Automatically moves a Totem of Undying to the off-hand.
+  - **Modes**:
+    - `OFF`: Disabled.
+    - `ALWAYS`: Keeps a totem in the off-hand if one is available in inventory.
+    - `SMART`: Only moves a totem to the off-hand if health falls below 40% (4 hearts).
 
 - [ ] **15. `AutoToolRepair` (Durability Protection)**
-  - Automatically stops using a tool (or switches to another) when its durability is extremely low to prevent it from breaking.
+  - Prevents tools from breaking by monitoring durability.
+  - **Modes**:
+    - `OFF`: Disabled.
+    - `NOTIFY`: Sends a warning when durability is below 5%.
+    - `SWITCH`: Automatically switches to another tool or empty slot when durability is low.
+    - `STOP`: Cancels the mining/attacking action to prevent the tool from breaking.
 
 - [ ] **16. `AutoLight`**
-  - Automatically places a torch when the light level at the player's position is too low.
+  - Automatically places a torch when it gets too dark.
+  - **Modes**:
+    - `OFF`: Disabled.
+    - `PLAYER`: Places a torch at the player's current position when light level is < 7.
+    - `TARGET`: Places a torch on the targeted block if the light level there is low.
