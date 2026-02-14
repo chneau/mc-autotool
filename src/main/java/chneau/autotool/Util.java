@@ -5,10 +5,19 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.BlockHitResult;
 
+/**
+ * Utility class for common Minecraft client-side operations.
+ */
 public class Util {
     private Util() {
     }
 
+    /**
+     * Retrieves the BlockPos of the block the player is currently looking at.
+     * 
+     * @param client The Minecraft client instance.
+     * @return The BlockPos of the targeted block, or null if no block is targeted.
+     */
     public static BlockPos getTargetedBlock(Minecraft client) {
         if (client.hitResult instanceof BlockHitResult bhr) {
             return bhr.getBlockPos();
@@ -16,12 +25,16 @@ public class Util {
         return null;
     }
 
+    /**
+     * Checks if the given player is the local client player.
+     * 
+     * @param other The player entity to check.
+     * @return True if the player is the local client player.
+     */
     public static boolean isCurrentPlayer(Player other) {
         var instance = Minecraft.getInstance();
         var player = instance.player;
-        if (player == null)
-            return false;
-        if (other == null)
+        if (player == null || other == null)
             return false;
         return player.equals(other);
     }

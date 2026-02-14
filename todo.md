@@ -26,7 +26,7 @@
 - [x] **7. `Autotool.java` Packet Efficiency**
   - Ensure `ServerboundSetCarriedItemPacket` is only sent if the slot has actually changed.
 
-- [ ] **8. General Code Style**
+- [x] **8. General Code Style**
   - Use `@Override` consistently.
   - Use a logger instead of `System.out.println`.
   - Add comments explaining complex logic, such as the coordinate math in `Util.java`.
