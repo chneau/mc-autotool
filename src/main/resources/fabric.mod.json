@@ -14,7 +14,8 @@
   "icon": "icon.png",
   "environment": "client",
   "entrypoints": {
-    "client": ["chneau.autotool.Main"]
+    "client": ["chneau.autotool.Main"],
+    "modmenu": ["chneau.autotool.ModMenuIntegration"]
   },
   "mixins": [],
   "depends": {},
