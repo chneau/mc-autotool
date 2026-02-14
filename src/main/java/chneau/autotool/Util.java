@@ -3,24 +3,17 @@ package chneau.autotool;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.BlockHitResult;
 
 public class Util {
     private Util() {
     }
 
-    private static final double WEE = 1e-6;
-
     public static BlockPos getTargetedBlock(Minecraft client) {
-        if (client.getCameraEntity() == null || client.hitResult == null) {
-            return null;
+        if (client.hitResult instanceof BlockHitResult bhr) {
+            return bhr.getBlockPos();
         }
-        var cameraPos = client.getCameraEntity().getEyePosition(1.0f);
-        var pos = client.hitResult.getLocation();
-        var x = (pos.x - cameraPos.x > 0) ? WEE : -WEE;
-        var y = (pos.y - cameraPos.y > 0) ? WEE : -WEE;
-        var z = (pos.z - cameraPos.z > 0) ? WEE : -WEE;
-        pos = pos.add(x, y, z);
-        return new BlockPos.MutableBlockPos(pos.x, pos.y, pos.z);
+        return null;
     }
 
     public static boolean isCurrentPlayer(Player other) {

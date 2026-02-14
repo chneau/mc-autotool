@@ -16,7 +16,7 @@
   - Consider caching the "best" weapon index and only updating it when the inventory changes.
   - Minor performance gain and cleaner logic.
 
-- [ ] **5. Improve `Util.getTargetedBlock`**
+- [x] **5. Improve `Util.getTargetedBlock`**
   - Investigate using `BlockHitResult` from `client.hitResult` directly or using `RaycastContext`.
   - More "idiomatic" Minecraft modding and potentially more accurate targeting.
 
