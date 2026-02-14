@@ -32,6 +32,8 @@ public class Autotool implements AttackBlockCallback, AttackEntityCallback, EndT
 
     @Override
     public InteractionResult interact(Player player, Level world, InteractionHand hand, BlockPos blockPos, Direction direction) {
+        if (!ConfigManager.getConfig().autoToolEnabled)
+            return InteractionResult.PASS;
         if (!Util.isCurrentPlayer(player))
             return InteractionResult.PASS;
         if (hand != InteractionHand.MAIN_HAND)
@@ -48,6 +50,8 @@ public class Autotool implements AttackBlockCallback, AttackEntityCallback, EndT
 
     @Override
     public InteractionResult interact(Player player, Level world, InteractionHand hand, Entity entity, EntityHitResult ehr) {
+        if (!ConfigManager.getConfig().autoToolEnabled)
+            return InteractionResult.PASS;
         if (!Util.isCurrentPlayer(player))
             return InteractionResult.PASS;
         if (hand != InteractionHand.MAIN_HAND)

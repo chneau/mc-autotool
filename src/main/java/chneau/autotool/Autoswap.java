@@ -16,6 +16,8 @@ public class Autoswap implements UseBlockCallback {
 
     @Override
     public InteractionResult interact(Player player, Level world, InteractionHand hand, BlockHitResult bhr) {
+        if (!ConfigManager.getConfig().autoRefillEnabled)
+            return InteractionResult.PASS;
         if (!Util.isCurrentPlayer(player))
             return InteractionResult.PASS;
         if (hand != InteractionHand.MAIN_HAND)

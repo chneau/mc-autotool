@@ -27,6 +27,8 @@ public class Autofarm implements EndTick {
 
     @Override
     public void onEndTick(Minecraft client) {
+        if (!ConfigManager.getConfig().autoFarmEnabled)
+            return;
         var player = client.player;
         if (player == null || !Util.isCurrentPlayer(player))
             return;

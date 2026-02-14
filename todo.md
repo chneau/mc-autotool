@@ -20,7 +20,7 @@
   - Investigate using `BlockHitResult` from `client.hitResult` directly or using `RaycastContext`.
   - More "idiomatic" Minecraft modding and potentially more accurate targeting.
 
-- [ ] **6. Configuration System**
+- [x] **6. Configuration System**
   - Implement a configuration file (e.g., Cloth Config or JSON) to allow users to toggle features and adjust values.
 
 - [x] **7. `Autotool.java` Packet Efficiency**
