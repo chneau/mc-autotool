@@ -14,7 +14,6 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 
 public class AutoAttack implements EndTick {
-    private static final long DEFAULT_ATTACK_DELAY_MS = 625; // 1.6 attack speed
     private long lastAttack = System.currentTimeMillis();
 
     public void register() {
@@ -44,13 +43,6 @@ public class AutoAttack implements EndTick {
             var atkSpd = modifiers.compute(Attributes.ATTACK_SPEED, 4.0, EquipmentSlot.MAINHAND);
             var delay = (long) (1000.0 / atkSpd);
             
-            // If the delay is unusually high (e.g. 4.0 which results in 250ms), we might want to respect a minimum or the config
-            // But here we'll just show we use the config if atkSpd is default/missing or as a multiplier maybe?
-            // Actually, let's just use the config if it's different from default.
-            if (ConfigManager.getConfig().defaultAttackDelayMs != 625 && atkSpd == 4.0) {
-                delay = ConfigManager.getConfig().defaultAttackDelayMs;
-            }
-
             if (now - lastAttack < delay)
                 return;
             if (client.gameMode != null) {
