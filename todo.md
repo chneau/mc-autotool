@@ -33,3 +33,6 @@
 
 - [x] **9. Autotool Strategy Toggle**
   - Added a configuration option to toggle between "Best" and "First" strategies.
+
+- [x] **10. Settings Shortcut Key**
+  - Implement a shortcut key (e.g., `Ctrl + Shift + O`) to open the mod's configuration screen directly.
