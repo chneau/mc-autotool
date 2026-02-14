@@ -24,11 +24,13 @@ public class ConfigScreen extends Screen {
                 .withValues(Config.AttackMode.values())
                 .create(x, y, 200, 20, Component.literal("Auto Attack"), (button, value) -> config.autoAttack = value));
 
-        this.addRenderableWidget(CycleButton.onOffBuilder(config.autoFarmEnabled)
-                .create(x, y + 24, 200, 20, Component.literal("Auto Farm"), (button, value) -> config.autoFarmEnabled = value));
+        this.addRenderableWidget(CycleButton.builder((Config.FarmMode m) -> Component.literal(m.name()), config.autoFarm)
+                .withValues(Config.FarmMode.values())
+                .create(x, y + 24, 200, 20, Component.literal("Auto Farm"), (button, value) -> config.autoFarm = value));
 
-        this.addRenderableWidget(CycleButton.onOffBuilder(config.autoRefillEnabled)
-                .create(x, y + 48, 200, 20, Component.literal("Auto Refill"), (button, value) -> config.autoRefillEnabled = value));
+        this.addRenderableWidget(CycleButton.builder((Config.RefillMode m) -> Component.literal(m.name()), config.autoRefill)
+                .withValues(Config.RefillMode.values())
+                .create(x, y + 48, 200, 20, Component.literal("Auto Refill"), (button, value) -> config.autoRefill = value));
 
         this.addRenderableWidget(CycleButton.builder((Config.SprintMode m) -> Component.literal(m.name()), config.autoSprint)
                 .withValues(Config.SprintMode.values())

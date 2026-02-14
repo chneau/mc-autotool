@@ -27,7 +27,8 @@ public class AutoFarm implements EndTick {
 
     @Override
     public void onEndTick(Minecraft client) {
-        if (!ConfigManager.getConfig().autoFarmEnabled)
+        var mode = ConfigManager.getConfig().autoFarm;
+        if (mode == Config.FarmMode.OFF)
             return;
         var player = client.player;
         if (player == null || !Util.isCurrentPlayer(player))
@@ -56,7 +57,7 @@ public class AutoFarm implements EndTick {
                 }
             }
 
-            if (isSeed) {
+            if (mode == Config.FarmMode.BOTH && isSeed) {
                 var basePos = bhr.getBlockPos();
                 for (int dy = -1; dy <= 0; dy++) {
                     for (int dx = -1; dx <= 1; dx++) {

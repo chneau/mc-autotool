@@ -16,7 +16,8 @@ public class AutoRefill implements UseBlockCallback {
 
     @Override
     public InteractionResult interact(Player player, Level world, InteractionHand hand, BlockHitResult bhr) {
-        if (!ConfigManager.getConfig().autoRefillEnabled)
+        var mode = ConfigManager.getConfig().autoRefill;
+        if (mode == Config.RefillMode.OFF)
             return InteractionResult.PASS;
         if (!Util.isCurrentPlayer(player))
             return InteractionResult.PASS;
@@ -29,7 +30,7 @@ public class AutoRefill implements UseBlockCallback {
         
         if (itemStack.isEmpty()) return InteractionResult.PASS;
 
-        if (itemStack.getCount() > 1)
+        if (mode == Config.RefillMode.SMART && itemStack.getCount() > 1)
             return InteractionResult.PASS;
 
         for (int i = 0; i < inventory.getContainerSize(); i++) {
