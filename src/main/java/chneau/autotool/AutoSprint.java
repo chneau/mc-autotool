@@ -12,7 +12,8 @@ public class AutoSprint implements EndTick {
 
     @Override
     public void onEndTick(Minecraft client) {
-        if (!ConfigManager.getConfig().autoSprintEnabled)
+        var mode = ConfigManager.getConfig().autoSprint;
+        if (mode == Config.SprintMode.OFF)
             return;
         
         var player = client.player;
@@ -22,7 +23,10 @@ public class AutoSprint implements EndTick {
         if (player.horizontalCollision || player.isDescending() || player.isUsingItem())
             return;
 
-        if (player.getFoodData().getFoodLevel() <= 6 && !player.getAbilities().mayfly)
+        int foodLevel = player.getFoodData().getFoodLevel();
+        int threshold = (mode == Config.SprintMode.HUNGER_50) ? 10 : 6;
+
+        if (foodLevel <= threshold && !player.getAbilities().mayfly)
             return;
 
         if (player.input.hasForwardImpulse() && !player.isSprinting()) {

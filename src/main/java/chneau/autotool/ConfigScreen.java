@@ -30,8 +30,9 @@ public class ConfigScreen extends Screen {
         this.addRenderableWidget(CycleButton.onOffBuilder(config.autoRefillEnabled)
                 .create(x, y + 48, 200, 20, Component.literal("Auto Refill"), (button, value) -> config.autoRefillEnabled = value));
 
-        this.addRenderableWidget(CycleButton.onOffBuilder(config.autoSprintEnabled)
-                .create(x, y + 72, 200, 20, Component.literal("Auto Sprint"), (button, value) -> config.autoSprintEnabled = value));
+        this.addRenderableWidget(CycleButton.builder((Config.SprintMode m) -> Component.literal(m.name()), config.autoSprint)
+                .withValues(Config.SprintMode.values())
+                .create(x, y + 72, 200, 20, Component.literal("Auto Sprint"), (button, value) -> config.autoSprint = value));
 
         this.addRenderableWidget(CycleButton.builder((Config.Strategy s) -> Component.literal(s.name()), config.autoSwap)
                 .withValues(Config.Strategy.values())
