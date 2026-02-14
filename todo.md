@@ -30,3 +30,6 @@
   - Use `@Override` consistently.
   - Use a logger instead of `System.out.println`.
   - Add comments explaining complex logic, such as the coordinate math in `Util.java`.
+
+- [x] **9. Autotool Strategy Toggle**
+  - Added a configuration option to toggle between "Best" and "First" strategies.

@@ -18,10 +18,14 @@ import net.minecraft.world.level.Level;
 
 public class Autotool implements AttackBlockCallback, AttackEntityCallback, EndTick {
     private int last = -1;
-    private final Select select;
+    private final Select best = new SelectBest();
+    private final Select first = new SelectFirst();
 
-    public Autotool(Select select) {
-        this.select = select;
+    public Autotool() {
+    }
+
+    private Select getSelect() {
+        return ConfigManager.getConfig().strategy == Config.Strategy.BEST ? best : first;
     }
 
     public void register() {
@@ -41,7 +45,7 @@ public class Autotool implements AttackBlockCallback, AttackEntityCallback, EndT
         if (last == -1)
             last = player.getInventory().getSelectedSlot();
         var bState = world.getBlockState(blockPos);
-        var tool = select.selectTool(player.getInventory(), bState);
+        var tool = getSelect().selectTool(player.getInventory(), bState);
         if (tool == -1 || player.getInventory().getSelectedSlot() == tool)
             return InteractionResult.PASS;
         updateServer(tool);
@@ -58,7 +62,7 @@ public class Autotool implements AttackBlockCallback, AttackEntityCallback, EndT
             return InteractionResult.PASS;
         if (last == -1)
             last = player.getInventory().getSelectedSlot();
-        var sword = select.selectWeapon(player.getInventory());
+        var sword = getSelect().selectWeapon(player.getInventory());
         if (sword == -1 || player.getInventory().getSelectedSlot() == sword)
             return InteractionResult.PASS;
         last = sword;

@@ -11,7 +11,7 @@ public class Main implements ClientModInitializer {
     public void onInitializeClient() {
         LOGGER.info("Initializing mc-autotool...");
         ConfigManager.load();
-        (new Autotool(new SelectBest())).register();
+        (new Autotool()).register();
         (new Autofarm()).register();
         (new Autoattack()).register();
     }

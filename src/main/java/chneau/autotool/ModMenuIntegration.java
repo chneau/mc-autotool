@@ -39,6 +39,11 @@ public class ModMenuIntegration implements ModMenuApi {
                     .setSaveConsumer(newValue -> config.autoRefillEnabled = newValue)
                     .build());
 
+            general.addEntry(entryBuilder.startEnumSelector(Component.literal("Autotool Strategy"), Config.Strategy.class, config.strategy)
+                    .setDefaultValue(Config.Strategy.BEST)
+                    .setSaveConsumer(newValue -> config.strategy = newValue)
+                    .build());
+
             general.addEntry(entryBuilder.startLongField(Component.literal("Default Attack Delay (ms)"), config.defaultAttackDelayMs)
                     .setDefaultValue(625L)
                     .setSaveConsumer(newValue -> config.defaultAttackDelayMs = newValue)
