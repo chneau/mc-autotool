@@ -6,9 +6,10 @@ on:
       version:
         description: 'Minecraft version to publish'
         required: true
-        default: '26.1'
+        default: 'all'
         type: choice 
         options:
+          - 'all'
           - '26.1'
           - '1.21'
           - '1.20'
@@ -20,20 +21,41 @@ on:
           - '1.14'
 
 jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - id: set-matrix
+        run: |
+          if [ "${{ github.event.inputs.version }}" == "all" ]; then
+            echo 'matrix=["26.1", "1.21", "1.20", "1.19", "1.18", "1.17", "1.16", "1.15", "1.14"]' >> $GITHUB_OUTPUT
+          else
+            echo 'matrix=["${{ github.event.inputs.version }}"]' >> $GITHUB_OUTPUT
+          fi
+
   publish:
-    name: Publish for Minecraft ${{ github.event.inputs.version }}
+    needs: prepare
+    name: Publish for Minecraft ${{ matrix.version }}
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    strategy:
+      matrix:
+        version: ${{ fromJson(needs.prepare.outputs.matrix) }}
     steps:
       - name: Checkout branch
         uses: actions/checkout@v6
         with:
-          ref: ${{ github.event.inputs.version }}
+          ref: ${{ matrix.version }}
+      - name: Set swap space
+        uses: pierotofy/set-swap-space@master
+        with:
+          swap-size-gb: 10
       - name: Build
         run: |
           curl https://mise.run | sh
-          mise exec java@${{ (github.event.inputs.version <= '1.20' && '17') || '25' }} -- ./gradlew build
+          mise exec java@${{ (matrix.version <= '1.20' && '17') || '25' }} -- ./gradlew build
           mv build/libs/$(ls build/libs/ | head -n 1) build/libs/autotool.jar
           echo "JAR_PATH=build/libs/autotool.jar" >> $GITHUB_ENV
       - name: Upload Release
@@ -41,6 +63,6 @@ jobs:
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: ${{ env.JAR_PATH }}
-          tag: ${{ github.event.inputs.version }}
+          tag: ${{ (matrix.version == '26.1') && 'latest' || matrix.version }}
           overwrite: true
-          release_name: Autotool for Minecraft ${{ github.event.inputs.version }}
+          release_name: Autotool for Minecraft ${{ (matrix.version == '26.1') && 'latest' || matrix.version }}
