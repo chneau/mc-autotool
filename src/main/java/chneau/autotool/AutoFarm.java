@@ -20,6 +20,7 @@ import net.minecraft.world.phys.HitResult.Type;
 import net.minecraft.core.BlockPos;
 
 public class AutoFarm implements EndTick {
+    private BlockPos lastTargetedBlock = null;
 
     public void register() {
         ClientTickEvents.END_CLIENT_TICK.register(this);
@@ -35,6 +36,18 @@ public class AutoFarm implements EndTick {
             return;
         if (client.hitResult == null || player.getInventory() == null)
             return;
+        
+        var targetedBlock = Util.getTargetedBlock(client);
+        if (targetedBlock == null) {
+            lastTargetedBlock = null;
+            return;
+        }
+
+        if (targetedBlock.equals(lastTargetedBlock)) {
+            return;
+        }
+        lastTargetedBlock = targetedBlock;
+
         var inventory = player.getInventory();
         var stackMainHand = inventory.getItem(inventory.getSelectedSlot());
         if (client.hitResult.getType() == Type.BLOCK) {
@@ -45,9 +58,7 @@ public class AutoFarm implements EndTick {
             var networkHandler = client.getConnection();
             if (networkHandler == null)
                 return;
-            var targetedBlock = Util.getTargetedBlock(client);
-            if (targetedBlock == null)
-                return;
+            
             var bhr = (BlockHitResult) client.hitResult;
 
             for (int dx = -1; dx <= 1; dx++) {

@@ -91,7 +91,7 @@
   - **Issue**: Scans entire inventory multiple times every 200ms.
   - **Proposed Fix**: Only trigger when the inventory actually changes or cache the best items.
 
-- [ ] **5. `AutoFarm` Redundant Loops**
+- [x] **5. `AutoFarm` Redundant Loops**
   - **Issue**: Performs full area scan every tick even if looking at the same block.
   - **Proposed Fix**: Only trigger area scan if the targeted `BlockPos` has changed.
 
