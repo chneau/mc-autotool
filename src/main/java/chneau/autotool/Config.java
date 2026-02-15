@@ -51,10 +51,9 @@ public class Config {
         SMART   // Consider enchantments alongside armor value
     }
 
-    public enum TargetMode {
+    public enum FishMode {
         OFF,
-        MONSTER,
-        CLOSEST
+        ON
     }
 
     public AttackMode autoAttack = AttackMode.SWORD;
@@ -64,8 +63,15 @@ public class Config {
     public EatMode autoEat = EatMode.SMART;
     public SortMode autoSort = SortMode.BOTH;
     public ArmorMode autoArmor = ArmorMode.SMART;
-    public boolean autoFish = true;
-    public TargetMode autoTarget = TargetMode.MONSTER;
+    public FishMode autoFish = FishMode.ON;
+    public int targetMonster = 1;
+    public int targetPassive = 0;
+    public int targetPlayer = 0;
+    public int targetDiamond = 0;
+    public int targetEmerald = 0;
+    public int targetGold = 0;
+    public int targetIron = 0;
+    public int targetDebris = 0;
     public Strategy autoSwap = Strategy.BEST;
 
     public void resetToDefault() {
@@ -76,8 +82,15 @@ public class Config {
         this.autoEat = EatMode.SMART;
         this.autoSort = SortMode.BOTH;
         this.autoArmor = ArmorMode.SMART;
-        this.autoFish = true;
-        this.autoTarget = TargetMode.MONSTER;
+        this.autoFish = FishMode.ON;
+        this.targetMonster = 1;
+        this.targetPassive = 0;
+        this.targetPlayer = 0;
+        this.targetDiamond = 0;
+        this.targetEmerald = 0;
+        this.targetGold = 0;
+        this.targetIron = 0;
+        this.targetDebris = 0;
         this.autoSwap = Strategy.BEST;
     }
 }

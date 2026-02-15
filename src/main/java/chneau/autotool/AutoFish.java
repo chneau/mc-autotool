@@ -37,7 +37,7 @@ public class AutoFish implements EndTick {
 
     @Override
     public void onEndTick(Minecraft client) {
-        if (!ConfigManager.getConfig().autoFish) return;
+        if (ConfigManager.getConfig().autoFish == Config.FishMode.OFF) return;
 
         var player = client.player;
         if (player == null || !Util.isCurrentPlayer(player)) return;

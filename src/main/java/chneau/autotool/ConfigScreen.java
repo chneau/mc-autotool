@@ -11,6 +11,7 @@ import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.function.Consumer;
 
 public class ConfigScreen extends OptionsSubScreen {
@@ -23,18 +24,28 @@ public class ConfigScreen extends OptionsSubScreen {
     protected void addOptions() {
         Config config = ConfigManager.getConfig();
 
-        this.list.addBig(createEnumOption("Auto Attack", Config.AttackMode.values(), config.autoAttack, v -> config.autoAttack = v));
-        this.list.addBig(createEnumOption("Auto Farm", Config.FarmMode.values(), config.autoFarm, v -> config.autoFarm = v));
-        this.list.addBig(createEnumOption("Auto Refill", Config.RefillMode.values(), config.autoRefill, v -> config.autoRefill = v));
-        this.list.addBig(createEnumOption("Auto Sprint", Config.SprintMode.values(), config.autoSprint, v -> config.autoSprint = v));
-        this.list.addBig(createEnumOption("Auto Eat", Config.EatMode.values(), config.autoEat, v -> config.autoEat = v));
-        this.list.addBig(createEnumOption("Auto Sort", Config.SortMode.values(), config.autoSort, v -> config.autoSort = v));
-                this.list.addBig(createEnumOption("Auto Armor", Config.ArmorMode.values(), config.autoArmor, v -> config.autoArmor = v));
-        
-                this.list.addBig(OptionInstance.createBoolean("Auto Fish", OptionInstance.noTooltip(), config.autoFish, v -> config.autoFish = v));
-                this.list.addBig(createEnumOption("Auto Target", Config.TargetMode.values(), config.autoTarget, v -> config.autoTarget = v));
-        
-                this.list.addBig(createEnumOption("Auto Swap", Config.Strategy.values(), config.autoSwap, v -> config.autoSwap = v));
+        this.list.addSmall(
+            createEnumOption("Auto Attack", Config.AttackMode.values(), config.autoAttack, v -> config.autoAttack = v),
+            createEnumOption("Auto Farm", Config.FarmMode.values(), config.autoFarm, v -> config.autoFarm = v)
+        );
+        this.list.addSmall(
+            createEnumOption("Auto Refill", Config.RefillMode.values(), config.autoRefill, v -> config.autoRefill = v),
+            createEnumOption("Auto Sprint", Config.SprintMode.values(), config.autoSprint, v -> config.autoSprint = v)
+        );
+        this.list.addSmall(
+            createEnumOption("Auto Eat", Config.EatMode.values(), config.autoEat, v -> config.autoEat = v),
+            createEnumOption("Auto Sort", Config.SortMode.values(), config.autoSort, v -> config.autoSort = v)
+        );
+        this.list.addSmall(
+            createEnumOption("Auto Armor", Config.ArmorMode.values(), config.autoArmor, v -> config.autoArmor = v),
+            createEnumOption("Auto Fish", Config.FishMode.values(), config.autoFish, v -> config.autoFish = v)
+        );
+        this.list.addSmall(
+            createEnumOption("Auto Swap", Config.Strategy.values(), config.autoSwap, v -> config.autoSwap = v).createButton(this.options),
+            Button.builder(Component.literal("Targeting Settings..."), (button) -> {
+                this.minecraft.setScreen(new TargetConfigScreen(this, this.options));
+            }).build()
+        );
     }
 
     @Override
