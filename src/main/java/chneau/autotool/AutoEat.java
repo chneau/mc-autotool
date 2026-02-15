@@ -15,7 +15,6 @@ public class AutoEat implements EndTick {
     private boolean isEating = false;
     
     private double lastX, lastY, lastZ;
-    private float lastYaw, lastPitch;
 
     public void register() {
         ClientTickEvents.END_CLIENT_TICK.register(this);
@@ -35,13 +34,11 @@ public class AutoEat implements EndTick {
         // Activity check: Detect manual activity efficiently
         boolean active = false;
         
-        // 1. Check for movement or rotation
-        if (player.getX() != lastX || player.getY() != lastY || player.getZ() != lastZ ||
-            player.getYRot() != lastYaw || player.getXRot() != lastPitch) {
+        // 1. Check for movement
+        if (player.getX() != lastX || player.getY() != lastY || player.getZ() != lastZ) {
             active = true;
         }
         lastX = player.getX(); lastY = player.getY(); lastZ = player.getZ();
-        lastYaw = player.getYRot(); lastPitch = player.getXRot();
 
         // 2. Check for common action keys
         if (!active) {
