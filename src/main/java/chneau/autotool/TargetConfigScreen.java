@@ -16,6 +16,17 @@ public class TargetConfigScreen extends BaseConfigScreen {
         super(parent, options, Component.literal("Targeting Settings"));
     }
 
+    private enum HudColor {
+        WHITE(0xFFFFFFFF),
+        YELLOW(0xFFFFFF00),
+        RED(0xFFFF0000),
+        AQUA(0xFF00FFFF),
+        GREEN(0xFF00FF00);
+
+        final int color;
+        HudColor(int color) { this.color = color; }
+    }
+
     @Override
     protected void addOptions() {
         Config config = ConfigManager.getConfig();
@@ -26,6 +37,10 @@ public class TargetConfigScreen extends BaseConfigScreen {
         );
         this.list.addSmall(
             createIntOption("Target Players", "Max number of players to show on HUD.", config.targetPlayer, v -> config.targetPlayer = v),
+            createIntOption("Target Chests", "Max number of chests/barrels to show on HUD.", config.targetChest, v -> config.targetChest = v)
+        );
+        this.list.addSmall(
+            createIntOption("Target Spawners", "Max number of mob spawners to show on HUD.", config.targetSpawner, v -> config.targetSpawner = v),
             createIntOption("Target Diamond", "Max number of diamond ores to show on HUD.", config.targetDiamond, v -> config.targetDiamond = v)
         );
         this.list.addSmall(
@@ -36,7 +51,23 @@ public class TargetConfigScreen extends BaseConfigScreen {
             createIntOption("Target Iron", "Max number of iron ores to show on HUD.", config.targetIron, v -> config.targetIron = v),
             createIntOption("Target Debris", "Max number of ancient debris to show on HUD.", config.targetDebris, v -> config.targetDebris = v)
         );
-        this.list.addBig(createEnumOption("HUD Position", "The corner of the screen where the target list is shown.", Config.HudPosition.values(), config.targetHudPosition, v -> config.targetHudPosition = v));
+
+        HudColor currentColor = HudColor.WHITE;
+        for (HudColor hc : HudColor.values()) {
+            if (hc.color == config.targetHudColor) {
+                currentColor = hc;
+                break;
+            }
+        }
+
+        this.list.addSmall(
+            createEnumOption("HUD Position", "The corner of the screen where the target list is shown.", Config.HudPosition.values(), config.targetHudPosition, v -> config.targetHudPosition = v),
+            createIntOption("HUD Limit", "Total maximum number of targets to show on HUD.", config.targetLimit, 10, v -> config.targetLimit = v)
+        );
+        this.list.addSmall(
+            createEnumOption("HUD Color", "Text color for the HUD targets.", HudColor.values(), currentColor, v -> config.targetHudColor = v.color),
+            null
+        );
     }
 
     @Override

@@ -92,6 +92,10 @@ public class Config {
     public int targetIron = 0;
     public int targetDebris = 0;
     public HudPosition targetHudPosition = HudPosition.TOP_LEFT;
+    public int targetLimit = 5;
+    public int targetHudColor = 0xFFFFFFFF;
+    public int targetChest = 0;
+    public int targetSpawner = 0;
     public StepMode autoStep = StepMode.ON;
     public DepositMode autoDeposit = DepositMode.ALL;
     public Strategy autoSwap = Strategy.BEST;
@@ -113,6 +117,10 @@ public class Config {
         this.targetGold = 0;
         this.targetIron = 0;
         this.targetDebris = 0;
+        this.targetChest = 0;
+        this.targetSpawner = 0;
+        this.targetLimit = 5;
+        this.targetHudColor = 0xFFFFFFFF;
         this.targetHudPosition = HudPosition.TOP_LEFT;
         this.autoStep = StepMode.ON;
         this.autoDeposit = DepositMode.ALL;

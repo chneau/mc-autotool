@@ -55,7 +55,7 @@ public class ConfigScreen extends BaseConfigScreen {
             new OptionInstance<>(
                 "Targeting Settings...",
                 OptionInstance.noTooltip(),
-                (caption, value) -> Component.literal("Targeting Settings..."),
+                (caption, value) -> Component.empty(),
                 OptionInstance.BOOLEAN_VALUES,
                 true,
                 (v) -> this.minecraft.setScreen(new TargetConfigScreen(this, this.options))

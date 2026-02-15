@@ -65,15 +65,30 @@ public class AutoTarget {
         addLimitedTargets(allPotentialTargets, currentBlockResults.get("Gold"), config.targetGold, client.player.position());
         addLimitedTargets(allPotentialTargets, currentBlockResults.get("Iron"), config.targetIron, client.player.position());
         addLimitedTargets(allPotentialTargets, currentBlockResults.get("Debris"), config.targetDebris, client.player.position());
+        addLimitedTargets(allPotentialTargets, currentBlockResults.get("Chest"), config.targetChest, client.player.position());
+        addLimitedTargets(allPotentialTargets, currentBlockResults.get("Spawner"), config.targetSpawner, client.player.position());
 
-        // Final sort and global limit (5)
-        allPotentialTargets.sort(Comparator.comparingDouble(t -> client.player.distanceToSqr(t.pos)));
-        List<Scanner.Target> finalTargets = allPotentialTargets.stream().limit(5).collect(Collectors.toList());
+        // Improved sorting: priority first, then distance
+        allPotentialTargets.sort(Comparator.<Scanner.Target>comparingInt(t -> t.priority)
+                                  .thenComparingDouble(t -> client.player.distanceToSqr(t.pos)));
+        
+        List<Scanner.Target> finalTargets = allPotentialTargets.stream().limit(config.targetLimit).collect(Collectors.toList());
 
         int screenWidth = client.getWindow().getGuiScaledWidth();
         int screenHeight = client.getWindow().getGuiScaledHeight();
-        int totalHeight = finalTargets.size() * 12;
+        
+        // Calculate max text width for background
+        int maxTextWidth = 0;
+        List<String> texts = new ArrayList<>();
+        for (Scanner.Target target : finalTargets) {
+            String text = getTargetText(client, target, tickCounter);
+            texts.add(text);
+            maxTextWidth = Math.max(maxTextWidth, client.font.width(text));
+        }
 
+        if (texts.isEmpty()) return;
+
+        int totalHeight = texts.size() * 12;
         int startY;
         if (config.targetHudPosition == Config.HudPosition.BOTTOM_LEFT || config.targetHudPosition == Config.HudPosition.BOTTOM_RIGHT) {
             startY = screenHeight - 10 - totalHeight;
@@ -81,11 +96,34 @@ public class AutoTarget {
             startY = 10;
         }
 
+        int xBase;
+        if (config.targetHudPosition == Config.HudPosition.TOP_RIGHT || config.targetHudPosition == Config.HudPosition.BOTTOM_RIGHT) {
+            xBase = screenWidth - 10 - maxTextWidth;
+        } else {
+            xBase = 10;
+        }
+
         int y = startY;
-        for (Scanner.Target target : finalTargets) {
-            drawInfo(drawContext, client, target, tickCounter, y, config.targetHudPosition, screenWidth);
+        for (String text : texts) {
+            int x = xBase;
+            if (config.targetHudPosition == Config.HudPosition.TOP_RIGHT || config.targetHudPosition == Config.HudPosition.BOTTOM_RIGHT) {
+                x = screenWidth - 10 - client.font.width(text);
+            }
+            drawContext.drawString(client.font, text, x, y, config.targetHudColor, true);
             y += 12;
         }
+    }
+
+    private String getTargetText(Minecraft client, Scanner.Target target, DeltaTracker tickCounter) {
+        double diffX = target.pos.x - client.player.getX();
+        double diffZ = target.pos.z - client.player.getZ();
+        float angleToTarget = (float) Math.toDegrees(Math.atan2(-diffX, diffZ));
+        float relativeYaw = Mth.wrapDegrees(angleToTarget - client.player.getYRot(tickCounter.getGameTimeDeltaTicks()));
+
+        String arrow = getDirectionArrow(relativeYaw);
+        double dist = Math.sqrt(client.player.distanceToSqr(target.pos));
+
+        return String.format("%s %.1fm %s", arrow, dist, target.name);
     }
 
     private void addLimitedTargets(List<Scanner.Target> allPotentialTargets, List<Scanner.Target> categoryList, int limit, Vec3 playerPos) {
@@ -96,24 +134,7 @@ public class AutoTarget {
     }
 
     private void drawInfo(GuiGraphics drawContext, Minecraft client, Scanner.Target target, DeltaTracker tickCounter, int y, Config.HudPosition pos, int screenWidth) {
-        double diffX = target.pos.x - client.player.getX();
-        double diffZ = target.pos.z - client.player.getZ();
-        float angleToTarget = (float) Math.toDegrees(Math.atan2(-diffX, diffZ));
-        float relativeYaw = Mth.wrapDegrees(angleToTarget - client.player.getYRot(tickCounter.getGameTimeDeltaTicks()));
-
-        String arrow = getDirectionArrow(relativeYaw);
-        double dist = Math.sqrt(client.player.distanceToSqr(target.pos));
-
-        String text = String.format("%s %.1fm %s", arrow, dist, target.name);
-        
-        int x;
-        if (pos == Config.HudPosition.TOP_RIGHT || pos == Config.HudPosition.BOTTOM_RIGHT) {
-            x = screenWidth - 10 - client.font.width(text);
-        } else {
-            x = 10;
-        }
-
-        drawContext.drawString(client.font, text, x, y, 0xFFFFFFFF, true);
+        // Obsolete, replaced by inline logic in onHudRender
     }
 
     private String getDirectionArrow(float relativeYaw) {

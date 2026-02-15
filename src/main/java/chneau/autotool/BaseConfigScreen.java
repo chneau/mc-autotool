@@ -33,17 +33,17 @@ public abstract class BaseConfigScreen extends OptionsSubScreen {
         );
     }
 
-    protected OptionInstance<Integer> createIntOption(String key, int currentValue, Consumer<Integer> setter) {
-        return createIntOption(key, null, currentValue, setter);
+    protected OptionInstance<Integer> createIntOption(String key, String tooltip, int currentValue, Consumer<Integer> setter) {
+        return createIntOption(key, tooltip, currentValue, 5, setter);
     }
 
-    protected OptionInstance<Integer> createIntOption(String key, String tooltip, int currentValue, Consumer<Integer> setter) {
+    protected OptionInstance<Integer> createIntOption(String key, String tooltip, int currentValue, int max, Consumer<Integer> setter) {
         OptionInstance.TooltipSupplier<Integer> tooltipSupplier = tooltip == null ? OptionInstance.noTooltip() : OptionInstance.cachedConstantTooltip(Component.literal(tooltip));
         return new OptionInstance<>(
             key,
             tooltipSupplier,
             (caption, value) -> CommonComponents.optionNameValue(caption, Component.literal(value == 0 ? "Off" : value.toString())),
-            new OptionInstance.IntRange(0, 5),
+            new OptionInstance.IntRange(0, max),
             Codec.INT,
             currentValue,
             setter

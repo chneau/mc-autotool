@@ -1,11 +1,11 @@
 # Todo
 
 ## Features
-- [ ] **AutoTarget Enhancements**
-    - [ ] Customizable HUD (color, background opacity).
-    - [ ] Option to show more than 5 targets.
-    - [ ] Improve sorting of targets (prioritize based on type, e.g., Hostile > Diamond > Passive).
-    - [ ] Add more block types to scan (Chests, Spawners, Ancient Debris, etc.).
+- [x] **AutoTarget Enhancements**
+    - [x] Customizable HUD (color).
+    - [x] Option to show more than 5 targets.
+    - [x] Improve sorting of targets (prioritize based on type, e.g., Hostile > Diamond > Passive).
+    - [x] Add more block types to scan (Chests, Spawners, Ancient Debris, etc.).
 - [ ] **AutoSwap Improvements**
     - [ ] Add "Auto-Tool" support for continuous block breaking (reactive swapping during mining).
     - [ ] Support for secondary tool uses (e.g., using a shovel for path-making).
