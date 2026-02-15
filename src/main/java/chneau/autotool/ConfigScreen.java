@@ -1,13 +1,13 @@
 package chneau.autotool;
 
 import com.mojang.serialization.Codec;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.OptionInstance;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.components.OptionsList;
+import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.options.OptionsSubScreen;
+import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 
 import java.util.Arrays;
@@ -31,6 +31,23 @@ public class ConfigScreen extends OptionsSubScreen {
         this.list.addBig(createEnumOption("Auto Sort", Config.SortMode.values(), config.autoSort, v -> config.autoSort = v));
         this.list.addBig(createEnumOption("Auto Armor", Config.ArmorMode.values(), config.autoArmor, v -> config.autoArmor = v));
         this.list.addBig(createEnumOption("Auto Swap", Config.Strategy.values(), config.autoSwap, v -> config.autoSwap = v));
+    }
+
+    @Override
+    protected void addFooter() {
+        LinearLayout linearLayout = LinearLayout.horizontal().spacing(8);
+        
+        linearLayout.addChild(Button.builder(Component.literal("Reset to Defaults"), (button) -> {
+            ConfigManager.getConfig().resetToDefault();
+            ConfigManager.save();
+            this.minecraft.setScreen(new ConfigScreen(this.lastScreen, this.options));
+        }).width(150).build());
+
+        linearLayout.addChild(Button.builder(CommonComponents.GUI_DONE, (button) -> {
+            this.onClose();
+        }).width(150).build());
+
+        this.layout.addToFooter(linearLayout);
     }
 
     private <T extends Enum<T>> OptionInstance<T> createEnumOption(String name, T[] values, T currentValue, Consumer<T> setter) {

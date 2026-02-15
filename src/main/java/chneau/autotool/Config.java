@@ -59,4 +59,15 @@ public class Config {
     public SortMode autoSort = SortMode.BOTH;
     public ArmorMode autoArmor = ArmorMode.SMART;
     public Strategy autoSwap = Strategy.BEST;
+
+    public void resetToDefault() {
+        this.autoAttack = AttackMode.SWORD;
+        this.autoFarm = FarmMode.BOTH;
+        this.autoRefill = RefillMode.ON;
+        this.autoSprint = SprintMode.ON;
+        this.autoEat = EatMode.SMART;
+        this.autoSort = SortMode.BOTH;
+        this.autoArmor = ArmorMode.SMART;
+        this.autoSwap = Strategy.BEST;
+    }
 }
