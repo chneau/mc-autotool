@@ -4,10 +4,8 @@ A powerful utility mod for Minecraft that automates tedious tasks like tool swap
 
 ## 📅 Roadmap & Versions
 
-- **Current Stable**: Supports Minecraft 1.21.1
-- **Upcoming**: Minecraft 26.1 ("Cute Companions" update)
-  - _Status_: Experimental compatibility available on the `26.1` branch.
-  - _Expected Release_: Late March 2026.
+- **Current Stable**: Supports Minecraft 26.1 (Cute Companions)
+- **Previous Version**: Minecraft 1.21.1
 
 ## 🛠 How to Access Settings
 
@@ -113,6 +111,7 @@ Automatically equips the best protection available in your inventory.
 
 ## 📜 Changelog
 
+- New 2026-02-15: Updated for Minecraft 26.1
 - New 2026-02-14: Updated for 1.21.1 and added comprehensive Auto features (Eat, Sort, Armor, Fish, etc.)
 - New 2023-10-20: Updated for 1.20
 - New 2023-03-13: Updated for 1.19.3
@@ -129,7 +128,7 @@ Automatically equips the best protection available in your inventory.
 ## 🔗 Other Versions
 
 Links to branch-specific code:
-[1.14](https://github.com/chneau/mc-autotool/tree/1.14) | [1.15](https://github.com/chneau/mc-autotool/tree/1.15) | [1.16](https://github.com/chneau/mc-autotool/tree/1.16) | [1.17](https://github.com/chneau/mc-autotool/tree/1.17) | [1.18](https://github.com/chneau/mc-autotool/tree/1.18) | [1.19](https://github.com/chneau/mc-autotool/tree/1.19) | [1.20](https://github.com/chneau/mc-autotool/tree/1.20) | [1.21](https://github.com/chneau/mc-autotool/tree/1.21)
+[1.14](https://github.com/chneau/mc-autotool/tree/1.14) | [1.15](https://github.com/chneau/mc-autotool/tree/1.15) | [1.16](https://github.com/chneau/mc-autotool/tree/1.16) | [1.17](https://github.com/chneau/mc-autotool/tree/1.17) | [1.18](https://github.com/chneau/mc-autotool/tree/1.18) | [1.19](https://github.com/chneau/mc-autotool/tree/1.19) | [1.20](https://github.com/chneau/mc-autotool/tree/1.20) | [1.21](https://github.com/chneau/mc-autotool/tree/1.21) | [26.1](https://github.com/chneau/mc-autotool/tree/26.1)
 
 ## 💡 Inspiration
 
