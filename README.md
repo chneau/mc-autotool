@@ -146,11 +146,22 @@ Automatically equips the best protection available in your inventory.
   - `BETTER`: Equips armor with higher raw defense and toughness values.
   - `SMART`: Considers both raw stats and enchantment levels (Protection, etc.).
 
+### 🎯 Auto Target
+
+Displays information about the closest entity on your HUD to help you navigate and stay aware of your surroundings.
+
+- **Display**: Top-left corner of the screen.
+- **Info**: Directional arrow, distance in meters, and entity name.
+- **Options**:
+  - `OFF`: Disable the target indicator.
+  - `MONSTER`: Only track hostile entities.
+  - `CLOSEST`: Tracks any living entity (passive or hostile).
+
 ---
 
 ## 📜 Changelog
 
-- New 2026-02-15: Updated for Minecraft 26.1
+- New 2026-02-15: Added Auto Target feature and updated for Minecraft 26.1
 - New 2026-02-14: Updated for 1.21.1 and added comprehensive Auto features (Eat, Sort, Armor, Fish, etc.)
 - New 2023-10-20: Updated for 1.20
 - New 2023-03-13: Updated for 1.19.3
@@ -167,7 +178,7 @@ Automatically equips the best protection available in your inventory.
 ## 🔗 Other Versions
 
 Links to branch-specific code:
-[1.14](https://github.com/chneau/mc-autotool/tree/1.14) | [1.15](https://github.com/chneau/mc-autotool/tree/1.15) | [1.16](https://github.com/chneau/mc-autotool/tree/1.16) | [1.17](https://github.com/chneau/mc-autotool/tree/1.17) | [1.18](https://github.com/chneau/mc-autotool/tree/1.18) | [1.19](https://github.com/chneau/mc-autotool/tree/1.19) | [1.20](https://github.com/chneau/mc-autotool/tree/1.20) | [1.21](https://github.com/chneau/mc-autotool/tree/1.21) | [26.1](https://github.com/chneau/mc-autotool/tree/26.1)
+[v1.14](https://github.com/chneau/mc-autotool/tree/v1.14) | [v1.15](https://github.com/chneau/mc-autotool/tree/v1.15) | [v1.16](https://github.com/chneau/mc-autotool/tree/v1.16) | [v1.17](https://github.com/chneau/mc-autotool/tree/v1.17) | [v1.18](https://github.com/chneau/mc-autotool/tree/v1.18) | [v1.19](https://github.com/chneau/mc-autotool/tree/v1.19) | [v1.20](https://github.com/chneau/mc-autotool/tree/v1.20) | [v1.21](https://github.com/chneau/mc-autotool/tree/v1.21) | [v26.1](https://github.com/chneau/mc-autotool/tree/v26.1)
 
 ## 💡 Inspiration
 
