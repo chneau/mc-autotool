@@ -28,6 +28,7 @@ public class Main implements ClientModInitializer {
         (new AutoArmor()).register();
         (new AutoFish()).register();
         (new AutoTarget()).register();
+        (new AutoStep()).register();
 
         configKey = KeyMappingHelper.registerKeyMapping(new KeyMapping(
                 "key.mc-autotool.config",
