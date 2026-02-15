@@ -45,7 +45,7 @@ jobs:
       - name: Checkout branch
         uses: actions/checkout@v6
         with:
-          ref: ${{ matrix.version }}
+          ref: v${{ matrix.version }}
       - name: Build
         run: |
           curl https://mise.run | sh
