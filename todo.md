@@ -83,7 +83,7 @@
   - **Issue**: Uses a `HashSet<ItemStack>` but performs a manual O(N) loop for comparison, negating the benefits of a Set.
   - **Proposed Fix**: Use a `Set<Item>` for O(1) lookups during the "Smart" check.
 
-- [ ] **10. `AutoStep` Event-Driven Updates**
+- [x] **10. `AutoStep` Event-Driven Updates**
   - **Issue**: Sets the `STEP_HEIGHT` attribute every single tick.
   - **Proposed Fix**: Only update the attribute when the player spawns or when the configuration is changed.
 

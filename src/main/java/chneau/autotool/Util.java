@@ -28,10 +28,10 @@ public class Util {
     /**
      * Checks if the given player is the local client player.
      * 
-     * @param other The player entity to check.
-     * @return True if the player is the local client player.
+     * @param other The entity to check.
+     * @return True if the entity is the local client player.
      */
-    public static boolean isCurrentPlayer(Player other) {
+    public static boolean isCurrentPlayer(net.minecraft.world.entity.Entity other) {
         var instance = Minecraft.getInstance();
         var player = instance.player;
         if (player == null || other == null)

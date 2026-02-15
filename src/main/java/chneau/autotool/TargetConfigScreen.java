@@ -76,6 +76,7 @@ public class TargetConfigScreen extends OptionsSubScreen {
     @Override
     public void onClose() {
         ConfigManager.save();
+        AutoStep.update();
         this.minecraft.setScreen(this.lastScreen);
     }
 }

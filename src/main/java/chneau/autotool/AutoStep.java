@@ -1,20 +1,23 @@
 package chneau.autotool;
 
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents.EndTick;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 
-public class AutoStep implements EndTick {
+public class AutoStep {
 
     public void register() {
-        ClientTickEvents.END_CLIENT_TICK.register(this);
+        ClientEntityEvents.ENTITY_LOAD.register((entity, world) -> {
+            if (Util.isCurrentPlayer(entity)) {
+                update();
+            }
+        });
     }
 
-    @Override
-    public void onEndTick(Minecraft client) {
+    public static void update() {
+        Minecraft client = Minecraft.getInstance();
         var player = client.player;
-        if (player == null || !Util.isCurrentPlayer(player)) return;
+        if (player == null) return;
 
         var mode = ConfigManager.getConfig().autoStep;
         var stepHeightAttr = player.getAttribute(Attributes.STEP_HEIGHT);

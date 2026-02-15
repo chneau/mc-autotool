@@ -59,6 +59,7 @@ public class ConfigScreen extends OptionsSubScreen {
         linearLayout.addChild(Button.builder(Component.literal("Reset to Defaults"), (button) -> {
             ConfigManager.getConfig().resetToDefault();
             ConfigManager.save();
+            AutoStep.update();
             this.minecraft.setScreen(new ConfigScreen(this.lastScreen, this.options));
         }).width(150).build());
 
@@ -83,6 +84,7 @@ public class ConfigScreen extends OptionsSubScreen {
     @Override
     public void onClose() {
         ConfigManager.save();
+        AutoStep.update();
         this.minecraft.setScreen(this.lastScreen);
     }
 }
