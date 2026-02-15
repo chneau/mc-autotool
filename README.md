@@ -2,6 +2,27 @@
 
 A powerful utility mod for Minecraft that automates tedious tasks like tool swapping, farming, eating, and inventory management.
 
+## 🚀 Quick Install (Windows)
+
+If you already have **Fabric** installed, you can quickly download the latest version of Autotool (**26.1**) by running this command in PowerShell:
+
+```powershell
+# For the latest version (Minecraft 26.1)
+irm https://github.com/chneau/mc-autotool/releases/latest/download/autotool.jar -OutFile "$env:APPDATA\.minecraft\mods\autotool.jar"
+```
+
+> **Note:** To install a specific version, simply replace `latest` in the URL with the version number (e.g., `1.21`, `1.20`).
+
+```powershell
+# Example for Minecraft 1.21
+irm https://github.com/chneau/mc-autotool/releases/download/1.21/autotool.jar -OutFile "$env:APPDATA\.minecraft\mods\autotool.jar"
+
+# Example for Minecraft 1.20
+irm https://github.com/chneau/mc-autotool/releases/download/1.20/autotool.jar -OutFile "$env:APPDATA\.minecraft\mods\autotool.jar"
+```
+
+---
+
 ## 📅 Roadmap & Versions
 
 - **Current Stable**: Supports Minecraft 26.1 (Cute Companions)
