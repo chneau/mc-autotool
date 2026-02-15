@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 public class AutoTarget {
     private static final int BLOCK_SCAN_RADIUS = 16;
     private long lastBlockScan = 0;
-    private final Map<String, List<Target>> categoryBlockTargets = new HashMap<>();
+    private volatile Map<String, List<Target>> categoryBlockTargets = new HashMap<>();
     private final Map<String, List<Target>> categoryEntityTargets = new HashMap<>();
     private boolean isScanning = false;
 
@@ -100,21 +100,17 @@ public class AutoTarget {
                         }
                     }
                 }
-                synchronized (categoryBlockTargets) {
-                    categoryBlockTargets.clear();
-                    categoryBlockTargets.putAll(results);
-                }
+                categoryBlockTargets = results; // Atomic swap
                 isScanning = false;
             });
         }
         
-        synchronized (categoryBlockTargets) {
-            addLimitedTargets(allPotentialTargets, categoryBlockTargets.get("Diamond"), config.targetDiamond, client.player.position());
-            addLimitedTargets(allPotentialTargets, categoryBlockTargets.get("Emerald"), config.targetEmerald, client.player.position());
-            addLimitedTargets(allPotentialTargets, categoryBlockTargets.get("Gold"), config.targetGold, client.player.position());
-            addLimitedTargets(allPotentialTargets, categoryBlockTargets.get("Iron"), config.targetIron, client.player.position());
-            addLimitedTargets(allPotentialTargets, categoryBlockTargets.get("Debris"), config.targetDebris, client.player.position());
-        }
+        Map<String, List<Target>> currentBlockResults = categoryBlockTargets; // Capture reference
+        addLimitedTargets(allPotentialTargets, currentBlockResults.get("Diamond"), config.targetDiamond, client.player.position());
+        addLimitedTargets(allPotentialTargets, currentBlockResults.get("Emerald"), config.targetEmerald, client.player.position());
+        addLimitedTargets(allPotentialTargets, currentBlockResults.get("Gold"), config.targetGold, client.player.position());
+        addLimitedTargets(allPotentialTargets, currentBlockResults.get("Iron"), config.targetIron, client.player.position());
+        addLimitedTargets(allPotentialTargets, currentBlockResults.get("Debris"), config.targetDebris, client.player.position());
 
         // Final sort and global limit (5)
         allPotentialTargets.sort(Comparator.comparingDouble(t -> client.player.distanceToSqr(t.pos)));

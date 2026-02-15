@@ -87,6 +87,6 @@
   - **Issue**: Sets the `STEP_HEIGHT` attribute every single tick.
   - **Proposed Fix**: Only update the attribute when the player spawns or when the configuration is changed.
 
-- [ ] **11. `AutoTarget` Threading Refinement**
+- [x] **11. `AutoTarget` Threading Refinement**
   - **Issue**: Uses `synchronized` blocks which can cause minor contention between the background scan and the render thread.
   - **Proposed Fix**: Use `AtomicReference` or a `volatile` result object to swap the scan results atomically without locking.
