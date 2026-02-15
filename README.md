@@ -148,14 +148,15 @@ Automatically equips the best protection available in your inventory.
 
 ### 🎯 Auto Target
 
-Displays information about the closest entity on your HUD to help you navigate and stay aware of your surroundings.
+Displays real-time tracking information for entities and valuable resources on your HUD.
 
-- **Display**: Top-left corner of the screen.
-- **Info**: Directional arrow, distance in meters, and entity name.
+- **Display**: Customizable position (Top-Left, Top-Right, Bottom-Left, Bottom-Right).
+- **Info**: Shows a directional arrow, distance in meters, and target name.
+- **Logic**: Track the closest targets from multiple categories simultaneously.
 - **Options**:
-  - `OFF`: Disable the target indicator.
-  - `MONSTER`: Only track hostile entities.
-  - `CLOSEST`: Tracks any living entity (passive or hostile).
+  - **Numeric Limits**: Set how many targets to show per category (0-5).
+  - **Categories**: Monsters, Passive Mobs, Players, Diamond Ore, Emerald Ore, Gold Ore, Iron Ore, and Ancient Debris.
+  - **Global Limit**: Automatically displays up to the 5 physically closest targets across all enabled categories.
 
 ---
 
