@@ -96,3 +96,26 @@
     - `INVENTORY`: Only sorts the main 27 inventory slots.
     - `BOTH`: Sorts the entire inventory.
   - **Sorting Order**: Sorts by item category (Combat -> Tools -> Blocks -> Food -> Misc) and then by rarity or name.
+
+- [ ] **18. `AutoTool: Enchantment Strategy`**
+  - Enhance `AutoSwap` to choose between Silk Touch and Fortune based on the block.
+  - **Logic**: Use Silk Touch for blocks like Glass, Ice, or Grass; use Fortune for ores like Diamond or Coal.
+
+- [ ] **19. `AutoShield`**
+  - Automatically raises your shield when danger is detected.
+  - **Logic**: Blocks when an arrow is flying towards you or when an entity is within 3 blocks and mid-swing.
+
+- [ ] **20. `AutoStep`**
+  - Allows you to walk up 1-block high obstacles without jumping (Step Assist).
+  - **Default**: `OFF`
+
+- [ ] **21. `AutoTrash`**
+  - Automatically drops items that you don't want.
+  - **Logic**: Users can define a "trash list" (e.g., Dirt, Cobblestone, Rotten Flesh) and the mod will drop them as soon as they enter the inventory.
+
+- [ ] **22. `AutoRespawn`**
+  - Automatically clicks the "Respawn" button when you die.
+
+- [ ] **23. `AutoReconnect`**
+  - Automatically attempts to reconnect to a server if you are disconnected.
+  - **Settings**: Customizable delay and max attempts.
