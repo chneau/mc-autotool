@@ -164,11 +164,6 @@ public class AutoTarget {
 		allPotentialTargets.addAll(sorted.stream().limit(limit).collect(Collectors.toList()));
 	}
 
-	private void drawInfo(GuiGraphics drawContext, Minecraft client, Scanner.Target target, DeltaTracker tickCounter,
-			int y, Config.HudPosition pos, int screenWidth) {
-		// Obsolete, replaced by inline logic in onHudRender
-	}
-
 	private String getDirectionArrow(float relativeYaw) {
 		if (relativeYaw > -22.5 && relativeYaw <= 22.5)
 			return "↑";

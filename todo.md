@@ -57,9 +57,9 @@
 - [x] **Inventory API**
     - [x] Improve `Util.java` with more robust and reusable inventory manipulation methods.
     - [x] Standardize item comparison and "better item" logic across modules.
-- [ ] **Code Cleanup**
-    - [ ] Remove obsolete methods like `AutoTarget.drawInfo`.
-    - [ ] Refactor `Config` to handle defaults more cleanly.
+- [x] **Code Cleanup**
+    - [x] Remove obsolete methods like `AutoTarget.drawInfo`.
+    - [x] Refactor `Config` to handle defaults more cleanly.
 - [ ] **Logging**
     - [ ] Add meaningful debug logging (using the mod's logger) for module actions.
 
