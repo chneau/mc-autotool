@@ -47,9 +47,7 @@ public class AutoAttack implements EndTick {
             
             if (!Util.areItemsEqual(itemStackMainHand, lastStack)) {
                 lastStack = itemStackMainHand.copy();
-                var modifiers = itemStackMainHand.getOrDefault(DataComponents.ATTRIBUTE_MODIFIERS, ItemAttributeModifiers.EMPTY);
-                var atkSpd = modifiers.compute(Attributes.ATTACK_SPEED, 4.0, EquipmentSlot.MAINHAND);
-                cachedDelay = (long) (1000.0 / atkSpd);
+                cachedDelay = (long) (1000.0 / Util.getWeaponSpeed(itemStackMainHand));
             }
             
             if (now - lastAttack < cachedDelay)

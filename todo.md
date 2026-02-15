@@ -37,9 +37,9 @@
 ## Refactoring
 - [ ] **Modular Initialization**
     - [ ] Use a more structured way to register modules in `Main.java`.
-- [ ] **Inventory API**
-    - [ ] Improve `Util.java` with more robust and reusable inventory manipulation methods.
-    - [ ] Standardize item comparison and "better item" logic across modules.
+- [x] **Inventory API**
+    - [x] Improve `Util.java` with more robust and reusable inventory manipulation methods.
+    - [x] Standardize item comparison and "better item" logic across modules.
 - [ ] **Logging**
     - [ ] Add meaningful debug logging (using the mod's logger) for module actions.
 

@@ -76,37 +76,18 @@ public class AutoArmor implements EndTick {
     private boolean isBetter(ItemStack newStack, ItemStack oldStack, EquipmentSlot slot, boolean smart) {
         if (oldStack.isEmpty()) return true;
 
-        double newValue = getArmorValue(newStack, slot);
-        double oldValue = getArmorValue(oldStack, slot);
+        double newValue = Util.getArmorValue(newStack, slot);
+        double oldValue = Util.getArmorValue(oldStack, slot);
 
         if (smart) {
-            var newEnchants = newStack.getOrDefault(DataComponents.ENCHANTMENTS, net.minecraft.world.item.enchantment.ItemEnchantments.EMPTY);
-            var oldEnchants = oldStack.getOrDefault(DataComponents.ENCHANTMENTS, net.minecraft.world.item.enchantment.ItemEnchantments.EMPTY);
-            
-            int newLevels = newEnchants.keySet().stream().mapToInt(newEnchants::getLevel).sum();
-            int oldLevels = oldEnchants.keySet().stream().mapToInt(oldEnchants::getLevel).sum();
-            
-            newValue += newLevels * 0.5;
-            oldValue += oldLevels * 0.5;
+            newValue += Util.getEnchantmentLevelSum(newStack) * 0.5;
+            oldValue += Util.getEnchantmentLevelSum(oldStack) * 0.5;
         }
 
         return newValue > oldValue;
     }
 
-    private double getArmorValue(ItemStack stack, EquipmentSlot slot) {
-        var modifiers = stack.getOrDefault(DataComponents.ATTRIBUTE_MODIFIERS, ItemAttributeModifiers.EMPTY);
-        double armor = modifiers.compute(Attributes.ARMOR, 0.0, slot);
-        double toughness = modifiers.compute(Attributes.ARMOR_TOUGHNESS, 0.0, slot);
-        return armor + toughness;
-    }
-
     private void equip(Minecraft client, int containerId, int inventorySlot, int armorSlot) {
-        if (client.player.inventoryMenu.getSlot(armorSlot).getItem().isEmpty()) {
-            Util.quickMove(client, containerId, inventorySlot);
-        } else {
-            Util.pickup(client, containerId, inventorySlot);
-            Util.pickup(client, containerId, armorSlot);
-            Util.pickup(client, containerId, inventorySlot);
-        }
+        Util.swap(client, containerId, inventorySlot, armorSlot);
     }
 }

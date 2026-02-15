@@ -39,11 +39,7 @@ public class SelectBest implements Select {
         for (var i = 0; i < HOTBAR_SIZE; i++) {
             var stack = inventory.getItem(i);
             
-            var modifiers = stack.getOrDefault(DataComponents.ATTRIBUTE_MODIFIERS, ItemAttributeModifiers.EMPTY);
-            var atkDmg = modifiers.compute(Attributes.ATTACK_DAMAGE, 1.0, EquipmentSlot.MAINHAND);
-            var atkSpd = modifiers.compute(Attributes.ATTACK_SPEED, 4.0, EquipmentSlot.MAINHAND);
-            
-            var dps = atkDmg * atkSpd;
+            var dps = Util.getWeaponDamage(stack) * Util.getWeaponSpeed(stack);
             if (bestDPS < dps) {
                 bestDPS = dps;
                 bestIndex = i;

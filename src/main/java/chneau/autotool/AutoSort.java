@@ -107,23 +107,11 @@ public class AutoSort implements EndTick {
         if (a.isEmpty()) return 1;
         if (b.isEmpty()) return -1;
         
-        int weightA = getWeight(a);
-        int weightB = getWeight(b);
+        int weightA = Util.getItemWeight(a);
+        int weightB = Util.getItemWeight(b);
         
         if (weightA != weightB) return Integer.compare(weightA, weightB);
         
         return a.getHoverName().getString().compareTo(b.getHoverName().getString());
-    }
-
-    private int getWeight(ItemStack stack) {
-        if (stack.is(ItemTags.SWORDS)) return 0;
-        if (stack.is(Items.BOW) || stack.is(Items.CROSSBOW)) return 1;
-        if (stack.is(ItemTags.PICKAXES)) return 2;
-        if (stack.is(ItemTags.AXES)) return 3;
-        if (stack.is(ItemTags.SHOVELS)) return 4;
-        if (stack.is(ItemTags.HOES)) return 5;
-        if (stack.has(net.minecraft.core.component.DataComponents.FOOD)) return 6;
-        if (stack.getItem() instanceof BlockItem) return 7;
-        return 8;
     }
 }
