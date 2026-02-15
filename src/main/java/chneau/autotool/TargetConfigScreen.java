@@ -10,7 +10,7 @@ import net.minecraft.client.gui.screens.options.OptionsSubScreen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 
-public class TargetConfigScreen extends OptionsSubScreen {
+public class TargetConfigScreen extends BaseConfigScreen {
 
     public TargetConfigScreen(Screen parent, Options options) {
         super(parent, options, Component.literal("Targeting Settings"));
@@ -39,29 +39,6 @@ public class TargetConfigScreen extends OptionsSubScreen {
         this.list.addBig(createEnumOption("HUD Position", Config.HudPosition.values(), config.targetHudPosition, v -> config.targetHudPosition = v));
     }
 
-    private <T extends Enum<T>> OptionInstance<T> createEnumOption(String name, T[] values, T currentValue, java.util.function.Consumer<T> setter) {
-        return new OptionInstance<>(
-                name,
-                OptionInstance.noTooltip(),
-                (caption, value) -> Component.literal(value.name().replace('_', ' ')),
-                new OptionInstance.Enum<>(java.util.Arrays.asList(values), Codec.INT.xmap(i -> values[i], Enum::ordinal)),
-                currentValue,
-                setter
-        );
-    }
-
-    private OptionInstance<Integer> createIntOption(String key, int currentValue, java.util.function.Consumer<Integer> setter) {
-        return new OptionInstance<>(
-            key,
-            OptionInstance.noTooltip(),
-            (caption, value) -> CommonComponents.optionNameValue(caption, Component.literal(value == 0 ? "Off" : value.toString())),
-            new OptionInstance.IntRange(0, 5),
-            Codec.INT,
-            currentValue,
-            setter
-        );
-    }
-
     @Override
     protected void addFooter() {
         LinearLayout linearLayout = LinearLayout.horizontal().spacing(8);
@@ -71,12 +48,5 @@ public class TargetConfigScreen extends OptionsSubScreen {
         }).width(150).build());
 
         this.layout.addToFooter(linearLayout);
-    }
-
-    @Override
-    public void onClose() {
-        ConfigManager.save();
-        AutoStep.update();
-        this.minecraft.setScreen(this.lastScreen);
     }
 }

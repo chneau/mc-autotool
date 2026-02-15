@@ -101,7 +101,7 @@
   - **Goal**: Extract common inventory operations (finding items, moving stacks, clicking slots) from `AutoArmor`, `AutoEat`, `AutoRefill`, `AutoSort`, and `AutoDeposit` into `Util.java`.
   - **Benefit**: Removes significant code duplication and makes inventory-heavy modules much shorter and easier to read.
 
-- [ ] **14. Abstract Configuration Screen**
+- [x] **14. Abstract Configuration Screen**
   - **Goal**: Create a helper class or base class for generating configuration screens.
   - **Benefit**: Reduces the boilerplate code needed in `ConfigScreen.java` and `TargetConfigScreen.java` for creating options and buttons.
 

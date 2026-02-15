@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class ConfigScreen extends OptionsSubScreen {
+public class ConfigScreen extends BaseConfigScreen {
 
     public ConfigScreen(Screen parent, Options options) {
         super(parent, options, Component.literal("Autotool Config"));
@@ -68,23 +68,5 @@ public class ConfigScreen extends OptionsSubScreen {
         }).width(150).build());
 
         this.layout.addToFooter(linearLayout);
-    }
-
-    private <T extends Enum<T>> OptionInstance<T> createEnumOption(String name, T[] values, T currentValue, Consumer<T> setter) {
-        return new OptionInstance<>(
-                name,
-                OptionInstance.noTooltip(),
-                (caption, value) -> Component.literal(value.name()),
-                new OptionInstance.Enum<>(Arrays.asList(values), Codec.INT.xmap(i -> values[i], Enum::ordinal)),
-                currentValue,
-                setter
-        );
-    }
-
-    @Override
-    public void onClose() {
-        ConfigManager.save();
-        AutoStep.update();
-        this.minecraft.setScreen(this.lastScreen);
     }
 }
