@@ -118,6 +118,7 @@ Maintains your momentum without you having to hold down the sprint key.
 Automatically attacks entities you are looking at, respecting weapon cool-downs for maximum damage.
 
 - **Trigger**: Looking at a living entity.
+- **Proximity Attack**: Automatically targets and attacks the closest monster within a 3.5-block radius if you are holding a sword, even if you are not looking at it. (Passive entities and players still require direct line-of-sight).
 - **Options**:
   - `OFF`: Disable auto-attack.
   - `SWORD`: Only auto-attacks when you are holding a sword.
@@ -182,9 +183,9 @@ Displays real-time tracking information for entities and valuable resources on y
  
  ## 📜 Changelog
  
--- New 2026-02-15: Added Auto Target and Auto Step features; updated for Minecraft 26.1
-+- New 2026-02-15: Added Auto Target, Auto Step, and Auto Deposit features; updated for Minecraft 26.1
- - New 2026-02-14: Updated for 1.21.1 and added comprehensive Auto features (Eat, Sort, Armor, Fish, etc.)- New 2023-10-20: Updated for 1.20
+- New 2026-02-15: Added Auto Target, Auto Step, and Auto Deposit features; improved Auto Attack with proximity targeting; updated for Minecraft 26.1
+- New 2026-02-14: Updated for 1.21.1 and added comprehensive Auto features (Eat, Sort, Armor, Fish, etc.)
+- New 2023-10-20: Updated for 1.20
 - New 2023-03-13: Updated for 1.19.3
 - New 2021-11-24: Updated for 1.18
 - New 2021-06-26: Updated for 1.17
