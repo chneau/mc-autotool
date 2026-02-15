@@ -10,41 +10,43 @@ import net.minecraft.world.item.ItemStack;
 
 public class AutoRefill implements UseBlockCallback {
 
-    public void register() {
-        UseBlockCallback.EVENT.register(this);
-    }
+	public void register() {
+		UseBlockCallback.EVENT.register(this);
+	}
 
-    @Override
-    public InteractionResult interact(Player player, Level world, InteractionHand hand, BlockHitResult bhr) {
-        var mode = ConfigManager.getConfig().autoRefill;
-        if (mode == Config.RefillMode.OFF)
-            return InteractionResult.PASS;
-        if (!Util.isCurrentPlayer(player))
-            return InteractionResult.PASS;
-        if (hand != InteractionHand.MAIN_HAND)
-            return InteractionResult.PASS;
-        
-        var inventory = player.getInventory();
-        var selectedSlot = inventory.getSelectedSlot();
-        var itemStack = inventory.getItem(selectedSlot);
-        
-        if (itemStack.isEmpty()) return InteractionResult.PASS;
+	@Override
+	public InteractionResult interact(Player player, Level world, InteractionHand hand, BlockHitResult bhr) {
+		var mode = ConfigManager.getConfig().autoRefill;
+		if (mode == Config.RefillMode.OFF)
+			return InteractionResult.PASS;
+		if (!Util.isCurrentPlayer(player))
+			return InteractionResult.PASS;
+		if (hand != InteractionHand.MAIN_HAND)
+			return InteractionResult.PASS;
 
-        if (mode == Config.RefillMode.SMART && itemStack.getCount() > 1)
-            return InteractionResult.PASS;
+		var inventory = player.getInventory();
+		var selectedSlot = inventory.getSelectedSlot();
+		var itemStack = inventory.getItem(selectedSlot);
 
-        for (int i = 0; i < inventory.getContainerSize(); i++) {
-            if (i == selectedSlot) continue;
-            
-            var candidate = inventory.getItem(i);
-            if (!candidate.isEmpty() && Util.areItemsEqual(itemStack, candidate)) {
-                inventory.setItem(selectedSlot, candidate.copy());
-                inventory.setItem(i, ItemStack.EMPTY);
-                break;
-            }
-        }
-        
-        return InteractionResult.PASS;
-    }
+		if (itemStack.isEmpty())
+			return InteractionResult.PASS;
+
+		if (mode == Config.RefillMode.SMART && itemStack.getCount() > 1)
+			return InteractionResult.PASS;
+
+		for (int i = 0; i < inventory.getContainerSize(); i++) {
+			if (i == selectedSlot)
+				continue;
+
+			var candidate = inventory.getItem(i);
+			if (!candidate.isEmpty() && Util.areItemsEqual(itemStack, candidate)) {
+				inventory.setItem(selectedSlot, candidate.copy());
+				inventory.setItem(i, ItemStack.EMPTY);
+				break;
+			}
+		}
+
+		return InteractionResult.PASS;
+	}
 
 }

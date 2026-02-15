@@ -6,31 +6,31 @@ import net.minecraft.client.Minecraft;
 
 public class AutoSprint implements EndTick {
 
-    public void register() {
-        ClientTickEvents.END_CLIENT_TICK.register(this);
-    }
+	public void register() {
+		ClientTickEvents.END_CLIENT_TICK.register(this);
+	}
 
-    @Override
-    public void onEndTick(Minecraft client) {
-        var mode = ConfigManager.getConfig().autoSprint;
-        if (mode == Config.SprintMode.OFF)
-            return;
-        
-        var player = client.player;
-        if (player == null || !Util.isCurrentPlayer(player))
-            return;
+	@Override
+	public void onEndTick(Minecraft client) {
+		var mode = ConfigManager.getConfig().autoSprint;
+		if (mode == Config.SprintMode.OFF)
+			return;
 
-        if (player.horizontalCollision || player.isDescending() || player.isUsingItem())
-            return;
+		var player = client.player;
+		if (player == null || !Util.isCurrentPlayer(player))
+			return;
 
-        int foodLevel = player.getFoodData().getFoodLevel();
-        int threshold = (mode == Config.SprintMode.HUNGER_50) ? 10 : 6;
+		if (player.horizontalCollision || player.isDescending() || player.isUsingItem())
+			return;
 
-        if (foodLevel <= threshold && !player.getAbilities().mayfly)
-            return;
+		int foodLevel = player.getFoodData().getFoodLevel();
+		int threshold = (mode == Config.SprintMode.HUNGER_50) ? 10 : 6;
 
-        if (player.input.hasForwardImpulse() && !player.isSprinting()) {
-            player.setSprinting(true);
-        }
-    }
+		if (foodLevel <= threshold && !player.getAbilities().mayfly)
+			return;
+
+		if (player.input.hasForwardImpulse() && !player.isSprinting()) {
+			player.setSprinting(true);
+		}
+	}
 }

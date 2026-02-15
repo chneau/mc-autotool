@@ -11,66 +11,71 @@ import net.minecraft.world.item.Items;
 import java.lang.reflect.Field;
 
 public class AutoFish implements EndTick {
-    private static EntityDataAccessor<Boolean> DATA_BITING;
-    private int recastTicks = -1;
+	private static EntityDataAccessor<Boolean> DATA_BITING;
+	private int recastTicks = -1;
 
-    static {
-        DATA_BITING = fetchDataBiting();
-    }
+	static {
+		DATA_BITING = fetchDataBiting();
+	}
 
-    @SuppressWarnings("unchecked")
-    private static EntityDataAccessor<Boolean> fetchDataBiting() {
-        try {
-            // Using official Mojang mappings names
-            Field field = FishingHook.class.getDeclaredField("DATA_BITING");
-            field.setAccessible(true);
-            return (EntityDataAccessor<Boolean>) field.get(null);
-        } catch (Exception e) {
-            Main.LOGGER.error("Failed to access DATA_BITING in FishingHook", e);
-            return null;
-        }
-    }
+	@SuppressWarnings("unchecked")
+	private static EntityDataAccessor<Boolean> fetchDataBiting() {
+		try {
+			// Using official Mojang mappings names
+			Field field = FishingHook.class.getDeclaredField("DATA_BITING");
+			field.setAccessible(true);
+			return (EntityDataAccessor<Boolean>) field.get(null);
+		} catch (Exception e) {
+			Main.LOGGER.error("Failed to access DATA_BITING in FishingHook", e);
+			return null;
+		}
+	}
 
-    public void register() {
-        ClientTickEvents.END_CLIENT_TICK.register(this);
-    }
+	public void register() {
+		ClientTickEvents.END_CLIENT_TICK.register(this);
+	}
 
-    @Override
-    public void onEndTick(Minecraft client) {
-        if (ConfigManager.getConfig().autoFish == Config.FishMode.OFF) return;
+	@Override
+	public void onEndTick(Minecraft client) {
+		if (ConfigManager.getConfig().autoFish == Config.FishMode.OFF)
+			return;
 
-        var player = client.player;
-        if (player == null || !Util.isCurrentPlayer(player)) return;
+		var player = client.player;
+		if (player == null || !Util.isCurrentPlayer(player))
+			return;
 
-        boolean holdingRod = player.getMainHandItem().is(Items.FISHING_ROD) || 
-                             player.getOffhandItem().is(Items.FISHING_ROD);
-        
-        if (!holdingRod) {
-            recastTicks = -1;
-            return;
-        }
+		boolean holdingRod = player.getMainHandItem().is(Items.FISHING_ROD)
+				|| player.getOffhandItem().is(Items.FISHING_ROD);
 
-        if (recastTicks > 0) {
-            recastTicks--;
-            if (recastTicks == 0) {
-                use(client);
-            }
-            return;
-        }
+		if (!holdingRod) {
+			recastTicks = -1;
+			return;
+		}
 
-        FishingHook hook = player.fishing;
-        if (hook != null && DATA_BITING != null) {
-            boolean isBiting = hook.getEntityData().get(DATA_BITING);
-            if (isBiting) {
-                use(client);
-                recastTicks = 40; // Recast after 2 seconds to be safe
-            }
-        }
-    }
+		if (recastTicks > 0) {
+			recastTicks--;
+			if (recastTicks == 0) {
+				use(client);
+			}
+			return;
+		}
 
-    private void use(Minecraft client) {
-        if (client.gameMode == null || client.player == null) return;
-        InteractionHand hand = client.player.getMainHandItem().is(Items.FISHING_ROD) ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
-        client.gameMode.useItem(client.player, hand);
-    }
+		FishingHook hook = player.fishing;
+		if (hook != null && DATA_BITING != null) {
+			boolean isBiting = hook.getEntityData().get(DATA_BITING);
+			if (isBiting) {
+				use(client);
+				recastTicks = 40; // Recast after 2 seconds to be safe
+			}
+		}
+	}
+
+	private void use(Minecraft client) {
+		if (client.gameMode == null || client.player == null)
+			return;
+		InteractionHand hand = client.player.getMainHandItem().is(Items.FISHING_ROD)
+				? InteractionHand.MAIN_HAND
+				: InteractionHand.OFF_HAND;
+		client.gameMode.useItem(client.player, hand);
+	}
 }

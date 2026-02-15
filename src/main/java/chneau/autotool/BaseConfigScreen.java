@@ -13,47 +13,46 @@ import java.util.function.Consumer;
 
 public abstract class BaseConfigScreen extends OptionsSubScreen {
 
-    public BaseConfigScreen(Screen parent, Options options, Component title) {
-        super(parent, options, title);
-    }
+	public BaseConfigScreen(Screen parent, Options options, Component title) {
+		super(parent, options, title);
+	}
 
-    protected <T extends Enum<T>> OptionInstance<T> createEnumOption(String name, T[] values, T currentValue, Consumer<T> setter) {
-        return createEnumOption(name, null, values, currentValue, setter);
-    }
+	protected <T extends Enum<T>> OptionInstance<T> createEnumOption(String name, T[] values, T currentValue,
+			Consumer<T> setter) {
+		return createEnumOption(name, null, values, currentValue, setter);
+	}
 
-    protected <T extends Enum<T>> OptionInstance<T> createEnumOption(String name, String tooltip, T[] values, T currentValue, Consumer<T> setter) {
-        OptionInstance.TooltipSupplier<T> tooltipSupplier = tooltip == null ? OptionInstance.noTooltip() : OptionInstance.cachedConstantTooltip(Component.literal(tooltip));
-        return new OptionInstance<>(
-                name,
-                tooltipSupplier,
-                (caption, value) -> Component.literal(value.name().replace('_', ' ')),
-                new OptionInstance.Enum<>(Arrays.asList(values), Codec.INT.xmap(i -> values[i], Enum::ordinal)),
-                currentValue,
-                setter
-        );
-    }
+	protected <T extends Enum<T>> OptionInstance<T> createEnumOption(String name, String tooltip, T[] values,
+			T currentValue, Consumer<T> setter) {
+		OptionInstance.TooltipSupplier<T> tooltipSupplier = tooltip == null
+				? OptionInstance.noTooltip()
+				: OptionInstance.cachedConstantTooltip(Component.literal(tooltip));
+		return new OptionInstance<>(name, tooltipSupplier,
+				(caption, value) -> Component.literal(value.name().replace('_', ' ')),
+				new OptionInstance.Enum<>(Arrays.asList(values), Codec.INT.xmap(i -> values[i], Enum::ordinal)),
+				currentValue, setter);
+	}
 
-    protected OptionInstance<Integer> createIntOption(String key, String tooltip, int currentValue, Consumer<Integer> setter) {
-        return createIntOption(key, tooltip, currentValue, 5, setter);
-    }
+	protected OptionInstance<Integer> createIntOption(String key, String tooltip, int currentValue,
+			Consumer<Integer> setter) {
+		return createIntOption(key, tooltip, currentValue, 5, setter);
+	}
 
-    protected OptionInstance<Integer> createIntOption(String key, String tooltip, int currentValue, int max, Consumer<Integer> setter) {
-        OptionInstance.TooltipSupplier<Integer> tooltipSupplier = tooltip == null ? OptionInstance.noTooltip() : OptionInstance.cachedConstantTooltip(Component.literal(tooltip));
-        return new OptionInstance<>(
-            key,
-            tooltipSupplier,
-            (caption, value) -> CommonComponents.optionNameValue(caption, Component.literal(value == 0 ? "Off" : value.toString())),
-            new OptionInstance.IntRange(0, max),
-            Codec.INT,
-            currentValue,
-            setter
-        );
-    }
+	protected OptionInstance<Integer> createIntOption(String key, String tooltip, int currentValue, int max,
+			Consumer<Integer> setter) {
+		OptionInstance.TooltipSupplier<Integer> tooltipSupplier = tooltip == null
+				? OptionInstance.noTooltip()
+				: OptionInstance.cachedConstantTooltip(Component.literal(tooltip));
+		return new OptionInstance<>(key, tooltipSupplier,
+				(caption, value) -> CommonComponents.optionNameValue(caption,
+						Component.literal(value == 0 ? "Off" : value.toString())),
+				new OptionInstance.IntRange(0, max), Codec.INT, currentValue, setter);
+	}
 
-    @Override
-    public void onClose() {
-        ConfigManager.save();
-        AutoStep.update();
-        this.minecraft.setScreen(this.lastScreen);
-    }
+	@Override
+	public void onClose() {
+		ConfigManager.save();
+		AutoStep.update();
+		this.minecraft.setScreen(this.lastScreen);
+	}
 }

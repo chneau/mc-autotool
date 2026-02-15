@@ -4,90 +4,91 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents.EndTick;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.item.component.ItemAttributeModifiers;
-import net.minecraft.world.item.equipment.Equippable;
 
 public class AutoArmor implements EndTick {
-    private int lastInventoryChangeCount = -1;
+	private int lastInventoryChangeCount = -1;
 
-    public void register() {
-        ClientTickEvents.END_CLIENT_TICK.register(this);
-    }
+	public void register() {
+		ClientTickEvents.END_CLIENT_TICK.register(this);
+	}
 
-    @Override
-    public void onEndTick(Minecraft client) {
-        var mode = ConfigManager.getConfig().autoArmor;
-        if (mode == Config.ArmorMode.OFF) return;
+	@Override
+	public void onEndTick(Minecraft client) {
+		var mode = ConfigManager.getConfig().autoArmor;
+		if (mode == Config.ArmorMode.OFF)
+			return;
 
-        var player = client.player;
-        if (player == null || client.gameMode == null) return;
+		var player = client.player;
+		if (player == null || client.gameMode == null)
+			return;
 
-        int currentChangeCount = player.getInventory().getTimesChanged();
+		int currentChangeCount = player.getInventory().getTimesChanged();
 
-        // If inventory hasn't changed, only check once every 20 ticks (1 second)
-        if (currentChangeCount == lastInventoryChangeCount) {
-            if (!Throttler.shouldRun(this, 20)) {
-                return;
-            }
-        }
-        
-        lastInventoryChangeCount = currentChangeCount;
+		// If inventory hasn't changed, only check once every 20 ticks (1 second)
+		if (currentChangeCount == lastInventoryChangeCount) {
+			if (!Throttler.shouldRun(this, 20)) {
+				return;
+			}
+		}
 
-        var menu = player.inventoryMenu;
-        
-        // Armor slots in InventoryMenu: 5 (HEAD), 6 (CHEST), 7 (LEGS), 8 (FEET)
-        for (EquipmentSlot slot : new EquipmentSlot[]{EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET}) {
-            int menuIdx = switch (slot) {
-                case HEAD -> 5;
-                case CHEST -> 6;
-                case LEGS -> 7;
-                case FEET -> 8;
-                default -> -1;
-            };
-            if (menuIdx == -1) continue;
+		lastInventoryChangeCount = currentChangeCount;
 
-            ItemStack currentArmor = menu.getSlot(menuIdx).getItem();
-            int bestSlot = -1;
-            ItemStack bestArmor = currentArmor;
+		var menu = player.inventoryMenu;
 
-            // Search in inventory (9-44)
-            for (int i = 9; i <= 44; i++) {
-                ItemStack stack = menu.getSlot(i).getItem();
-                var equippable = stack.get(DataComponents.EQUIPPABLE);
-                if (equippable != null && equippable.slot() == slot) {
-                    if (isBetter(stack, bestArmor, slot, mode == Config.ArmorMode.SMART)) {
-                        bestArmor = stack;
-                        bestSlot = i;
-                    }
-                }
-            }
+		// Armor slots in InventoryMenu: 5 (HEAD), 6 (CHEST), 7 (LEGS), 8 (FEET)
+		for (EquipmentSlot slot : new EquipmentSlot[]{EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS,
+				EquipmentSlot.FEET}) {
+			int menuIdx = switch (slot) {
+				case HEAD -> 5;
+				case CHEST -> 6;
+				case LEGS -> 7;
+				case FEET -> 8;
+				default -> -1;
+			};
+			if (menuIdx == -1)
+				continue;
 
-            if (bestSlot != -1) {
-                equip(client, menu.containerId, bestSlot, menuIdx);
-                return; // Only one swap per tick
-            }
-        }
-    }
+			ItemStack currentArmor = menu.getSlot(menuIdx).getItem();
+			int bestSlot = -1;
+			ItemStack bestArmor = currentArmor;
 
-    private boolean isBetter(ItemStack newStack, ItemStack oldStack, EquipmentSlot slot, boolean smart) {
-        if (oldStack.isEmpty()) return true;
+			// Search in inventory (9-44)
+			for (int i = 9; i <= 44; i++) {
+				ItemStack stack = menu.getSlot(i).getItem();
+				var equippable = stack.get(DataComponents.EQUIPPABLE);
+				if (equippable != null && equippable.slot() == slot) {
+					if (isBetter(stack, bestArmor, slot, mode == Config.ArmorMode.SMART)) {
+						bestArmor = stack;
+						bestSlot = i;
+					}
+				}
+			}
 
-        double newValue = Util.getArmorValue(newStack, slot);
-        double oldValue = Util.getArmorValue(oldStack, slot);
+			if (bestSlot != -1) {
+				equip(client, menu.containerId, bestSlot, menuIdx);
+				return; // Only one swap per tick
+			}
+		}
+	}
 
-        if (smart) {
-            newValue += Util.getEnchantmentLevelSum(newStack) * 0.5;
-            oldValue += Util.getEnchantmentLevelSum(oldStack) * 0.5;
-        }
+	private boolean isBetter(ItemStack newStack, ItemStack oldStack, EquipmentSlot slot, boolean smart) {
+		if (oldStack.isEmpty())
+			return true;
 
-        return newValue > oldValue;
-    }
+		double newValue = Util.getArmorValue(newStack, slot);
+		double oldValue = Util.getArmorValue(oldStack, slot);
 
-    private void equip(Minecraft client, int containerId, int inventorySlot, int armorSlot) {
-        Util.swap(client, containerId, inventorySlot, armorSlot);
-    }
+		if (smart) {
+			newValue += Util.getEnchantmentLevelSum(newStack) * 0.5;
+			oldValue += Util.getEnchantmentLevelSum(oldStack) * 0.5;
+		}
+
+		return newValue > oldValue;
+	}
+
+	private void equip(Minecraft client, int containerId, int inventorySlot, int armorSlot) {
+		Util.swap(client, containerId, inventorySlot, armorSlot);
+	}
 }
