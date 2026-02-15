@@ -10,6 +10,17 @@ java {
 base {
 	archivesName = project.archives_base_name
 }
+
+loom {
+	runs {
+		client {
+			client()
+			runDir "run"
+			programArgs "--quickPlaySingleplayer", "New World"
+		}
+	}
+}
+
 version = project.mod_version
 group = project.maven_group
 
