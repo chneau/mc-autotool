@@ -36,6 +36,18 @@ public class TargetConfigScreen extends OptionsSubScreen {
             createIntOption("Target Iron", config.targetIron, v -> config.targetIron = v),
             createIntOption("Target Debris", config.targetDebris, v -> config.targetDebris = v)
         );
+        this.list.addBig(createEnumOption("HUD Position", Config.HudPosition.values(), config.targetHudPosition, v -> config.targetHudPosition = v));
+    }
+
+    private <T extends Enum<T>> OptionInstance<T> createEnumOption(String name, T[] values, T currentValue, java.util.function.Consumer<T> setter) {
+        return new OptionInstance<>(
+                name,
+                OptionInstance.noTooltip(),
+                (caption, value) -> Component.literal(value.name().replace('_', ' ')),
+                new OptionInstance.Enum<>(java.util.Arrays.asList(values), Codec.INT.xmap(i -> values[i], Enum::ordinal)),
+                currentValue,
+                setter
+        );
     }
 
     private OptionInstance<Integer> createIntOption(String key, int currentValue, java.util.function.Consumer<Integer> setter) {

@@ -75,9 +75,20 @@ public class AutoTarget {
         allPotentialTargets.sort(Comparator.comparingDouble(t -> client.player.distanceToSqr(t.pos)));
         List<Target> finalTargets = allPotentialTargets.stream().limit(5).collect(Collectors.toList());
 
-        int y = 10;
+        int screenWidth = client.getWindow().getGuiScaledWidth();
+        int screenHeight = client.getWindow().getGuiScaledHeight();
+        int totalHeight = finalTargets.size() * 12;
+
+        int startY;
+        if (config.targetHudPosition == Config.HudPosition.BOTTOM_LEFT || config.targetHudPosition == Config.HudPosition.BOTTOM_RIGHT) {
+            startY = screenHeight - 10 - totalHeight;
+        } else {
+            startY = 10;
+        }
+
+        int y = startY;
         for (Target target : finalTargets) {
-            drawInfo(drawContext, client, target, tickCounter, y);
+            drawInfo(drawContext, client, target, tickCounter, y, config.targetHudPosition, screenWidth);
             y += 12;
         }
     }
@@ -120,7 +131,7 @@ public class AutoTarget {
         }
     }
 
-    private void drawInfo(GuiGraphics drawContext, Minecraft client, Target target, DeltaTracker tickCounter, int y) {
+    private void drawInfo(GuiGraphics drawContext, Minecraft client, Target target, DeltaTracker tickCounter, int y, Config.HudPosition pos, int screenWidth) {
         double diffX = target.pos.x - client.player.getX();
         double diffZ = target.pos.z - client.player.getZ();
         float angleToTarget = (float) Math.toDegrees(Math.atan2(-diffX, diffZ));
@@ -130,7 +141,15 @@ public class AutoTarget {
         double dist = Math.sqrt(client.player.distanceToSqr(target.pos));
 
         String text = String.format("%s %.1fm %s", arrow, dist, target.name);
-        drawContext.drawString(client.font, text, 10, y, 0xFFFFFFFF, true);
+        
+        int x;
+        if (pos == Config.HudPosition.TOP_RIGHT || pos == Config.HudPosition.BOTTOM_RIGHT) {
+            x = screenWidth - 10 - client.font.width(text);
+        } else {
+            x = 10;
+        }
+
+        drawContext.drawString(client.font, text, x, y, 0xFFFFFFFF, true);
     }
 
     private String getDirectionArrow(float relativeYaw) {

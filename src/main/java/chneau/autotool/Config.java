@@ -56,6 +56,13 @@ public class Config {
         ON
     }
 
+    public enum HudPosition {
+        TOP_LEFT,
+        TOP_RIGHT,
+        BOTTOM_LEFT,
+        BOTTOM_RIGHT
+    }
+
     public AttackMode autoAttack = AttackMode.SWORD;
     public FarmMode autoFarm = FarmMode.BOTH;
     public RefillMode autoRefill = RefillMode.ON;
@@ -72,6 +79,7 @@ public class Config {
     public int targetGold = 0;
     public int targetIron = 0;
     public int targetDebris = 0;
+    public HudPosition targetHudPosition = HudPosition.TOP_LEFT;
     public Strategy autoSwap = Strategy.BEST;
 
     public void resetToDefault() {
@@ -91,6 +99,7 @@ public class Config {
         this.targetGold = 0;
         this.targetIron = 0;
         this.targetDebris = 0;
+        this.targetHudPosition = HudPosition.TOP_LEFT;
         this.autoSwap = Strategy.BEST;
     }
 }
