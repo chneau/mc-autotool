@@ -4,13 +4,15 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents.EndTick;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class AutoSort implements EndTick {
-	private boolean wasInventoryOpen = false;
+	private Screen lastScreen = null;
 
 	public void register() {
 		ClientTickEvents.END_CLIENT_TICK.register(this);
@@ -19,14 +21,16 @@ public class AutoSort implements EndTick {
 	@Override
 	public void onEndTick(Minecraft client) {
 		var mode = ConfigManager.getConfig().autoSort;
-		if (mode == Config.SortMode.OFF)
+		if (mode == Config.SortMode.OFF) {
+			lastScreen = client.screen;
 			return;
+		}
 
-		boolean isInventoryOpen = client.screen instanceof InventoryScreen;
-		if (isInventoryOpen && !wasInventoryOpen) {
+		boolean isInventoryOpen = client.screen instanceof AbstractContainerScreen;
+		if (isInventoryOpen && client.screen != lastScreen) {
 			sortInventory(client, mode);
 		}
-		wasInventoryOpen = isInventoryOpen;
+		lastScreen = client.screen;
 	}
 
 	private void sortInventory(Minecraft client, Config.SortMode mode) {
@@ -34,11 +38,26 @@ public class AutoSort implements EndTick {
 		if (player == null || client.gameMode == null)
 			return;
 
-		if (mode == Config.SortMode.INVENTORY || mode == Config.SortMode.BOTH) {
-			sortSlotRange(client, 9, 35);
-		}
-		if (mode == Config.SortMode.HOTBAR || mode == Config.SortMode.BOTH) {
-			sortSlotRange(client, 36, 44);
+		if (client.screen instanceof InventoryScreen) {
+			if (mode == Config.SortMode.INVENTORY || mode == Config.SortMode.BOTH || mode == Config.SortMode.ALL) {
+				sortSlotRange(client, 9, 35);
+			}
+			if (mode == Config.SortMode.HOTBAR || mode == Config.SortMode.BOTH || mode == Config.SortMode.ALL) {
+				sortSlotRange(client, 36, 44);
+			}
+		} else {
+			var menu = player.containerMenu;
+			int slots = menu.slots.size();
+			int playerStart = slots - 36;
+			if (playerStart > 0 && mode == Config.SortMode.ALL) {
+				sortSlotRange(client, 0, playerStart - 1);
+			}
+			if (mode == Config.SortMode.INVENTORY || mode == Config.SortMode.BOTH || mode == Config.SortMode.ALL) {
+				sortSlotRange(client, playerStart, playerStart + 26);
+			}
+			if (mode == Config.SortMode.HOTBAR || mode == Config.SortMode.BOTH || mode == Config.SortMode.ALL) {
+				sortSlotRange(client, playerStart + 27, slots - 1);
+			}
 		}
 	}
 
@@ -46,8 +65,10 @@ public class AutoSort implements EndTick {
 	 * Uses an optimized Cycle Sort variation to minimize item movements (packets).
 	 */
 	private void sortSlotRange(Minecraft client, int start, int end) {
+		consolidateStacks(client, start, end);
+
 		var player = client.player;
-		var menu = player.inventoryMenu;
+		var menu = player.containerMenu;
 
 		List<ItemStack> targetOrder = new ArrayList<>();
 		for (int i = start; i <= end; i++) {
@@ -119,5 +140,36 @@ public class AutoSort implements EndTick {
 			return Integer.compare(weightA, weightB);
 
 		return a.getHoverName().getString().compareTo(b.getHoverName().getString());
+	}
+
+	private void consolidateStacks(Minecraft client, int start, int end) {
+		var player = client.player;
+		var menu = player.containerMenu;
+
+		for (int i = start; i <= end; i++) {
+			ItemStack itemI = menu.getSlot(i).getItem();
+			if (itemI.isEmpty() || itemI.getCount() >= itemI.getMaxStackSize())
+				continue;
+
+			for (int j = i + 1; j <= end; j++) {
+				ItemStack itemJ = menu.getSlot(j).getItem();
+				if (itemJ.isEmpty())
+					continue;
+
+				if (Util.areItemsEqual(itemI, itemJ)) {
+					Util.pickup(client, menu.containerId, j);
+					Util.pickup(client, menu.containerId, i);
+
+					if (!player.containerMenu.getCarried().isEmpty()) {
+						Util.pickup(client, menu.containerId, j);
+					}
+
+					itemI = menu.getSlot(i).getItem();
+					if (itemI.getCount() >= itemI.getMaxStackSize()) {
+						break;
+					}
+				}
+			}
+		}
 	}
 }

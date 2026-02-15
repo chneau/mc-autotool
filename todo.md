@@ -17,7 +17,7 @@
     - [ ] Support for "Eat while moving" (optional).
     - [ ] Better food prioritization (consider saturation vs. nutrition).
 - [ ] **AutoSort Improvements**
-    - [ ] Support for sorting external containers (Chests, Barrels, etc.).
+    - [x] Support for sorting external containers (Chests, Barrels, etc.).
     - [ ] Customizable sort orders via config.
 - [ ] **AutoDeposit Enhancements**
     - [ ] Smart depositing: Only deposit items that are already present in the target container.

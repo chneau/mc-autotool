@@ -42,7 +42,8 @@ public class Config {
 		OFF, // Disable auto-sort
 		HOTBAR, // Only sort the hotbar
 		INVENTORY, // Only sort the main inventory
-		BOTH // Sort both hotbar and main inventory
+		BOTH, // Sort both hotbar and main inventory
+		ALL // Sort everything including external containers
 	}
 
 	public enum ArmorMode {
@@ -72,7 +73,7 @@ public class Config {
 	public RefillMode autoRefill = RefillMode.ON;
 	public SprintMode autoSprint = SprintMode.ON;
 	public EatMode autoEat = EatMode.SMART;
-	public SortMode autoSort = SortMode.BOTH;
+	public SortMode autoSort = SortMode.ALL;
 	public ArmorMode autoArmor = ArmorMode.SMART;
 	public FishMode autoFish = FishMode.ON;
 	public int targetMonster = 1;
@@ -98,7 +99,7 @@ public class Config {
 		this.autoRefill = RefillMode.ON;
 		this.autoSprint = SprintMode.ON;
 		this.autoEat = EatMode.SMART;
-		this.autoSort = SortMode.BOTH;
+		this.autoSort = SortMode.ALL;
 		this.autoArmor = ArmorMode.SMART;
 		this.autoFish = FishMode.ON;
 		this.targetMonster = 1;
