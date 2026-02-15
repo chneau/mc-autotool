@@ -1,33 +1,119 @@
-# mc-autotool
+# Autotool
 
-This mod takes the first good tool for the thing you're trying to mine.  
-Put your best tools on your hotbar and just forget about it.
+A powerful utility mod for Minecraft that automates tedious tasks like tool swapping, farming, eating, and inventory management.
 
-## Features
+## 📅 Roadmap & Versions
 
-- **Smart Tool Selection (Autotool):** Automatically switches to the most effective tool in your hotbar for the block you are currently mining.
-- **Dynamic Combat (Autotool):** Instantly selects your best weapon when engaging an entity.
-- **Auto-Revert:** Automatically returns to your previously held item once you stop mining or attacking.
-- **Efficient Farming (Autofarm):** Automatically harvests mature crops and replants them in a 3x3 area around your target when holding seeds or a tool.
-- **Auto-Attack:** Automatically performs timed attacks (every 625ms) while holding a sword and looking at an entity, ensuring maximum damage efficiency.
+- **Current Stable**: Supports Minecraft 1.21.1
+- **Upcoming**: Minecraft 26.1 ("Cute Companions" update)
+  - _Status_: Experimental compatibility available on the `26.1` branch.
+  - _Expected Release_: Late March 2026.
 
-## Installation
+## 🛠 How to Access Settings
 
-1. Install [Fabric Loader](https://fabricmc.net/use/).
-2. Download the [Fabric API](https://www.curseforge.com/minecraft/mc-mods/fabric-api/files) for your Minecraft version and place it in your `mods` folder.
-3. Download the [latest release](https://github.com/chneau/mc-autotool/releases) of this mod and place it in your `mods` folder.
+You can open the configuration menu at any time by pressing:
+**`Ctrl + Shift + O`**
 
-## How it works
+---
 
-The mod identifies the best tool in your hotbar for the block you are interacting with. For example, if you have bread in your hand and click a tree, it will switch to your best axe. Releasing the click returns the bread to your hand.
+## ✨ Features
 
-For farming, looking at a mature crop and clicking will harvest it and its neighbors (3x3 area), and automatically replant if you are holding seeds.
+### 🔄 Auto Swap
 
-For entities, it switches to a sword and performs timed attacks every 625ms (full charge) to maximize damage per second.
+Automatically selects the most appropriate tool or weapon from your hotbar when you interact with the world.
 
-## Changelog
+- **Trigger**: Left-clicking a block or an entity.
+- **Options**:
+  - `OFF`: Disable automatic swapping.
+  - `FIRST`: Picks the first tool in your hotbar that works.
+  - `BEST`: Picks the most efficient tool (e.g., Diamond over Stone) or the highest DPS weapon.
 
-- New 2026-02-14: Updated for 1.21
+### 🚜 Auto Farm
+
+Makes harvesting and replanting crops effortless.
+
+- **Trigger**: Looking at a mature crop while holding a tool or seed.
+- **Options**:
+  - `OFF`: Disable auto-farming.
+  - `HARVEST`: Only harvests mature crops.
+  - `BOTH`: Harvests mature crops and automatically replants seeds from your inventory.
+
+### 🎣 Auto Fish
+
+Automatically catches fish and recasts the line for you.
+
+- **Trigger**: Holding a fishing rod with an active hook.
+- **Logic**: Automatically reels in when a fish bites and recasts after a 2-second delay.
+- **Options**: `OFF`, `ON`.
+
+### 📦 Auto Refill
+
+Ensures you never run out of the item you are currently placing.
+
+- **Trigger**: Right-clicking to place a block or use an item.
+- **Options**:
+  - `OFF`: Disable auto-refill.
+  - `ON`: Keeps your held stack full by pulling matching items from your main inventory.
+  - `SMART`: Only refills the stack when you are down to your very last item.
+
+### 🏃 Auto Sprint
+
+Maintains your momentum without you having to hold down the sprint key.
+
+- **Trigger**: Moving forward.
+- **Options**:
+  - `OFF`: Disable auto-sprint.
+  - `ON`: Sprints whenever your hunger is high enough.
+  - `HUNGER_50`: Only sprints if your hunger bar is above 50%.
+
+### ⚔️ Auto Attack
+
+Automatically attacks entities you are looking at, respecting weapon cool-downs for maximum damage.
+
+- **Trigger**: Looking at a living entity.
+- **Options**:
+  - `OFF`: Disable auto-attack.
+  - `SWORD`: Only auto-attacks when you are holding a sword.
+  - `ALL`: Auto-attacks with any item in your hand.
+
+### 🍎 Auto Eat
+
+Keeps you fed and healthy without manual intervention.
+
+- **Trigger**: Automatically starts after **1 second of total inactivity** (no moving, clicking, or jumping).
+- **Options**:
+  - `OFF`: Disable auto-eating.
+  - `HUNGER`: Eats whenever you are missing any hunger points.
+  - `HEALTH`: Only eats when you are injured (to maintain natural regeneration).
+  - `SMART`: Optimal logic that picks the best food for your current hunger and avoids over-eating.
+
+### 🧹 Auto Sort
+
+Keeps your inventory and hotbar organized automatically.
+
+- **Trigger**: Opening your inventory screen (default key `E`).
+- **Options**:
+  - `OFF`: Disable auto-sorting.
+  - `HOTBAR`: Only sorts the 9 hotbar slots.
+  - `INVENTORY`: Only sorts the main 27 inventory slots.
+  - `BOTH`: Sorts the hotbar and inventory independently.
+- **Logic**: Items are grouped by category: Combat → Tools → Food → Blocks → Misc.
+
+### 🛡️ Auto Armor
+
+Automatically equips the best protection available in your inventory.
+
+- **Trigger**: Continuous check while playing.
+- **Options**:
+  - `OFF`: Disable auto-armor.
+  - `BETTER`: Equips armor with higher raw defense and toughness values.
+  - `SMART`: Considers both raw stats and enchantment levels (Protection, etc.).
+
+---
+
+## 📜 Changelog
+
+- New 2026-02-14: Updated for 1.21.1 and added comprehensive Auto features (Eat, Sort, Armor, Fish, etc.)
 - New 2023-10-20: Updated for 1.20
 - New 2023-03-13: Updated for 1.19.3
 - New 2021-11-24: Updated for 1.18
@@ -40,20 +126,20 @@ For entities, it switches to a sword and performs timed attacks every 625ms (ful
 - New 2019-07-25: Auto attack entity with sword.
 - New 2019-07-25: Best tool selection logic improved.
 
-## Other Versions
+## 🔗 Other Versions
 
 Links to branch-specific code:
 [1.14](https://github.com/chneau/mc-autotool/tree/1.14) | [1.15](https://github.com/chneau/mc-autotool/tree/1.15) | [1.16](https://github.com/chneau/mc-autotool/tree/1.16) | [1.17](https://github.com/chneau/mc-autotool/tree/1.17) | [1.18](https://github.com/chneau/mc-autotool/tree/1.18) | [1.19](https://github.com/chneau/mc-autotool/tree/1.19) | [1.20](https://github.com/chneau/mc-autotool/tree/1.20) | [1.21](https://github.com/chneau/mc-autotool/tree/1.21)
 
-## Inspiration
+## 💡 Inspiration
 
 Inspired by `ControlPack` by uyjulian. <https://github.com/uyjulian/ControlPack>
 
-## Development
+## 🛠 Development
 
 1. Check [fabricmc.net](https://modmuss50.me/fabric.html) for `gradle.properties` and `fabric.mod.json`.
 2. Check [fabric-loom](https://maven.fabricmc.net/fabric-loom/fabric-loom.gradle.plugin/) for `build.gradle`.
-3. Run `make genSources` and verify with `make test`.
+3. Run `./gradlew genSources` and verify with `./gradlew build`.
 
 <details>
 <summary><b>Debugging & Technical Details</b></summary>
@@ -124,6 +210,8 @@ realistico 8
 
 </details>
 
-## Dropped ideas
+---
 
-- [ ] Auto refill of coal and easy refill of chest if item is in inventory and the chest (Not easily possible).
+## 📜 License
+
+This project is licensed under the MIT License.
