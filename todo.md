@@ -6,6 +6,7 @@
     - [x] Option to show more than 5 targets.
     - [x] Improve sorting of targets (prioritize based on type, e.g., Hostile > Diamond > Passive).
     - [x] Add more block types to scan (Chests, Spawners, Ancient Debris, etc.).
+    - [x] **3D Direction Arrow:** Replaced text arrow with a fully 3D, shaded, rotating cylinder/cone model.
 - [ ] **AutoFarm Enhancements**
     - [ ] **Bonemeal Support:** Automatically use bonemeal on crops.
     - [ ] **Replant Logic:** Ensure seeds are available before breaking crops.
