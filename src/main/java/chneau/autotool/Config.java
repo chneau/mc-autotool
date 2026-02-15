@@ -68,6 +68,13 @@ public class Config {
         ON
     }
 
+    public enum DepositMode {
+        OFF,
+        CHEST,
+        FURNACE,
+        ALL
+    }
+
     public AttackMode autoAttack = AttackMode.SWORD;
     public FarmMode autoFarm = FarmMode.BOTH;
     public RefillMode autoRefill = RefillMode.ON;
@@ -86,6 +93,7 @@ public class Config {
     public int targetDebris = 0;
     public HudPosition targetHudPosition = HudPosition.TOP_LEFT;
     public StepMode autoStep = StepMode.ON;
+    public DepositMode autoDeposit = DepositMode.ALL;
     public Strategy autoSwap = Strategy.BEST;
 
     public void resetToDefault() {
@@ -107,6 +115,7 @@ public class Config {
         this.targetDebris = 0;
         this.targetHudPosition = HudPosition.TOP_LEFT;
         this.autoStep = StepMode.ON;
+        this.autoDeposit = DepositMode.ALL;
         this.autoSwap = Strategy.BEST;
     }
 }

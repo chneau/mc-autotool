@@ -41,14 +41,15 @@ public class ConfigScreen extends OptionsSubScreen {
             createEnumOption("Auto Fish", Config.FishMode.values(), config.autoFish, v -> config.autoFish = v)
         );
         this.list.addSmall(
-            createEnumOption("Auto Swap", Config.Strategy.values(), config.autoSwap, v -> config.autoSwap = v),
-            createEnumOption("Auto Step", Config.StepMode.values(), config.autoStep, v -> config.autoStep = v)
+            createEnumOption("Auto Deposit", Config.DepositMode.values(), config.autoDeposit, v -> config.autoDeposit = v),
+            createEnumOption("Auto Swap", Config.Strategy.values(), config.autoSwap, v -> config.autoSwap = v)
         );
-        this.list.addSmall(List.of(
+        this.list.addSmall(
+            createEnumOption("Auto Step", Config.StepMode.values(), config.autoStep, v -> config.autoStep = v).createButton(this.options),
             Button.builder(Component.literal("Targeting Settings..."), (button) -> {
                 this.minecraft.setScreen(new TargetConfigScreen(this, this.options));
             }).build()
-        ));
+        );
     }
 
     @Override
