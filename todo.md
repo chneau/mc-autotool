@@ -61,10 +61,6 @@
   - Automatically places a block under the player's feet when walking near an edge.
   - **Logic**: Checks if the player is about to fall and if they are holding a placeable block.
 
-- [ ] **28. `AutoInventory` (Quick Deposit)**
-  - Automatically moves items from your inventory into a chest if the chest already contains those items.
-  - **Trigger**: Interacting with a chest while holding a modifier key (e.g., Shift).
-
 - [ ] **29. `AutoMount`**
   - Automatically mounts a nearby Horse, Boat, or Minecart if empty.
   - **Logic**: Triggers when walking into the entity's hitbox.
@@ -74,30 +70,6 @@
   - **Settings**: Health percentage threshold (e.g., 10% or 2 hearts).
 
 ## Optimisations
-
-- [x] **1. `AutoTarget` Entity Scanning**
-  - **Issue**: Loops through `entitiesForRendering()` every HUD render frame.
-  - **Proposed Fix**: Cache the closest entities once every 10-20 ticks instead of every frame.
-
-- [x] **2. `AutoTarget` Block Scanning**
-  - **Issue**: `scanBlocks` iterates through ~36,000 blocks every 2 seconds on the main thread.
-  - **Proposed Fix**: Move to a background thread or use a fragmented scan (few layers per tick).
-
-- [x] **3. `AutoEat` Input Polling**
-  - **Issue**: Iterates through 300+ keys every tick using `glfwGetKey`.
-  - **Proposed Fix**: Only perform the check if movement/look state has changed.
-
-- [x] **4. `AutoArmor` Inventory Loops**
-  - **Issue**: Scans entire inventory multiple times every 200ms.
-  - **Proposed Fix**: Only trigger when the inventory actually changes or cache the best items.
-
-- [x] **5. `AutoFarm` Redundant Loops**
-  - **Issue**: Performs full area scan every tick even if looking at the same block.
-  - **Proposed Fix**: Only trigger area scan if the targeted `BlockPos` has changed.
-
-- [x] **6. Centralized Tick Throttling**
-  - **Issue**: Many modules run logic every 50ms (every tick) unnecessarily.
-  - **Proposed Fix**: Implement a `Throttler` utility to spread heavy tasks across different ticks.
 
 - [ ] **7. `AutoAttack` Attribute Caching**
   - **Issue**: Re-calculates `ATTACK_SPEED` attribute and modifiers every tick.
