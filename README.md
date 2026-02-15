@@ -8,17 +8,25 @@ If you already have **Fabric** installed, you can quickly download the latest ve
 
 ```powershell
 # For the latest version (Minecraft 26.1)
+mkdir -Force "$env:APPDATA\.minecraft\mods"
 irm https://github.com/chneau/mc-autotool/releases/latest/download/autotool.jar -OutFile "$env:APPDATA\.minecraft\mods\autotool.jar"
+irm https://github.com/FabricMC/fabric-api/releases/download/0.143.4%2B26.1/fabric-api-0.143.4+26.1.jar -OutFile "$env:APPDATA\.minecraft\mods\fabric-api.jar"
 ```
 
 > **Note:** To install a specific version, simply replace `latest` in the URL with the version number (e.g., `1.21`, `1.20`).
 
 ```powershell
 # Example for Minecraft 1.21
+mkdir -Force "$env:APPDATA\.minecraft\mods"
 irm https://github.com/chneau/mc-autotool/releases/download/1.21/autotool.jar -OutFile "$env:APPDATA\.minecraft\mods\autotool.jar"
+irm https://github.com/FabricMC/fabric-api/releases/download/0.141.2%2B1.21.11/fabric-api-0.141.2+1.21.11.jar -OutFile "$env:APPDATA\.minecraft\mods\fabric-api.jar"
+```
 
+```powershell
 # Example for Minecraft 1.20
+mkdir -Force "$env:APPDATA\.minecraft\mods"
 irm https://github.com/chneau/mc-autotool/releases/download/1.20/autotool.jar -OutFile "$env:APPDATA\.minecraft\mods\autotool.jar"
+irm https://github.com/FabricMC/fabric-api/releases/download/0.98.0%2B1.20.6/fabric-api-0.98.0+1.20.6.jar -OutFile "$env:APPDATA\.minecraft\mods\fabric-api.jar"
 ```
 
 ### 🗑️ How to Remove
