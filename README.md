@@ -4,6 +4,8 @@ A powerful utility mod for Minecraft that automates tedious tasks like tool swap
 
 ## 🚀 Quick Install (Windows)
 
+> **Important:** It is required to install a **Fabric profile** using the [Fabric Installer](https://fabricmc.net/use/installer/) before proceeding.
+
 If you already have **Fabric** installed, you can quickly download the latest version of Autotool (**26.1**) by running this command in PowerShell:
 
 ```powershell
