@@ -32,24 +32,24 @@ public class TargetConfigScreen extends BaseConfigScreen {
         Config config = ConfigManager.getConfig();
 
         this.list.addSmall(
-            createIntOption("Target Monsters", "Max number of monsters to show on HUD.", config.targetMonster, v -> config.targetMonster = v),
-            createIntOption("Target Passives", "Max number of passive mobs to show on HUD.", config.targetPassive, v -> config.targetPassive = v)
+            createIntOption("👹 Monsters", "Max number of monsters to show on HUD.", config.targetMonster, v -> config.targetMonster = v),
+            createIntOption("🐷 Passives", "Max number of passive mobs to show on HUD.", config.targetPassive, v -> config.targetPassive = v)
         );
         this.list.addSmall(
-            createIntOption("Target Players", "Max number of players to show on HUD.", config.targetPlayer, v -> config.targetPlayer = v),
-            createIntOption("Target Chests", "Max number of chests/barrels to show on HUD.", config.targetChest, v -> config.targetChest = v)
+            createIntOption("👤 Players", "Max number of players to show on HUD.", config.targetPlayer, v -> config.targetPlayer = v),
+            createIntOption("📦 Chests", "Max number of chests/barrels to show on HUD.", config.targetChest, v -> config.targetChest = v)
         );
         this.list.addSmall(
-            createIntOption("Target Spawners", "Max number of mob spawners to show on HUD.", config.targetSpawner, v -> config.targetSpawner = v),
-            createIntOption("Target Diamond", "Max number of diamond ores to show on HUD.", config.targetDiamond, v -> config.targetDiamond = v)
+            createIntOption("👾 Spawners", "Max number of mob spawners to show on HUD.", config.targetSpawner, v -> config.targetSpawner = v),
+            createIntOption("💎 Diamond", "Max number of diamond ores to show on HUD.", config.targetDiamond, v -> config.targetDiamond = v)
         );
         this.list.addSmall(
-            createIntOption("Target Emerald", "Max number of emerald ores to show on HUD.", config.targetEmerald, v -> config.targetEmerald = v),
-            createIntOption("Target Gold", "Max number of gold ores to show on HUD.", config.targetGold, v -> config.targetGold = v)
+            createIntOption("🟢 Emerald", "Max number of emerald ores to show on HUD.", config.targetEmerald, v -> config.targetEmerald = v),
+            createIntOption("🟡 Gold", "Max number of gold ores to show on HUD.", config.targetGold, v -> config.targetGold = v)
         );
         this.list.addSmall(
-            createIntOption("Target Iron", "Max number of iron ores to show on HUD.", config.targetIron, v -> config.targetIron = v),
-            createIntOption("Target Debris", "Max number of ancient debris to show on HUD.", config.targetDebris, v -> config.targetDebris = v)
+            createIntOption("⚪ Iron", "Max number of iron ores to show on HUD.", config.targetIron, v -> config.targetIron = v),
+            createIntOption("🧱 Debris", "Max number of ancient debris to show on HUD.", config.targetDebris, v -> config.targetDebris = v)
         );
 
         HudColor currentColor = HudColor.WHITE;

@@ -19,11 +19,13 @@ public class Scanner {
     public static final int BLOCK_SCAN_RADIUS = 16;
 
     public static class Target {
+        public final String category;
         public final String name;
         public final Vec3 pos;
         public final int priority;
 
-        public Target(String name, Vec3 pos, int priority) {
+        public Target(String category, String name, Vec3 pos, int priority) {
+            this.category = category;
             this.name = name;
             this.pos = pos;
             this.priority = priority;
@@ -55,7 +57,7 @@ public class Scanner {
             }
 
             if (category != null) {
-                categoryEntityTargets.computeIfAbsent(category, k -> new ArrayList<>()).add(new Target(living.getName().getString(), living.position(), priority));
+                categoryEntityTargets.computeIfAbsent(category, k -> new ArrayList<>()).add(new Target(category, living.getName().getString(), living.position(), priority));
             }
         }
         return categoryEntityTargets;
@@ -95,7 +97,7 @@ public class Scanner {
                     }
 
                     if (category != null) {
-                        results.computeIfAbsent(category, k -> new ArrayList<>()).add(new Target(name, Vec3.atCenterOf(pos), priority));
+                        results.computeIfAbsent(category, k -> new ArrayList<>()).add(new Target(category, name, Vec3.atCenterOf(pos), priority));
                     }
                 }
             }

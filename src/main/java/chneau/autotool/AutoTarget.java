@@ -122,8 +122,26 @@ public class AutoTarget {
 
         String arrow = getDirectionArrow(relativeYaw);
         double dist = Math.sqrt(client.player.distanceToSqr(target.pos));
+        String emoji = getCategoryEmoji(target.category);
 
-        return String.format("%s %.1fm %s", arrow, dist, target.name);
+        return String.format("%s %s %.1fm %s", emoji, arrow, dist, target.name);
+    }
+
+    private String getCategoryEmoji(String category) {
+        if (category == null) return "";
+        return switch (category) {
+            case "Monster" -> "👹";
+            case "Player" -> "👤";
+            case "Passive" -> "🐷";
+            case "Diamond" -> "💎";
+            case "Emerald" -> "🟢";
+            case "Gold" -> "🟡";
+            case "Iron" -> "⚪";
+            case "Debris" -> "🧱";
+            case "Chest" -> "📦";
+            case "Spawner" -> "👾";
+            default -> "";
+        };
     }
 
     private void addLimitedTargets(List<Scanner.Target> allPotentialTargets, List<Scanner.Target> categoryList, int limit, Vec3 playerPos) {
@@ -147,15 +165,5 @@ public class AutoTarget {
         if (relativeYaw > -112.5 && relativeYaw <= -67.5) return "←";
         if (relativeYaw > -67.5 && relativeYaw <= -22.5) return "↖";
         return "?";
-    }
-
-    private static class Target {
-        final String name;
-        final Vec3 pos;
-
-        Target(String name, Vec3 pos) {
-            this.name = name;
-            this.pos = pos;
-        }
     }
 }
