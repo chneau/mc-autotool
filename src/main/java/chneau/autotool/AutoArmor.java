@@ -4,7 +4,7 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents.EndTick;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -96,11 +96,11 @@ public class AutoArmor implements EndTick {
 
     private void equip(Minecraft client, int containerId, int inventorySlot, int armorSlot) {
         if (client.player.inventoryMenu.getSlot(armorSlot).getItem().isEmpty()) {
-            client.gameMode.handleInventoryMouseClick(containerId, inventorySlot, 0, ClickType.QUICK_MOVE, client.player);
+            client.gameMode.handleContainerInput(containerId, inventorySlot, 0, ContainerInput.QUICK_MOVE, client.player);
         } else {
-            client.gameMode.handleInventoryMouseClick(containerId, inventorySlot, 0, ClickType.PICKUP, client.player);
-            client.gameMode.handleInventoryMouseClick(containerId, armorSlot, 0, ClickType.PICKUP, client.player);
-            client.gameMode.handleInventoryMouseClick(containerId, inventorySlot, 0, ClickType.PICKUP, client.player);
+            client.gameMode.handleContainerInput(containerId, inventorySlot, 0, ContainerInput.PICKUP, client.player);
+            client.gameMode.handleContainerInput(containerId, armorSlot, 0, ContainerInput.PICKUP, client.player);
+            client.gameMode.handleContainerInput(containerId, inventorySlot, 0, ContainerInput.PICKUP, client.player);
         }
     }
 }

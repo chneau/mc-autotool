@@ -2,7 +2,7 @@ package chneau.autotool;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.KeyMapping;
 import com.mojang.blaze3d.platform.InputConstants;
@@ -28,7 +28,7 @@ public class Main implements ClientModInitializer {
         (new AutoArmor()).register();
         (new AutoFish()).register();
 
-        configKey = KeyBindingHelper.registerKeyBinding(new KeyMapping(
+        configKey = KeyMappingHelper.registerKeyMapping(new KeyMapping(
                 "key.mc-autotool.config",
                 InputConstants.Type.KEYSYM,
                 GLFW.GLFW_KEY_O,

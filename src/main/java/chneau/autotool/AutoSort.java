@@ -4,7 +4,7 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents.EndTick;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
-import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.tags.ItemTags;
@@ -91,8 +91,8 @@ public class AutoSort implements EndTick {
     }
 
     private void swap(Minecraft client, int containerId, int slot1, int slot2) {
-        client.gameMode.handleInventoryMouseClick(containerId, slot1, 0, ClickType.PICKUP, client.player);
-        client.gameMode.handleInventoryMouseClick(containerId, slot2, 0, ClickType.PICKUP, client.player);
-        client.gameMode.handleInventoryMouseClick(containerId, slot1, 0, ClickType.PICKUP, client.player);
+        client.gameMode.handleContainerInput(containerId, slot1, 0, ContainerInput.PICKUP, client.player);
+        client.gameMode.handleContainerInput(containerId, slot2, 0, ContainerInput.PICKUP, client.player);
+        client.gameMode.handleContainerInput(containerId, slot1, 0, ContainerInput.PICKUP, client.player);
     }
 }
