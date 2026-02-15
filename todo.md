@@ -87,7 +87,7 @@
   - **Issue**: Iterates through 300+ keys every tick using `glfwGetKey`.
   - **Proposed Fix**: Only perform the check if movement/look state has changed.
 
-- [ ] **4. `AutoArmor` Inventory Loops**
+- [x] **4. `AutoArmor` Inventory Loops**
   - **Issue**: Scans entire inventory multiple times every 200ms.
   - **Proposed Fix**: Only trigger when the inventory actually changes or cache the best items.
 

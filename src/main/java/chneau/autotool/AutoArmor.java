@@ -13,6 +13,7 @@ import net.minecraft.world.item.equipment.Equippable;
 
 public class AutoArmor implements EndTick {
     private long lastUpdate = 0;
+    private int lastInventoryChangeCount = -1;
 
     public void register() {
         ClientTickEvents.END_CLIENT_TICK.register(this);
@@ -26,9 +27,16 @@ public class AutoArmor implements EndTick {
         var player = client.player;
         if (player == null || client.gameMode == null) return;
 
-        // Don't update too fast to avoid issues with rapid clicks
+        int currentChangeCount = player.getInventory().getTimesChanged();
         long now = System.currentTimeMillis();
-        if (now - lastUpdate < 200) return;
+
+        // If inventory hasn't changed and it's been less than 1 second, skip.
+        // We still check once a second just in case some external factors changed item properties without incrementing the counter.
+        if (currentChangeCount == lastInventoryChangeCount && now - lastUpdate < 1000) {
+            return;
+        }
+        
+        lastInventoryChangeCount = currentChangeCount;
 
         var menu = player.inventoryMenu;
         
