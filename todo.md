@@ -49,7 +49,7 @@
     - `HEALTH`: Only eat when health is not full (to maintain regeneration).
     - `SMART`: Optimizes food usage based on saturation and hunger levels; **checks food value to avoid over-eating/wasting high-value food**.
 
-- [ ] **12. `AutoFish`**
+- [x] **12. `AutoFish`**
   - Automatically reels in and recasts the fishing rod when a fish is caught.
   - **Default**: `ON`
   - **Modes**: `OFF`, `ON`.

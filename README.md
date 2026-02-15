@@ -26,6 +26,12 @@ Makes harvesting and replanting crops effortless.
   - `HARVEST`: Only harvests mature crops.
   - `BOTH`: Harvests mature crops and automatically replants seeds from your inventory.
 
+### 🎣 Auto Fish
+Automatically catches fish and recasts the line for you.
+- **Trigger**: Holding a fishing rod with an active hook.
+- **Logic**: Automatically reels in when a fish bites and recasts after a 2-second delay.
+- **Options**: `OFF`, `ON`.
+
 ### 📦 Auto Refill
 Ensures you never run out of the item you are currently placing.
 - **Trigger**: Right-clicking to place a block or use an item.

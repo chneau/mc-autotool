@@ -58,6 +58,7 @@ public class Config {
     public EatMode autoEat = EatMode.SMART;
     public SortMode autoSort = SortMode.BOTH;
     public ArmorMode autoArmor = ArmorMode.SMART;
+    public boolean autoFish = true;
     public Strategy autoSwap = Strategy.BEST;
 
     public void resetToDefault() {
