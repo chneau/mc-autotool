@@ -93,6 +93,16 @@ Ensures you never run out of the item you are currently placing.
   - `ON`: Keeps your held stack full by pulling matching items from your main inventory.
   - `SMART`: Only refills the stack when you are down to your very last item.
 
+### 📥 Auto Deposit
+
+Simplifies inventory management by allowing you to quickly move items into containers.
+
+- **Trigger**: A small "**D**" button appears in the top-right corner of supported container screens (Chests, Furnaces, etc.).
+- **Logic**:
+  - **Chests**: Performs a "Smart Quick-Stack," moving only items that already exist in the container.
+  - **Furnaces**: Automatically fills input and fuel slots from your inventory.
+- **Options**: `OFF`, `CHEST`, `FURNACE`, `ALL` (Enabled by default).
+
 ### 🏃 Auto Sprint
 
 Maintains your momentum without you having to hold down the sprint key.
@@ -166,12 +176,12 @@ Displays real-time tracking information for entities and valuable resources on y
   - **Global Limit**: Automatically displays up to the 5 physically closest targets across all enabled categories.
 
 ---
-
-## 📜 Changelog
-
-- New 2026-02-15: Added Auto Target and Auto Step features; updated for Minecraft 26.1
-- New 2026-02-14: Updated for 1.21.1 and added comprehensive Auto features (Eat, Sort, Armor, Fish, etc.)
-- New 2023-10-20: Updated for 1.20
+ 
+ ## 📜 Changelog
+ 
+-- New 2026-02-15: Added Auto Target and Auto Step features; updated for Minecraft 26.1
++- New 2026-02-15: Added Auto Target, Auto Step, and Auto Deposit features; updated for Minecraft 26.1
+ - New 2026-02-14: Updated for 1.21.1 and added comprehensive Auto features (Eat, Sort, Armor, Fish, etc.)- New 2023-10-20: Updated for 1.20
 - New 2023-03-13: Updated for 1.19.3
 - New 2021-11-24: Updated for 1.18
 - New 2021-06-26: Updated for 1.17
