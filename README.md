@@ -69,7 +69,7 @@ Automatically selects the most appropriate tool or weapon from your hotbar when 
 
 Makes harvesting and replanting crops effortless.
 
-- **Trigger**: Looking at a mature crop while holding a tool or seed.
+- **Trigger**: Looking at a mature crop (Wheat, Carrots, Potatoes, Beetroots, Nether Wart) while holding a tool or seed.
 - **Options**:
   - `OFF`: Disable auto-farming.
   - `HARVEST`: Only harvests mature crops.
@@ -79,8 +79,8 @@ Makes harvesting and replanting crops effortless.
 
 Automatically catches fish and recasts the line for you.
 
-- **Trigger**: Holding a fishing rod with an active hook.
-- **Logic**: Automatically reels in when a fish bites and recasts after a 2-second delay.
+- **Trigger**: Holding a fishing rod.
+- **Logic**: Detects bites using game data (`DATA_BITING`) and recasts after a safe delay.
 - **Options**: `OFF`, `ON`.
 
 ### 📦 Auto Refill
@@ -91,7 +91,7 @@ Ensures you never run out of the item you are currently placing.
 - **Options**:
   - `OFF`: Disable auto-refill.
   - `ON`: Keeps your held stack full by pulling matching items from your main inventory.
-  - `SMART`: Only refills the stack when you are down to your very last item.
+  - `SMART`: Only refills the stack when you are down to your last item (count <= 1).
 
 ### 📥 Auto Deposit
 
@@ -132,19 +132,22 @@ Keeps you fed and healthy without manual intervention.
   - `OFF`: Disable auto-eating.
   - `HUNGER`: Eats whenever you are missing any hunger points.
   - `HEALTH`: Only eats when you are injured (to maintain natural regeneration).
-  - `SMART`: Optimal logic that picks the best food for your current hunger and avoids over-eating.
+  - `SMART`: Optimal logic. Eats when hunger is low (<= 14) or when injured to support regeneration.
 
 ### 🧹 Auto Sort
 
 Keeps your inventory and hotbar organized automatically.
 
-- **Trigger**: Opening your inventory screen (default key `E`).
+- **Trigger**: Opening your inventory or a container screen.
 - **Options**:
   - `OFF`: Disable auto-sorting.
   - `HOTBAR`: Only sorts the 9 hotbar slots.
   - `INVENTORY`: Only sorts the main 27 inventory slots.
   - `BOTH`: Sorts the hotbar and inventory independently.
-- **Logic**: Items are grouped by category: Combat → Tools → Food → Blocks → Misc.
+  - `ALL`: Sorts everything, including external containers (Chests, Barrels, etc.).
+- **Logic**:
+  - **Stack Consolidation**: Merges fragmented stacks before sorting.
+  - **Sorting**: Uses an optimized Cycle Sort to minimize network traffic. Items are grouped by category (Combat → Tools → Food → Blocks → Misc).
 
 ### 🛡️ Auto Armor
 
@@ -172,7 +175,7 @@ Displays real-time tracking information for entities and valuable resources on y
 - **Logic**: Track the closest targets from multiple categories simultaneously.
 - **Options**:
   - **Numeric Limits**: Set how many targets to show per category (0-5).
-  - **Categories**: Monsters, Passive Mobs, Players, Diamond Ore, Emerald Ore, Gold Ore, Iron Ore, and Ancient Debris.
+  - **Categories**: Monsters, Passive Mobs, Players, Diamond Ore, Emerald Ore, Gold Ore, Iron Ore, Ancient Debris, Chests, and Spawners.
   - **Global Limit**: Automatically displays up to the 5 physically closest targets across all enabled categories.
 
 ---
