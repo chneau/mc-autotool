@@ -13,6 +13,9 @@ public class AutoEat implements EndTick {
     private long lastActivity = System.currentTimeMillis();
     private int lastSlot = -1;
     private boolean isEating = false;
+    
+    private double lastX, lastY, lastZ;
+    private float lastYaw, lastPitch;
 
     public void register() {
         ClientTickEvents.END_CLIENT_TICK.register(this);
@@ -29,30 +32,34 @@ public class AutoEat implements EndTick {
         var player = client.player;
         if (player == null || !Util.isCurrentPlayer(player)) return;
 
-        // Activity check: Detect any manual input
-        long window = client.getWindow().handle();
-        boolean anyKeyDown = false;
+        // Activity check: Detect manual activity efficiently
+        boolean active = false;
         
-        for (int i = 32; i <= 348; i++) {
-            if (org.lwjgl.glfw.GLFW.glfwGetKey(window, i) == org.lwjgl.glfw.GLFW.GLFW_PRESS) {
-                if (isEating && client.options.keyUse.same(new net.minecraft.client.KeyMapping("", com.mojang.blaze3d.platform.InputConstants.Type.KEYSYM, i, net.minecraft.client.KeyMapping.Category.MISC))) continue;
-                
-                anyKeyDown = true;
-                break;
+        // 1. Check for movement or rotation
+        if (player.getX() != lastX || player.getY() != lastY || player.getZ() != lastZ ||
+            player.getYRot() != lastYaw || player.getXRot() != lastPitch) {
+            active = true;
+        }
+        lastX = player.getX(); lastY = player.getY(); lastZ = player.getZ();
+        lastYaw = player.getYRot(); lastPitch = player.getXRot();
+
+        // 2. Check for common action keys
+        if (!active) {
+            if (client.options.keyAttack.isDown() || 
+                (client.options.keyUse.isDown() && !isEating) || 
+                client.options.keyJump.isDown() || 
+                client.options.keyShift.isDown() || 
+                client.options.keySprint.isDown()) {
+                active = true;
             }
         }
 
-        if (!anyKeyDown) {
-            for (int i = 0; i <= 7; i++) {
-                if (org.lwjgl.glfw.GLFW.glfwGetMouseButton(window, i) == org.lwjgl.glfw.GLFW.GLFW_PRESS) {
-                    if (isEating && client.options.keyUse.same(new net.minecraft.client.KeyMapping("", com.mojang.blaze3d.platform.InputConstants.Type.MOUSE, i, net.minecraft.client.KeyMapping.Category.MISC))) continue;
-                    anyKeyDown = true;
-                    break;
-                }
-            }
+        // 3. Check if any screen is open
+        if (!active && client.screen != null) {
+            active = true;
         }
         
-        if (anyKeyDown) {
+        if (active) {
             lastActivity = System.currentTimeMillis();
             if (isEating) stopEating(client);
             return;

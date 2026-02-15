@@ -83,7 +83,7 @@
   - **Issue**: `scanBlocks` iterates through ~36,000 blocks every 2 seconds on the main thread.
   - **Proposed Fix**: Move to a background thread or use a fragmented scan (few layers per tick).
 
-- [ ] **3. `AutoEat` Input Polling**
+- [x] **3. `AutoEat` Input Polling**
   - **Issue**: Iterates through 300+ keys every tick using `glfwGetKey`.
   - **Proposed Fix**: Only perform the check if movement/look state has changed.
 
