@@ -5,6 +5,7 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents.EndTic
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult.Type;
@@ -15,6 +16,8 @@ import net.minecraft.world.item.component.ItemAttributeModifiers;
 
 public class AutoAttack implements EndTick {
     private long lastAttack = System.currentTimeMillis();
+    private ItemStack lastStack = ItemStack.EMPTY;
+    private long cachedDelay = 0;
 
     public void register() {
         ClientTickEvents.END_CLIENT_TICK.register(this);
@@ -41,11 +44,15 @@ public class AutoAttack implements EndTick {
                 return;
             
             var now = System.currentTimeMillis();
-            var modifiers = itemStackMainHand.getOrDefault(DataComponents.ATTRIBUTE_MODIFIERS, ItemAttributeModifiers.EMPTY);
-            var atkSpd = modifiers.compute(Attributes.ATTACK_SPEED, 4.0, EquipmentSlot.MAINHAND);
-            var delay = (long) (1000.0 / atkSpd);
             
-            if (now - lastAttack < delay)
+            if (!ItemStack.isSameItemSameComponents(itemStackMainHand, lastStack)) {
+                lastStack = itemStackMainHand.copy();
+                var modifiers = itemStackMainHand.getOrDefault(DataComponents.ATTRIBUTE_MODIFIERS, ItemAttributeModifiers.EMPTY);
+                var atkSpd = modifiers.compute(Attributes.ATTACK_SPEED, 4.0, EquipmentSlot.MAINHAND);
+                cachedDelay = (long) (1000.0 / atkSpd);
+            }
+            
+            if (now - lastAttack < cachedDelay)
                 return;
             if (client.gameMode != null) {
                 client.gameMode.attack(player, entity);

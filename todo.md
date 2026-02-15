@@ -71,7 +71,7 @@
 
 ## Optimisations
 
-- [ ] **7. `AutoAttack` Attribute Caching**
+- [x] **7. `AutoAttack` Attribute Caching**
   - **Issue**: Re-calculates `ATTACK_SPEED` attribute and modifiers every tick.
   - **Proposed Fix**: Cache the calculated attack delay and only update it when the item in the main hand changes.
 
