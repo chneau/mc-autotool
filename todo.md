@@ -44,6 +44,6 @@
     - [ ] Add meaningful debug logging (using the mod's logger) for module actions.
 
 ## UI/UX
-- [ ] **Config Screen Improvements**
-    - [ ] Better organization of settings (categories).
-    - [ ] Tooltips for different modes to explain what they do.
+- [x] **Config Screen Improvements**
+    - [ ] Better organization of settings (categories) - *Note: OptionsList does not support headers easily in this version.*
+    - [x] Tooltips for different modes to explain what they do.

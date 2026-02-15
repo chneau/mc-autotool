@@ -21,22 +21,22 @@ public class TargetConfigScreen extends BaseConfigScreen {
         Config config = ConfigManager.getConfig();
 
         this.list.addSmall(
-            createIntOption("Target Monsters", config.targetMonster, v -> config.targetMonster = v),
-            createIntOption("Target Passives", config.targetPassive, v -> config.targetPassive = v)
+            createIntOption("Target Monsters", "Max number of monsters to show on HUD.", config.targetMonster, v -> config.targetMonster = v),
+            createIntOption("Target Passives", "Max number of passive mobs to show on HUD.", config.targetPassive, v -> config.targetPassive = v)
         );
         this.list.addSmall(
-            createIntOption("Target Players", config.targetPlayer, v -> config.targetPlayer = v),
-            createIntOption("Target Diamond", config.targetDiamond, v -> config.targetDiamond = v)
+            createIntOption("Target Players", "Max number of players to show on HUD.", config.targetPlayer, v -> config.targetPlayer = v),
+            createIntOption("Target Diamond", "Max number of diamond ores to show on HUD.", config.targetDiamond, v -> config.targetDiamond = v)
         );
         this.list.addSmall(
-            createIntOption("Target Emerald", config.targetEmerald, v -> config.targetEmerald = v),
-            createIntOption("Target Gold", config.targetGold, v -> config.targetGold = v)
+            createIntOption("Target Emerald", "Max number of emerald ores to show on HUD.", config.targetEmerald, v -> config.targetEmerald = v),
+            createIntOption("Target Gold", "Max number of gold ores to show on HUD.", config.targetGold, v -> config.targetGold = v)
         );
         this.list.addSmall(
-            createIntOption("Target Iron", config.targetIron, v -> config.targetIron = v),
-            createIntOption("Target Debris", config.targetDebris, v -> config.targetDebris = v)
+            createIntOption("Target Iron", "Max number of iron ores to show on HUD.", config.targetIron, v -> config.targetIron = v),
+            createIntOption("Target Debris", "Max number of ancient debris to show on HUD.", config.targetDebris, v -> config.targetDebris = v)
         );
-        this.list.addBig(createEnumOption("HUD Position", Config.HudPosition.values(), config.targetHudPosition, v -> config.targetHudPosition = v));
+        this.list.addBig(createEnumOption("HUD Position", "The corner of the screen where the target list is shown.", Config.HudPosition.values(), config.targetHudPosition, v -> config.targetHudPosition = v));
     }
 
     @Override

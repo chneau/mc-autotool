@@ -18,9 +18,14 @@ public abstract class BaseConfigScreen extends OptionsSubScreen {
     }
 
     protected <T extends Enum<T>> OptionInstance<T> createEnumOption(String name, T[] values, T currentValue, Consumer<T> setter) {
+        return createEnumOption(name, null, values, currentValue, setter);
+    }
+
+    protected <T extends Enum<T>> OptionInstance<T> createEnumOption(String name, String tooltip, T[] values, T currentValue, Consumer<T> setter) {
+        OptionInstance.TooltipSupplier<T> tooltipSupplier = tooltip == null ? OptionInstance.noTooltip() : OptionInstance.cachedConstantTooltip(Component.literal(tooltip));
         return new OptionInstance<>(
                 name,
-                OptionInstance.noTooltip(),
+                tooltipSupplier,
                 (caption, value) -> Component.literal(value.name().replace('_', ' ')),
                 new OptionInstance.Enum<>(Arrays.asList(values), Codec.INT.xmap(i -> values[i], Enum::ordinal)),
                 currentValue,
@@ -29,9 +34,14 @@ public abstract class BaseConfigScreen extends OptionsSubScreen {
     }
 
     protected OptionInstance<Integer> createIntOption(String key, int currentValue, Consumer<Integer> setter) {
+        return createIntOption(key, null, currentValue, setter);
+    }
+
+    protected OptionInstance<Integer> createIntOption(String key, String tooltip, int currentValue, Consumer<Integer> setter) {
+        OptionInstance.TooltipSupplier<Integer> tooltipSupplier = tooltip == null ? OptionInstance.noTooltip() : OptionInstance.cachedConstantTooltip(Component.literal(tooltip));
         return new OptionInstance<>(
             key,
-            OptionInstance.noTooltip(),
+            tooltipSupplier,
             (caption, value) -> CommonComponents.optionNameValue(caption, Component.literal(value == 0 ? "Off" : value.toString())),
             new OptionInstance.IntRange(0, 5),
             Codec.INT,

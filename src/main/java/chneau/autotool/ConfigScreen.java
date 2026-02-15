@@ -25,30 +25,41 @@ public class ConfigScreen extends BaseConfigScreen {
         Config config = ConfigManager.getConfig();
 
         this.list.addSmall(
-            createEnumOption("Auto Attack", Config.AttackMode.values(), config.autoAttack, v -> config.autoAttack = v),
-            createEnumOption("Auto Farm", Config.FarmMode.values(), config.autoFarm, v -> config.autoFarm = v)
+            createEnumOption("Auto Attack", "Attack entities you look at using cooldown. SWORD mode only with swords.", Config.AttackMode.values(), config.autoAttack, v -> config.autoAttack = v),
+            createEnumOption("Auto Farm", "Harvest mature crops in a 3x3 area. BOTH mode also replants.", Config.FarmMode.values(), config.autoFarm, v -> config.autoFarm = v)
         );
         this.list.addSmall(
-            createEnumOption("Auto Refill", Config.RefillMode.values(), config.autoRefill, v -> config.autoRefill = v),
-            createEnumOption("Auto Sprint", Config.SprintMode.values(), config.autoSprint, v -> config.autoSprint = v)
+            createEnumOption("Auto Fish", "Automatically reel in and recast when a fish bites.", Config.FishMode.values(), config.autoFish, v -> config.autoFish = v),
+            createEnumOption("Auto Eat", "Automatically eat when hungry/injured and inactive. SMART optimizes food usage.", Config.EatMode.values(), config.autoEat, v -> config.autoEat = v)
+        );
+
+        this.list.addSmall(
+            createEnumOption("Auto Swap", "Swap to the best hotbar tool or weapon when attacking.", Config.Strategy.values(), config.autoSwap, v -> config.autoSwap = v),
+            createEnumOption("Auto Refill", "Refill held stack from inventory. SMART only refills last item.", Config.RefillMode.values(), config.autoRefill, v -> config.autoRefill = v)
         );
         this.list.addSmall(
-            createEnumOption("Auto Eat", Config.EatMode.values(), config.autoEat, v -> config.autoEat = v),
-            createEnumOption("Auto Sort", Config.SortMode.values(), config.autoSort, v -> config.autoSort = v)
+            createEnumOption("Auto Sort", "Sort hotbar and inventory when the inventory screen is opened.", Config.SortMode.values(), config.autoSort, v -> config.autoSort = v),
+            createEnumOption("Auto Armor", "Equip best armor from inventory. SMART mode considers enchantments.", Config.ArmorMode.values(), config.autoArmor, v -> config.autoArmor = v)
         );
         this.list.addSmall(
-            createEnumOption("Auto Armor", Config.ArmorMode.values(), config.autoArmor, v -> config.autoArmor = v),
-            createEnumOption("Auto Fish", Config.FishMode.values(), config.autoFish, v -> config.autoFish = v)
+            createEnumOption("Auto Deposit", "Add a 'D' button to containers to deposit items already in them.", Config.DepositMode.values(), config.autoDeposit, v -> config.autoDeposit = v),
+            createEnumOption("Auto Sprint", "Toggle sprinting. HUNGER_50 requires 50% hunger (10 points).", Config.SprintMode.values(), config.autoSprint, v -> config.autoSprint = v)
         );
+
         this.list.addSmall(
-            createEnumOption("Auto Deposit", Config.DepositMode.values(), config.autoDeposit, v -> config.autoDeposit = v),
-            createEnumOption("Auto Swap", Config.Strategy.values(), config.autoSwap, v -> config.autoSwap = v)
+            createEnumOption("Auto Step", "Increase step height to 1 block, allowing you to walk up full blocks.", Config.StepMode.values(), config.autoStep, v -> config.autoStep = v),
+            null
         );
-        this.list.addSmall(
-            createEnumOption("Auto Step", Config.StepMode.values(), config.autoStep, v -> config.autoStep = v).createButton(this.options),
-            Button.builder(Component.literal("Targeting Settings..."), (button) -> {
-                this.minecraft.setScreen(new TargetConfigScreen(this, this.options));
-            }).build()
+        
+        this.list.addBig(
+            new OptionInstance<>(
+                "Targeting Settings...",
+                OptionInstance.noTooltip(),
+                (caption, value) -> Component.literal("Targeting Settings..."),
+                OptionInstance.BOOLEAN_VALUES,
+                true,
+                (v) -> this.minecraft.setScreen(new TargetConfigScreen(this, this.options))
+            )
         );
     }
 
