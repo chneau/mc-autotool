@@ -44,3 +44,31 @@
 - [ ] **23. `AutoReconnect`**
   - Automatically attempts to reconnect to a server if you are disconnected.
   - **Settings**: Customizable delay and max attempts.
+
+- [ ] **24. `AutoWalk`**
+  - Keeps the player walking forward without holding the key.
+  - **Logic**: A simple toggle that simulates the "W" key being pressed.
+
+- [ ] **25. `AutoMine`**
+  - Automatically holds down the attack/mine key while looking at a breakable block.
+  - **Logic**: Use the current `AutoSwap` logic to pick the tool, then keep mining until the block is gone.
+
+- [ ] **26. `AutoClicker`**
+  - Automatically clicks at a set interval (CPS).
+  - **Settings**: Adjustable clicks per second. Works for both left and right click.
+
+- [ ] **27. `AutoBridge`**
+  - Automatically places a block under the player's feet when walking near an edge.
+  - **Logic**: Checks if the player is about to fall and if they are holding a placeable block.
+
+- [ ] **28. `AutoInventory` (Quick Deposit)**
+  - Automatically moves items from your inventory into a chest if the chest already contains those items.
+  - **Trigger**: Interacting with a chest while holding a modifier key (e.g., Shift).
+
+- [ ] **29. `AutoMount`**
+  - Automatically mounts a nearby Horse, Boat, or Minecart if empty.
+  - **Logic**: Triggers when walking into the entity's hitbox.
+
+- [ ] **30. `AutoLeave`**
+  - Automatically disconnects from a server if health drops below a critical threshold.
+  - **Settings**: Health percentage threshold (e.g., 10% or 2 hearts).
