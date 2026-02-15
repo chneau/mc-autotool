@@ -18,6 +18,7 @@ public class Main implements ClientModInitializer {
     public void onInitializeClient() {
         LOGGER.info("Initializing mc-autotool...");
         ConfigManager.load();
+        Throttler.register();
         (new AutoSwap()).register();
         (new AutoRefill()).register();
         (new AutoFarm()).register();

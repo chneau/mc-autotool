@@ -95,6 +95,6 @@
   - **Issue**: Performs full area scan every tick even if looking at the same block.
   - **Proposed Fix**: Only trigger area scan if the targeted `BlockPos` has changed.
 
-- [ ] **6. Centralized Tick Throttling**
+- [x] **6. Centralized Tick Throttling**
   - **Issue**: Many modules run logic every 50ms (every tick) unnecessarily.
   - **Proposed Fix**: Implement a `Throttler` utility to spread heavy tasks across different ticks.

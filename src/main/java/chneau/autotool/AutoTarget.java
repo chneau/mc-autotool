@@ -27,7 +27,6 @@ public class AutoTarget {
     private final Map<String, List<Target>> categoryBlockTargets = new HashMap<>();
     private final Map<String, List<Target>> categoryEntityTargets = new HashMap<>();
     private boolean isScanning = false;
-    private int entityScanDelay = 0;
 
     public void register() {
         HudRenderCallback.EVENT.register(this::onHudRender);
@@ -41,8 +40,7 @@ public class AutoTarget {
         List<Target> allPotentialTargets = new ArrayList<>();
 
         // 1. Entities (Optimized: only scan every 10 frames)
-        if (entityScanDelay-- <= 0) {
-            entityScanDelay = 10;
+        if (Throttler.shouldRun(this, 10)) {
             categoryEntityTargets.clear();
             for (var entity : client.level.entitiesForRendering()) {
                 if (!(entity instanceof LivingEntity living) || !living.isAlive() || living == client.player) {

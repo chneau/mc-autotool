@@ -12,7 +12,6 @@ import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.item.equipment.Equippable;
 
 public class AutoArmor implements EndTick {
-    private long lastUpdate = 0;
     private int lastInventoryChangeCount = -1;
 
     public void register() {
@@ -28,12 +27,12 @@ public class AutoArmor implements EndTick {
         if (player == null || client.gameMode == null) return;
 
         int currentChangeCount = player.getInventory().getTimesChanged();
-        long now = System.currentTimeMillis();
 
-        // If inventory hasn't changed and it's been less than 1 second, skip.
-        // We still check once a second just in case some external factors changed item properties without incrementing the counter.
-        if (currentChangeCount == lastInventoryChangeCount && now - lastUpdate < 1000) {
-            return;
+        // If inventory hasn't changed, only check once every 20 ticks (1 second)
+        if (currentChangeCount == lastInventoryChangeCount) {
+            if (!Throttler.shouldRun(this, 20)) {
+                return;
+            }
         }
         
         lastInventoryChangeCount = currentChangeCount;
@@ -69,7 +68,6 @@ public class AutoArmor implements EndTick {
 
             if (bestSlot != -1) {
                 equip(client, menu.containerId, bestSlot, menuIdx);
-                lastUpdate = now;
                 return; // Only one swap per tick
             }
         }
