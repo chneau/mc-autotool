@@ -41,6 +41,7 @@ jobs:
     permissions:
       contents: write
     strategy:
+      fail-fast: false
       matrix:
         version: ${{ fromJson(needs.prepare.outputs.matrix) }}
     steps:
