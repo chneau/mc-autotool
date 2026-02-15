@@ -6,6 +6,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.world.inventory.AbstractFurnaceMenu;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.ArrayList;
@@ -28,6 +29,10 @@ public class AutoSort implements EndTick {
 
 		boolean isInventoryOpen = client.screen instanceof AbstractContainerScreen;
 		if (isInventoryOpen && client.screen != lastScreen) {
+			if (client.player != null && client.player.containerMenu instanceof AbstractFurnaceMenu) {
+				lastScreen = client.screen;
+				return;
+			}
 			sortInventory(client, mode);
 		}
 		lastScreen = client.screen;

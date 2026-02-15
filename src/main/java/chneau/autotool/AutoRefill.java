@@ -7,6 +7,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.AbstractFurnaceBlock;
 
 public class AutoRefill implements UseBlockCallback {
 
@@ -23,6 +24,11 @@ public class AutoRefill implements UseBlockCallback {
 			return InteractionResult.PASS;
 		if (hand != InteractionHand.MAIN_HAND)
 			return InteractionResult.PASS;
+
+		var state = world.getBlockState(bhr.getBlockPos());
+		if (state.getBlock() instanceof AbstractFurnaceBlock) {
+			return InteractionResult.PASS;
+		}
 
 		var inventory = player.getInventory();
 		var selectedSlot = inventory.getSelectedSlot();
