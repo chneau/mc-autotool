@@ -79,7 +79,7 @@
   - **Issue**: Loops through `entitiesForRendering()` every HUD render frame.
   - **Proposed Fix**: Cache the closest entities once every 10-20 ticks instead of every frame.
 
-- [ ] **2. `AutoTarget` Block Scanning**
+- [x] **2. `AutoTarget` Block Scanning**
   - **Issue**: `scanBlocks` iterates through ~36,000 blocks every 2 seconds on the main thread.
   - **Proposed Fix**: Move to a background thread or use a fragmented scan (few layers per tick).
 

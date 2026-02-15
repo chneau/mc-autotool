@@ -18,12 +18,14 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 public class AutoTarget {
     private static final int BLOCK_SCAN_RADIUS = 16;
     private long lastBlockScan = 0;
     private final Map<String, List<Target>> categoryBlockTargets = new HashMap<>();
+    private boolean isScanning = false;
 
     public void register() {
         HudRenderCallback.EVENT.register(this::onHudRender);
@@ -36,7 +38,7 @@ public class AutoTarget {
         Config config = ConfigManager.getConfig();
         List<Target> allPotentialTargets = new ArrayList<>();
 
-        // 1. Entities
+        // 1. Entities (High frequency, low cost)
         Map<String, List<Target>> entityCategories = new HashMap<>();
         for (var entity : client.level.entitiesForRendering()) {
             if (!(entity instanceof LivingEntity living) || !living.isAlive() || living == client.player) {
@@ -53,23 +55,63 @@ public class AutoTarget {
             }
         }
 
-        // Limit entities per category
         addLimitedTargets(allPotentialTargets, entityCategories.get("Monster"), config.targetMonster, client.player.position());
         addLimitedTargets(allPotentialTargets, entityCategories.get("Player"), config.targetPlayer, client.player.position());
         addLimitedTargets(allPotentialTargets, entityCategories.get("Passive"), config.targetPassive, client.player.position());
 
-        // 2. Blocks
+        // 2. Blocks (Offloaded to background)
         long now = System.currentTimeMillis();
-        if (now - lastBlockScan > 2000) {
+        if (now - lastBlockScan > 2000 && !isScanning) {
             lastBlockScan = now;
-            scanBlocks(client, config);
+            isScanning = true;
+            
+            // Capture needed data for async scan
+            BlockPos playerPos = client.player.blockPosition();
+            var level = client.level;
+            
+            CompletableFuture.runAsync(() -> {
+                Map<String, List<Target>> results = new HashMap<>();
+                for (int x = -BLOCK_SCAN_RADIUS; x <= BLOCK_SCAN_RADIUS; x++) {
+                    for (int y = -BLOCK_SCAN_RADIUS; y <= BLOCK_SCAN_RADIUS; y++) {
+                        for (int z = -BLOCK_SCAN_RADIUS; z <= BLOCK_SCAN_RADIUS; z++) {
+                            BlockPos pos = playerPos.offset(x, y, z);
+                            BlockState state = level.getBlockState(pos);
+                            
+                            String category = null;
+                            String name = null;
+                            if (config.targetDiamond > 0 && (state.is(Blocks.DIAMOND_ORE) || state.is(Blocks.DEEPSLATE_DIAMOND_ORE))) {
+                                category = "Diamond"; name = "Diamond Ore";
+                            } else if (config.targetEmerald > 0 && (state.is(Blocks.EMERALD_ORE) || state.is(Blocks.DEEPSLATE_EMERALD_ORE))) {
+                                category = "Emerald"; name = "Emerald Ore";
+                            } else if (config.targetGold > 0 && (state.is(Blocks.GOLD_ORE) || state.is(Blocks.DEEPSLATE_GOLD_ORE) || state.is(Blocks.NETHER_GOLD_ORE))) {
+                                category = "Gold"; name = "Gold Ore";
+                            } else if (config.targetIron > 0 && (state.is(Blocks.IRON_ORE) || state.is(Blocks.DEEPSLATE_IRON_ORE))) {
+                                category = "Iron"; name = "Iron Ore";
+                            } else if (config.targetDebris > 0 && state.is(Blocks.ANCIENT_DEBRIS)) {
+                                category = "Debris"; name = "Ancient Debris";
+                            }
+
+                            if (category != null) {
+                                results.computeIfAbsent(category, k -> new ArrayList<>()).add(new Target(name, Vec3.atCenterOf(pos)));
+                            }
+                        }
+                    }
+                }
+                synchronized (categoryBlockTargets) {
+                    categoryBlockTargets.clear();
+                    categoryBlockTargets.putAll(results);
+                }
+                isScanning = false;
+            });
         }
         
-        addLimitedTargets(allPotentialTargets, categoryBlockTargets.get("Diamond"), config.targetDiamond, client.player.position());
-        addLimitedTargets(allPotentialTargets, categoryBlockTargets.get("Emerald"), config.targetEmerald, client.player.position());
-        addLimitedTargets(allPotentialTargets, categoryBlockTargets.get("Gold"), config.targetGold, client.player.position());
-        addLimitedTargets(allPotentialTargets, categoryBlockTargets.get("Iron"), config.targetIron, client.player.position());
-        addLimitedTargets(allPotentialTargets, categoryBlockTargets.get("Debris"), config.targetDebris, client.player.position());
+        synchronized (categoryBlockTargets) {
+            addLimitedTargets(allPotentialTargets, categoryBlockTargets.get("Diamond"), config.targetDiamond, client.player.position());
+            addLimitedTargets(allPotentialTargets, categoryBlockTargets.get("Emerald"), config.targetEmerald, client.player.position());
+            addLimitedTargets(allPotentialTargets, categoryBlockTargets.get("Gold"), config.targetGold, client.player.position());
+            addLimitedTargets(allPotentialTargets, categoryBlockTargets.get("Iron"), config.targetIron, client.player.position());
+            addLimitedTargets(allPotentialTargets, categoryBlockTargets.get("Debris"), config.targetDebris, client.player.position());
+        }
 
         // Final sort and global limit (5)
         allPotentialTargets.sort(Comparator.comparingDouble(t -> client.player.distanceToSqr(t.pos)));
@@ -95,40 +137,9 @@ public class AutoTarget {
 
     private void addLimitedTargets(List<Target> allPotentialTargets, List<Target> categoryList, int limit, Vec3 playerPos) {
         if (categoryList == null || limit <= 0) return;
-        categoryList.sort(Comparator.comparingDouble(t -> t.pos.distanceToSqr(playerPos)));
-        allPotentialTargets.addAll(categoryList.stream().limit(limit).collect(Collectors.toList()));
-    }
-
-    private void scanBlocks(Minecraft client, Config config) {
-        categoryBlockTargets.clear();
-        BlockPos playerPos = client.player.blockPosition();
-        
-        for (int x = -BLOCK_SCAN_RADIUS; x <= BLOCK_SCAN_RADIUS; x++) {
-            for (int y = -BLOCK_SCAN_RADIUS; y <= BLOCK_SCAN_RADIUS; y++) {
-                for (int z = -BLOCK_SCAN_RADIUS; z <= BLOCK_SCAN_RADIUS; z++) {
-                    BlockPos pos = playerPos.offset(x, y, z);
-                    BlockState state = client.level.getBlockState(pos);
-                    
-                    String category = null;
-                    String name = null;
-                    if (config.targetDiamond > 0 && (state.is(Blocks.DIAMOND_ORE) || state.is(Blocks.DEEPSLATE_DIAMOND_ORE))) {
-                        category = "Diamond"; name = "Diamond Ore";
-                    } else if (config.targetEmerald > 0 && (state.is(Blocks.EMERALD_ORE) || state.is(Blocks.DEEPSLATE_EMERALD_ORE))) {
-                        category = "Emerald"; name = "Emerald Ore";
-                    } else if (config.targetGold > 0 && (state.is(Blocks.GOLD_ORE) || state.is(Blocks.DEEPSLATE_GOLD_ORE) || state.is(Blocks.NETHER_GOLD_ORE))) {
-                        category = "Gold"; name = "Gold Ore";
-                    } else if (config.targetIron > 0 && (state.is(Blocks.IRON_ORE) || state.is(Blocks.DEEPSLATE_IRON_ORE))) {
-                        category = "Iron"; name = "Iron Ore";
-                    } else if (config.targetDebris > 0 && state.is(Blocks.ANCIENT_DEBRIS)) {
-                        category = "Debris"; name = "Ancient Debris";
-                    }
-
-                    if (category != null) {
-                        categoryBlockTargets.computeIfAbsent(category, k -> new ArrayList<>()).add(new Target(name, Vec3.atCenterOf(pos)));
-                    }
-                }
-            }
-        }
+        List<Target> sorted = new ArrayList<>(categoryList); // Defensive copy
+        sorted.sort(Comparator.comparingDouble(t -> t.pos.distanceToSqr(playerPos)));
+        allPotentialTargets.addAll(sorted.stream().limit(limit).collect(Collectors.toList()));
     }
 
     private void drawInfo(GuiGraphics drawContext, Minecraft client, Target target, DeltaTracker tickCounter, int y, Config.HudPosition pos, int screenWidth) {
