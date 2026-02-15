@@ -146,6 +146,13 @@ Automatically equips the best protection available in your inventory.
   - `BETTER`: Equips armor with higher raw defense and toughness values.
   - `SMART`: Considers both raw stats and enchantment levels (Protection, etc.).
 
+### 🪜 Auto Step
+
+Allows you to walk up 1-block high obstacles without jumping.
+
+- **Function**: Automatically increases your step height to 1.0 block.
+- **Options**: `OFF`, `ON` (Enabled by default).
+
 ### 🎯 Auto Target
 
 Displays real-time tracking information for entities and valuable resources on your HUD.
@@ -162,7 +169,7 @@ Displays real-time tracking information for entities and valuable resources on y
 
 ## 📜 Changelog
 
-- New 2026-02-15: Added Auto Target feature and updated for Minecraft 26.1
+- New 2026-02-15: Added Auto Target and Auto Step features; updated for Minecraft 26.1
 - New 2026-02-14: Updated for 1.21.1 and added comprehensive Auto features (Eat, Sort, Armor, Fish, etc.)
 - New 2023-10-20: Updated for 1.20
 - New 2023-03-13: Updated for 1.19.3
