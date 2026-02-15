@@ -27,7 +27,7 @@ jobs:
       - name: Build
         run: |
           curl https://mise.run | sh
-          mise exec java@${{ (github.event.inputs.version == '1.20' && '17') || '25' }} -- ./gradlew build
+          mise exec java@${{ (github.event.inputs.version <= '1.20' && '17') || '25' }} -- ./gradlew build
           mv build/libs/$(ls build/libs/ | head -n 1) build/libs/autotool.jar
           echo "JAR_PATH=build/libs/autotool.jar" >> $GITHUB_ENV
       - name: Upload Release
