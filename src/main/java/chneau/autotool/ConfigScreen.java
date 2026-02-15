@@ -32,6 +32,7 @@ public class ConfigScreen extends OptionsSubScreen {
                 this.list.addBig(createEnumOption("Auto Armor", Config.ArmorMode.values(), config.autoArmor, v -> config.autoArmor = v));
         
                 this.list.addBig(OptionInstance.createBoolean("Auto Fish", OptionInstance.noTooltip(), config.autoFish, v -> config.autoFish = v));
+                this.list.addBig(createEnumOption("Auto Target", Config.TargetMode.values(), config.autoTarget, v -> config.autoTarget = v));
         
                 this.list.addBig(createEnumOption("Auto Swap", Config.Strategy.values(), config.autoSwap, v -> config.autoSwap = v));
     }

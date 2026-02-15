@@ -51,6 +51,12 @@ public class Config {
         SMART   // Consider enchantments alongside armor value
     }
 
+    public enum TargetMode {
+        OFF,
+        MONSTER,
+        CLOSEST
+    }
+
     public AttackMode autoAttack = AttackMode.SWORD;
     public FarmMode autoFarm = FarmMode.BOTH;
     public RefillMode autoRefill = RefillMode.ON;
@@ -59,6 +65,7 @@ public class Config {
     public SortMode autoSort = SortMode.BOTH;
     public ArmorMode autoArmor = ArmorMode.SMART;
     public boolean autoFish = true;
+    public TargetMode autoTarget = TargetMode.MONSTER;
     public Strategy autoSwap = Strategy.BEST;
 
     public void resetToDefault() {
@@ -69,6 +76,8 @@ public class Config {
         this.autoEat = EatMode.SMART;
         this.autoSort = SortMode.BOTH;
         this.autoArmor = ArmorMode.SMART;
+        this.autoFish = true;
+        this.autoTarget = TargetMode.MONSTER;
         this.autoSwap = Strategy.BEST;
     }
 }
