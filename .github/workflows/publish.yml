@@ -46,10 +46,6 @@ jobs:
         uses: actions/checkout@v6
         with:
           ref: ${{ matrix.version }}
-      - name: Set swap space
-        uses: pierotofy/set-swap-space@master
-        with:
-          swap-size-gb: 10
       - name: Build
         run: |
           curl https://mise.run | sh
