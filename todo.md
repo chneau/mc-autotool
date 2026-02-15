@@ -97,7 +97,7 @@
   - **Goal**: Create a base class or interface for all "Auto*" modules.
   - **Benefit**: Simplifies `Main.java` initialization and ensures consistent registration logic across all features.
 
-- [ ] **13. Unified Inventory Utility**
+- [x] **13. Unified Inventory Utility**
   - **Goal**: Extract common inventory operations (finding items, moving stacks, clicking slots) from `AutoArmor`, `AutoEat`, `AutoRefill`, `AutoSort`, and `AutoDeposit` into `Util.java`.
   - **Benefit**: Removes significant code duplication and makes inventory-heavy modules much shorter and easier to read.
 

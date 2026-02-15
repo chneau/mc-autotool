@@ -109,13 +109,7 @@ public class AutoDeposit {
                 continue;
             }
 
-            quickMove(client, menu.containerId, slotId);
-        }
-    }
-
-    private void quickMove(Minecraft client, int containerId, int slotId) {
-        if (client.gameMode != null && client.player != null) {
-            client.gameMode.handleContainerInput(containerId, slotId, 0, ContainerInput.QUICK_MOVE, client.player);
+            Util.quickMove(client, menu.containerId, slotId);
         }
     }
 }

@@ -102,11 +102,11 @@ public class AutoArmor implements EndTick {
 
     private void equip(Minecraft client, int containerId, int inventorySlot, int armorSlot) {
         if (client.player.inventoryMenu.getSlot(armorSlot).getItem().isEmpty()) {
-            client.gameMode.handleContainerInput(containerId, inventorySlot, 0, ContainerInput.QUICK_MOVE, client.player);
+            Util.quickMove(client, containerId, inventorySlot);
         } else {
-            client.gameMode.handleContainerInput(containerId, inventorySlot, 0, ContainerInput.PICKUP, client.player);
-            client.gameMode.handleContainerInput(containerId, armorSlot, 0, ContainerInput.PICKUP, client.player);
-            client.gameMode.handleContainerInput(containerId, inventorySlot, 0, ContainerInput.PICKUP, client.player);
+            Util.pickup(client, containerId, inventorySlot);
+            Util.pickup(client, containerId, armorSlot);
+            Util.pickup(client, containerId, inventorySlot);
         }
     }
 }

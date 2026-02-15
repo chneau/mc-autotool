@@ -37,7 +37,7 @@ public class AutoRefill implements UseBlockCallback {
             if (i == selectedSlot) continue;
             
             var candidate = inventory.getItem(i);
-            if (!candidate.isEmpty() && ItemStack.isSameItemSameComponents(itemStack, candidate)) {
+            if (!candidate.isEmpty() && Util.areItemsEqual(itemStack, candidate)) {
                 inventory.setItem(selectedSlot, candidate.copy());
                 inventory.setItem(i, ItemStack.EMPTY);
                 break;

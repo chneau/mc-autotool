@@ -65,7 +65,7 @@ public class AutoSort implements EndTick {
             if (isEqual(currentI, goalI)) continue;
 
             // Start a cycle
-            click(client, menu.containerId, slotI, ContainerInput.PICKUP);
+            Util.pickup(client, menu.containerId, slotI);
             
             int currentHoleIdx = i;
             while (true) {
@@ -86,11 +86,11 @@ public class AutoSort implements EndTick {
 
                 if (targetIdx == -1) {
                     // Should not happen, but as a fallback, put it in the current hole
-                    click(client, menu.containerId, start + currentHoleIdx, ContainerInput.PICKUP);
+                    Util.pickup(client, menu.containerId, start + currentHoleIdx);
                     break;
                 }
 
-                click(client, menu.containerId, start + targetIdx, ContainerInput.PICKUP);
+                Util.pickup(client, menu.containerId, start + targetIdx);
                 if (targetIdx == i) break; // Cycle complete
                 currentHoleIdx = targetIdx;
             }
@@ -99,7 +99,7 @@ public class AutoSort implements EndTick {
 
     private boolean isEqual(ItemStack a, ItemStack b) {
         if (a.isEmpty() || b.isEmpty()) return a.isEmpty() == b.isEmpty();
-        return ItemStack.isSameItemSameComponents(a, b) && a.getCount() == b.getCount();
+        return Util.areItemsEqual(a, b) && a.getCount() == b.getCount();
     }
 
     private int compare(ItemStack a, ItemStack b) {
@@ -125,9 +125,5 @@ public class AutoSort implements EndTick {
         if (stack.has(net.minecraft.core.component.DataComponents.FOOD)) return 6;
         if (stack.getItem() instanceof BlockItem) return 7;
         return 8;
-    }
-
-    private void click(Minecraft client, int containerId, int slotId, ContainerInput type) {
-        client.gameMode.handleContainerInput(containerId, slotId, 0, type, client.player);
     }
 }

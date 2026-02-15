@@ -38,4 +38,22 @@ public class Util {
             return false;
         return player.equals(other);
     }
+
+    public static void click(Minecraft client, int containerId, int slotId, int button, net.minecraft.world.inventory.ContainerInput type) {
+        if (client.gameMode != null && client.player != null) {
+            client.gameMode.handleContainerInput(containerId, slotId, button, type, client.player);
+        }
+    }
+
+    public static void quickMove(Minecraft client, int containerId, int slotId) {
+        click(client, containerId, slotId, 0, net.minecraft.world.inventory.ContainerInput.QUICK_MOVE);
+    }
+
+    public static void pickup(Minecraft client, int containerId, int slotId) {
+        click(client, containerId, slotId, 0, net.minecraft.world.inventory.ContainerInput.PICKUP);
+    }
+
+    public static boolean areItemsEqual(net.minecraft.world.item.ItemStack a, net.minecraft.world.item.ItemStack b) {
+        return net.minecraft.world.item.ItemStack.isSameItemSameComponents(a, b);
+    }
 }
