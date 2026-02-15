@@ -90,3 +90,21 @@
 - [x] **11. `AutoTarget` Threading Refinement**
   - **Issue**: Uses `synchronized` blocks which can cause minor contention between the background scan and the render thread.
   - **Proposed Fix**: Use `AtomicReference` or a `volatile` result object to swap the scan results atomically without locking.
+
+## Refactorings
+
+- [ ] **12. Modularize Registry Pattern**
+  - **Goal**: Create a base class or interface for all "Auto*" modules.
+  - **Benefit**: Simplifies `Main.java` initialization and ensures consistent registration logic across all features.
+
+- [ ] **13. Unified Inventory Utility**
+  - **Goal**: Extract common inventory operations (finding items, moving stacks, clicking slots) from `AutoArmor`, `AutoEat`, `AutoRefill`, `AutoSort`, and `AutoDeposit` into `Util.java`.
+  - **Benefit**: Removes significant code duplication and makes inventory-heavy modules much shorter and easier to read.
+
+- [ ] **14. Abstract Configuration Screen**
+  - **Goal**: Create a helper class or base class for generating configuration screens.
+  - **Benefit**: Reduces the boilerplate code needed in `ConfigScreen.java` and `TargetConfigScreen.java` for creating options and buttons.
+
+- [ ] **15. Target Logic Extraction**
+  - **Goal**: Move the entity/block filtering logic from `AutoTarget` into a dedicated `Scanner` utility.
+  - **Benefit**: Allows other modules (like `AutoAttack` or a future `AutoMine`) to reuse the high-performance scanning logic without duplication.
