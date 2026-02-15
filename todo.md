@@ -75,7 +75,7 @@
 
 ## Optimisations
 
-- [ ] **1. `AutoTarget` Entity Scanning**
+- [x] **1. `AutoTarget` Entity Scanning**
   - **Issue**: Loops through `entitiesForRendering()` every HUD render frame.
   - **Proposed Fix**: Cache the closest entities once every 10-20 ticks instead of every frame.
 

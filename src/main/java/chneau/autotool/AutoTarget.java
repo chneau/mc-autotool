@@ -25,7 +25,9 @@ public class AutoTarget {
     private static final int BLOCK_SCAN_RADIUS = 16;
     private long lastBlockScan = 0;
     private final Map<String, List<Target>> categoryBlockTargets = new HashMap<>();
+    private final Map<String, List<Target>> categoryEntityTargets = new HashMap<>();
     private boolean isScanning = false;
+    private int entityScanDelay = 0;
 
     public void register() {
         HudRenderCallback.EVENT.register(this::onHudRender);
@@ -38,26 +40,29 @@ public class AutoTarget {
         Config config = ConfigManager.getConfig();
         List<Target> allPotentialTargets = new ArrayList<>();
 
-        // 1. Entities (High frequency, low cost)
-        Map<String, List<Target>> entityCategories = new HashMap<>();
-        for (var entity : client.level.entitiesForRendering()) {
-            if (!(entity instanceof LivingEntity living) || !living.isAlive() || living == client.player) {
-                continue;
-            }
+        // 1. Entities (Optimized: only scan every 10 frames)
+        if (entityScanDelay-- <= 0) {
+            entityScanDelay = 10;
+            categoryEntityTargets.clear();
+            for (var entity : client.level.entitiesForRendering()) {
+                if (!(entity instanceof LivingEntity living) || !living.isAlive() || living == client.player) {
+                    continue;
+                }
 
-            String category = null;
-            if (config.targetMonster > 0 && living instanceof Monster) category = "Monster";
-            else if (config.targetPlayer > 0 && living instanceof Player) category = "Player";
-            else if (config.targetPassive > 0 && !(living instanceof Monster) && !(living instanceof Player)) category = "Passive";
+                String category = null;
+                if (config.targetMonster > 0 && living instanceof Monster) category = "Monster";
+                else if (config.targetPlayer > 0 && living instanceof Player) category = "Player";
+                else if (config.targetPassive > 0 && !(living instanceof Monster) && !(living instanceof Player)) category = "Passive";
 
-            if (category != null) {
-                entityCategories.computeIfAbsent(category, k -> new ArrayList<>()).add(new Target(living.getName().getString(), living.position()));
+                if (category != null) {
+                    categoryEntityTargets.computeIfAbsent(category, k -> new ArrayList<>()).add(new Target(living.getName().getString(), living.position()));
+                }
             }
         }
 
-        addLimitedTargets(allPotentialTargets, entityCategories.get("Monster"), config.targetMonster, client.player.position());
-        addLimitedTargets(allPotentialTargets, entityCategories.get("Player"), config.targetPlayer, client.player.position());
-        addLimitedTargets(allPotentialTargets, entityCategories.get("Passive"), config.targetPassive, client.player.position());
+        addLimitedTargets(allPotentialTargets, categoryEntityTargets.get("Monster"), config.targetMonster, client.player.position());
+        addLimitedTargets(allPotentialTargets, categoryEntityTargets.get("Player"), config.targetPlayer, client.player.position());
+        addLimitedTargets(allPotentialTargets, categoryEntityTargets.get("Passive"), config.targetPassive, client.player.position());
 
         // 2. Blocks (Offloaded to background)
         long now = System.currentTimeMillis();
