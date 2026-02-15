@@ -15,14 +15,19 @@ public class AutoFish implements EndTick {
     private int recastTicks = -1;
 
     static {
+        DATA_BITING = fetchDataBiting();
+    }
+
+    @SuppressWarnings("unchecked")
+    private static EntityDataAccessor<Boolean> fetchDataBiting() {
         try {
             // Using official Mojang mappings names
             Field field = FishingHook.class.getDeclaredField("DATA_BITING");
             field.setAccessible(true);
-            //noinspection unchecked
-            DATA_BITING = (EntityDataAccessor<Boolean>) field.get(null);
+            return (EntityDataAccessor<Boolean>) field.get(null);
         } catch (Exception e) {
             Main.LOGGER.error("Failed to access DATA_BITING in FishingHook", e);
+            return null;
         }
     }
 
