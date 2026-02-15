@@ -64,4 +64,4 @@ jobs:
           tag: ${{ matrix.version }}
           overwrite: true
           make_latest: ${{ matrix.version == '26.1' }}
-          release_name: Autotool for Minecraft ${{ (matrix.version == '26.1') && 'latest' || matrix.version }}
+          release_name: Autotool for Minecraft ${{ matrix.version }}
