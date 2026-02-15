@@ -21,6 +21,14 @@ irm https://github.com/chneau/mc-autotool/releases/download/1.21/autotool.jar -O
 irm https://github.com/chneau/mc-autotool/releases/download/1.20/autotool.jar -OutFile "$env:APPDATA\.minecraft\mods\autotool.jar"
 ```
 
+### 🗑️ How to Remove
+
+To uninstall the mod, simply delete the `autotool.jar` file from your mods folder. You can do this quickly in PowerShell:
+
+```powershell
+rm "$env:APPDATA\.minecraft\mods\autotool.jar"
+```
+
 ---
 
 ## 📅 Roadmap & Versions
