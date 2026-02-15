@@ -3,4 +3,6 @@
 !.gitignore
 !LICENSE
 !README.md
-!.github/workflows/publish.yml
+!/.github/
+!/.github/workflows/
+!/.github/workflows/publish.yml

@@ -1,0 +1,56 @@
+name: Publish
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Minecraft version to publish'
+        required: true
+        default: '26.1'
+        type: choice 
+        options:
+          - '26.1'
+          - '1.21'
+          - '1.20'
+
+jobs:
+  publish:
+    name: Publish for Minecraft ${{ github.event.inputs.version }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.version }}
+
+      - name: Set swap space
+        uses: pierotofy/set-swap-space@master
+        with:
+          swap-size-gb: 10
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: ${{ (github.event.inputs.version == '1.20' && '17') || '21' }}
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Build
+        run: |
+          chmod +x gradlew
+          ./gradlew build
+          JAR_NAME=$(ls build/libs/ | grep -v "-dev.jar" | grep -v "-sources.jar" | grep ".jar" | head -n 1)
+          echo "JAR_PATH=build/libs/$JAR_NAME" >> $GITHUB_ENV
+
+      - name: Upload Release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ${{ env.JAR_PATH }}
+          tag: ${{ github.event.inputs.version }}
+          overwrite: true
+          release_name: Autotool for Minecraft ${{ github.event.inputs.version }}
