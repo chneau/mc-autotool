@@ -22,10 +22,9 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 public class AutoTarget {
-    private static final int BLOCK_SCAN_RADIUS = 16;
     private long lastBlockScan = 0;
-    private volatile Map<String, List<Target>> categoryBlockTargets = new HashMap<>();
-    private final Map<String, List<Target>> categoryEntityTargets = new HashMap<>();
+    private volatile Map<String, List<Scanner.Target>> categoryBlockTargets = new HashMap<>();
+    private Map<String, List<Scanner.Target>> categoryEntityTargets = new HashMap<>();
     private boolean isScanning = false;
 
     public void register() {
@@ -37,25 +36,11 @@ public class AutoTarget {
         if (client.player == null || client.level == null) return;
 
         Config config = ConfigManager.getConfig();
-        List<Target> allPotentialTargets = new ArrayList<>();
+        List<Scanner.Target> allPotentialTargets = new ArrayList<>();
 
         // 1. Entities (Optimized: only scan every 10 frames)
         if (Throttler.shouldRun(this, 10)) {
-            categoryEntityTargets.clear();
-            for (var entity : client.level.entitiesForRendering()) {
-                if (!(entity instanceof LivingEntity living) || !living.isAlive() || living == client.player) {
-                    continue;
-                }
-
-                String category = null;
-                if (config.targetMonster > 0 && living instanceof Monster) category = "Monster";
-                else if (config.targetPlayer > 0 && living instanceof Player) category = "Player";
-                else if (config.targetPassive > 0 && !(living instanceof Monster) && !(living instanceof Player)) category = "Passive";
-
-                if (category != null) {
-                    categoryEntityTargets.computeIfAbsent(category, k -> new ArrayList<>()).add(new Target(living.getName().getString(), living.position()));
-                }
-            }
+            categoryEntityTargets = Scanner.scanEntities(client, config);
         }
 
         addLimitedTargets(allPotentialTargets, categoryEntityTargets.get("Monster"), config.targetMonster, client.player.position());
@@ -68,44 +53,13 @@ public class AutoTarget {
             lastBlockScan = now;
             isScanning = true;
             
-            // Capture needed data for async scan
-            BlockPos playerPos = client.player.blockPosition();
-            var level = client.level;
-            
             CompletableFuture.runAsync(() -> {
-                Map<String, List<Target>> results = new HashMap<>();
-                for (int x = -BLOCK_SCAN_RADIUS; x <= BLOCK_SCAN_RADIUS; x++) {
-                    for (int y = -BLOCK_SCAN_RADIUS; y <= BLOCK_SCAN_RADIUS; y++) {
-                        for (int z = -BLOCK_SCAN_RADIUS; z <= BLOCK_SCAN_RADIUS; z++) {
-                            BlockPos pos = playerPos.offset(x, y, z);
-                            BlockState state = level.getBlockState(pos);
-                            
-                            String category = null;
-                            String name = null;
-                            if (config.targetDiamond > 0 && (state.is(Blocks.DIAMOND_ORE) || state.is(Blocks.DEEPSLATE_DIAMOND_ORE))) {
-                                category = "Diamond"; name = "Diamond Ore";
-                            } else if (config.targetEmerald > 0 && (state.is(Blocks.EMERALD_ORE) || state.is(Blocks.DEEPSLATE_EMERALD_ORE))) {
-                                category = "Emerald"; name = "Emerald Ore";
-                            } else if (config.targetGold > 0 && (state.is(Blocks.GOLD_ORE) || state.is(Blocks.DEEPSLATE_GOLD_ORE) || state.is(Blocks.NETHER_GOLD_ORE))) {
-                                category = "Gold"; name = "Gold Ore";
-                            } else if (config.targetIron > 0 && (state.is(Blocks.IRON_ORE) || state.is(Blocks.DEEPSLATE_IRON_ORE))) {
-                                category = "Iron"; name = "Iron Ore";
-                            } else if (config.targetDebris > 0 && state.is(Blocks.ANCIENT_DEBRIS)) {
-                                category = "Debris"; name = "Ancient Debris";
-                            }
-
-                            if (category != null) {
-                                results.computeIfAbsent(category, k -> new ArrayList<>()).add(new Target(name, Vec3.atCenterOf(pos)));
-                            }
-                        }
-                    }
-                }
-                categoryBlockTargets = results; // Atomic swap
+                categoryBlockTargets = Scanner.scanBlocks(client, config); // Atomic swap
                 isScanning = false;
             });
         }
         
-        Map<String, List<Target>> currentBlockResults = categoryBlockTargets; // Capture reference
+        Map<String, List<Scanner.Target>> currentBlockResults = categoryBlockTargets; // Capture reference
         addLimitedTargets(allPotentialTargets, currentBlockResults.get("Diamond"), config.targetDiamond, client.player.position());
         addLimitedTargets(allPotentialTargets, currentBlockResults.get("Emerald"), config.targetEmerald, client.player.position());
         addLimitedTargets(allPotentialTargets, currentBlockResults.get("Gold"), config.targetGold, client.player.position());
@@ -114,7 +68,7 @@ public class AutoTarget {
 
         // Final sort and global limit (5)
         allPotentialTargets.sort(Comparator.comparingDouble(t -> client.player.distanceToSqr(t.pos)));
-        List<Target> finalTargets = allPotentialTargets.stream().limit(5).collect(Collectors.toList());
+        List<Scanner.Target> finalTargets = allPotentialTargets.stream().limit(5).collect(Collectors.toList());
 
         int screenWidth = client.getWindow().getGuiScaledWidth();
         int screenHeight = client.getWindow().getGuiScaledHeight();
@@ -128,20 +82,20 @@ public class AutoTarget {
         }
 
         int y = startY;
-        for (Target target : finalTargets) {
+        for (Scanner.Target target : finalTargets) {
             drawInfo(drawContext, client, target, tickCounter, y, config.targetHudPosition, screenWidth);
             y += 12;
         }
     }
 
-    private void addLimitedTargets(List<Target> allPotentialTargets, List<Target> categoryList, int limit, Vec3 playerPos) {
+    private void addLimitedTargets(List<Scanner.Target> allPotentialTargets, List<Scanner.Target> categoryList, int limit, Vec3 playerPos) {
         if (categoryList == null || limit <= 0) return;
-        List<Target> sorted = new ArrayList<>(categoryList); // Defensive copy
+        List<Scanner.Target> sorted = new ArrayList<>(categoryList); // Defensive copy
         sorted.sort(Comparator.comparingDouble(t -> t.pos.distanceToSqr(playerPos)));
         allPotentialTargets.addAll(sorted.stream().limit(limit).collect(Collectors.toList()));
     }
 
-    private void drawInfo(GuiGraphics drawContext, Minecraft client, Target target, DeltaTracker tickCounter, int y, Config.HudPosition pos, int screenWidth) {
+    private void drawInfo(GuiGraphics drawContext, Minecraft client, Scanner.Target target, DeltaTracker tickCounter, int y, Config.HudPosition pos, int screenWidth) {
         double diffX = target.pos.x - client.player.getX();
         double diffZ = target.pos.z - client.player.getZ();
         float angleToTarget = (float) Math.toDegrees(Math.atan2(-diffX, diffZ));

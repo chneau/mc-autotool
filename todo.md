@@ -105,6 +105,6 @@
   - **Goal**: Create a helper class or base class for generating configuration screens.
   - **Benefit**: Reduces the boilerplate code needed in `ConfigScreen.java` and `TargetConfigScreen.java` for creating options and buttons.
 
-- [ ] **15. Target Logic Extraction**
+- [x] **15. Target Logic Extraction**
   - **Goal**: Move the entity/block filtering logic from `AutoTarget` into a dedicated `Scanner` utility.
   - **Benefit**: Allows other modules (like `AutoAttack` or a future `AutoMine`) to reuse the high-performance scanning logic without duplication.
