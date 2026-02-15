@@ -32,8 +32,8 @@ jobs:
         run: |
           curl https://mise.run | sh
           mise exec java@${{ (github.event.inputs.version == '1.20' && '17') || '25' }} -- ./gradlew build
-          JAR_NAME=$(ls build/libs/ | head -n 1)
-          echo "JAR_PATH=build/libs/$JAR_NAME" >> $GITHUB_ENV
+          mv build/libs/$(ls build/libs/ | head -n 1) build/libs/autotool.jar
+          echo "JAR_PATH=build/libs/autotool.jar" >> $GITHUB_ENV
       - name: Upload Release
         uses: svenstaro/upload-release-action@v2
         with:
