@@ -5,6 +5,8 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents.EndTic
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.phys.EntityHitResult;
@@ -25,19 +27,38 @@ public class AutoAttack implements EndTick {
 		if (mode == Config.AttackMode.OFF)
 			return;
 		var player = client.player;
-		if (player == null || !Util.isCurrentPlayer(player))
+		if (player == null || !Util.isCurrentPlayer(player) || player.getInventory() == null || client.level == null)
 			return;
-		if (client.hitResult == null || player.getInventory() == null)
-			return;
+
 		var inventory = player.getInventory();
 		var itemStackMainHand = inventory.getItem(inventory.getSelectedSlot());
-		if (client.hitResult.getType() == Type.ENTITY) {
-			var entity = ((EntityHitResult) client.hitResult).getEntity();
-			if (entity instanceof LivingEntity living && living.getHealth() <= 0)
-				return;
 
-			if (mode == Config.AttackMode.SWORD && !itemStackMainHand.is(ItemTags.SWORDS))
-				return;
+		if (mode == Config.AttackMode.SWORD && !itemStackMainHand.is(ItemTags.SWORDS))
+			return;
+
+		Entity entityToAttack = null;
+		if (client.hitResult != null && client.hitResult.getType() == Type.ENTITY) {
+			entityToAttack = ((EntityHitResult) client.hitResult).getEntity();
+		} else {
+			double minDistance = 3.5; // Reach distance
+			for (var entity : client.level.entitiesForRendering()) {
+				if (entity instanceof Monster monster && monster.isAlive() && !monster.isInvulnerable()) {
+					double dist = monster.distanceTo(player);
+					if (dist <= minDistance) {
+						minDistance = dist;
+						entityToAttack = monster;
+					}
+				}
+			}
+		}
+
+		if (entityToAttack instanceof LivingEntity living && living.isAlive() && living.getHealth() > 0) {
+			// If we found an entity through proximity (not hitResult), it must be a monster
+			if (client.hitResult == null || client.hitResult.getType() != Type.ENTITY) {
+				if (!(entityToAttack instanceof Monster)) {
+					return;
+				}
+			}
 
 			var now = System.currentTimeMillis();
 
@@ -49,7 +70,7 @@ public class AutoAttack implements EndTick {
 			if (now - lastAttack < cachedDelay)
 				return;
 			if (client.gameMode != null) {
-				client.gameMode.attack(player, entity);
+				client.gameMode.attack(player, entityToAttack);
 				player.resetAttackStrengthTicker();
 				player.swing(InteractionHand.MAIN_HAND);
 				lastAttack = now;
