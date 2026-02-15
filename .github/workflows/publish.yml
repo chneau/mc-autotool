@@ -24,28 +24,16 @@ jobs:
         uses: actions/checkout@v6
         with:
           ref: ${{ github.event.inputs.version }}
-
       - name: Set swap space
         uses: pierotofy/set-swap-space@master
         with:
           swap-size-gb: 10
-
-      - name: Set up JDK
-        uses: actions/setup-java@v5
-        with:
-          distribution: 'temurin'
-          java-version: ${{ (github.event.inputs.version == '1.20' && '17') || '25' }}
-
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v5
-
       - name: Build
         run: |
-          chmod +x gradlew
-          ./gradlew build
+          curl https://mise.run | sh
+          mise exec bun@latest java@${{ (github.event.inputs.version == '1.20' && '17') || '25' }} -- ./gradlew build
           JAR_NAME=$(ls build/libs/ | grep -v "-dev.jar" | grep -v "-sources.jar" | grep ".jar" | head -n 1)
           echo "JAR_PATH=build/libs/$JAR_NAME" >> $GITHUB_ENV
-
       - name: Upload Release
         uses: svenstaro/upload-release-action@v2
         with:
