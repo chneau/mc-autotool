@@ -10,6 +10,9 @@ import net.minecraft.world.item.Items;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.BlockItem;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class AutoSort implements EndTick {
     private boolean wasInventoryOpen = false;
 
@@ -33,10 +36,6 @@ public class AutoSort implements EndTick {
         var player = client.player;
         if (player == null || client.gameMode == null) return;
 
-        // Slots in InventoryMenu:
-        // 9-35: Main Inventory (27 slots)
-        // 36-44: Hotbar (9 slots)
-        
         if (mode == Config.SortMode.INVENTORY || mode == Config.SortMode.BOTH) {
             sortSlotRange(client, 9, 35);
         }
@@ -45,24 +44,62 @@ public class AutoSort implements EndTick {
         }
     }
 
+    /**
+     * Uses an optimized Cycle Sort variation to minimize item movements (packets).
+     */
     private void sortSlotRange(Minecraft client, int start, int end) {
         var player = client.player;
-        if (player == null || client.gameMode == null) return;
         var menu = player.inventoryMenu;
 
+        List<ItemStack> targetOrder = new ArrayList<>();
         for (int i = start; i <= end; i++) {
-            int bestIdx = i;
+            targetOrder.add(menu.getSlot(i).getItem().copy());
+        }
+        targetOrder.sort(this::compare);
+
+        for (int i = 0; i < targetOrder.size(); i++) {
+            int slotI = start + i;
+            ItemStack currentI = menu.getSlot(slotI).getItem();
+            ItemStack goalI = targetOrder.get(i);
+
+            if (isEqual(currentI, goalI)) continue;
+
+            // Start a cycle
+            click(client, menu.containerId, slotI, ContainerInput.PICKUP);
             
-            for (int j = i + 1; j <= end; j++) {
-                if (compare(menu.getSlot(j).getItem(), menu.getSlot(bestIdx).getItem()) < 0) {
-                    bestIdx = j;
+            int currentHoleIdx = i;
+            while (true) {
+                ItemStack held = player.containerMenu.getCarried();
+                if (held.isEmpty()) break;
+
+                // Find where 'held' should go
+                int targetIdx = -1;
+                for (int j = 0; j < targetOrder.size(); j++) {
+                    ItemStack targetGoal = targetOrder.get(j);
+                    ItemStack targetCurrent = menu.getSlot(start + j).getItem();
+                    
+                    if (isEqual(held, targetGoal) && !isEqual(targetCurrent, targetGoal)) {
+                        targetIdx = j;
+                        break;
+                    }
                 }
-            }
-            
-            if (bestIdx != i) {
-                swap(client, menu.containerId, i, bestIdx);
+
+                if (targetIdx == -1) {
+                    // Should not happen, but as a fallback, put it in the current hole
+                    click(client, menu.containerId, start + currentHoleIdx, ContainerInput.PICKUP);
+                    break;
+                }
+
+                click(client, menu.containerId, start + targetIdx, ContainerInput.PICKUP);
+                if (targetIdx == i) break; // Cycle complete
+                currentHoleIdx = targetIdx;
             }
         }
+    }
+
+    private boolean isEqual(ItemStack a, ItemStack b) {
+        if (a.isEmpty() || b.isEmpty()) return a.isEmpty() == b.isEmpty();
+        return ItemStack.isSameItemSameComponents(a, b) && a.getCount() == b.getCount();
     }
 
     private int compare(ItemStack a, ItemStack b) {
@@ -90,9 +127,7 @@ public class AutoSort implements EndTick {
         return 8;
     }
 
-    private void swap(Minecraft client, int containerId, int slot1, int slot2) {
-        client.gameMode.handleContainerInput(containerId, slot1, 0, ContainerInput.PICKUP, client.player);
-        client.gameMode.handleContainerInput(containerId, slot2, 0, ContainerInput.PICKUP, client.player);
-        client.gameMode.handleContainerInput(containerId, slot1, 0, ContainerInput.PICKUP, client.player);
+    private void click(Minecraft client, int containerId, int slotId, ContainerInput type) {
+        client.gameMode.handleContainerInput(containerId, slotId, 0, type, client.player);
     }
 }

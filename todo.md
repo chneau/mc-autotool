@@ -75,7 +75,7 @@
   - **Issue**: Re-calculates `ATTACK_SPEED` attribute and modifiers every tick.
   - **Proposed Fix**: Cache the calculated attack delay and only update it when the item in the main hand changes.
 
-- [ ] **8. `AutoSort` Packet Optimization**
+- [x] **8. `AutoSort` Packet Optimization**
   - **Issue**: Uses a basic swap algorithm that sends 3 packets per swap, potentially flooding the server during a full inventory sort.
   - **Proposed Fix**: Implement a more efficient sorting algorithm (like a Cycle Sort variation) to minimize the total number of item moves.
 
