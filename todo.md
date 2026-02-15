@@ -79,7 +79,7 @@
   - **Issue**: Uses a basic swap algorithm that sends 3 packets per swap, potentially flooding the server during a full inventory sort.
   - **Proposed Fix**: Implement a more efficient sorting algorithm (like a Cycle Sort variation) to minimize the total number of item moves.
 
-- [ ] **9. `AutoDeposit` Set Efficiency**
+- [x] **9. `AutoDeposit` Set Efficiency**
   - **Issue**: Uses a `HashSet<ItemStack>` but performs a manual O(N) loop for comparison, negating the benefits of a Set.
   - **Proposed Fix**: Use a `Set<Item>` for O(1) lookups during the "Smart" check.
 

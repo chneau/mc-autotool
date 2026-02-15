@@ -12,6 +12,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.AbstractFurnaceMenu;
 import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 import java.lang.reflect.Field;
@@ -85,7 +86,7 @@ public class AutoDeposit {
     }
 
     private void fillContainer(Minecraft client, AbstractContainerMenu menu, boolean smart) {
-        Set<ItemStack> existingItems = new HashSet<>();
+        Set<Item> existingItems = new HashSet<>();
         List<Integer> playerSlots = new ArrayList<>();
 
         for (int i = 0; i < menu.slots.size(); i++) {
@@ -95,7 +96,7 @@ public class AutoDeposit {
             } else {
                 ItemStack stack = slot.getItem();
                 if (!stack.isEmpty()) {
-                    existingItems.add(stack);
+                    existingItems.add(stack.getItem());
                 }
             }
         }
@@ -104,15 +105,8 @@ public class AutoDeposit {
             ItemStack playerStack = menu.getSlot(slotId).getItem();
             if (playerStack.isEmpty()) continue;
 
-            if (smart) {
-                boolean found = false;
-                for (ItemStack existing : existingItems) {
-                    if (ItemStack.isSameItem(playerStack, existing)) {
-                        found = true;
-                        break;
-                    }
-                }
-                if (!found) continue;
+            if (smart && !existingItems.contains(playerStack.getItem())) {
+                continue;
             }
 
             quickMove(client, menu.containerId, slotId);
