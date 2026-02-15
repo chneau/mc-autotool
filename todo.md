@@ -98,3 +98,23 @@
 - [x] **6. Centralized Tick Throttling**
   - **Issue**: Many modules run logic every 50ms (every tick) unnecessarily.
   - **Proposed Fix**: Implement a `Throttler` utility to spread heavy tasks across different ticks.
+
+- [ ] **7. `AutoAttack` Attribute Caching**
+  - **Issue**: Re-calculates `ATTACK_SPEED` attribute and modifiers every tick.
+  - **Proposed Fix**: Cache the calculated attack delay and only update it when the item in the main hand changes.
+
+- [ ] **8. `AutoSort` Packet Optimization**
+  - **Issue**: Uses a basic swap algorithm that sends 3 packets per swap, potentially flooding the server during a full inventory sort.
+  - **Proposed Fix**: Implement a more efficient sorting algorithm (like a Cycle Sort variation) to minimize the total number of item moves.
+
+- [ ] **9. `AutoDeposit` Set Efficiency**
+  - **Issue**: Uses a `HashSet<ItemStack>` but performs a manual O(N) loop for comparison, negating the benefits of a Set.
+  - **Proposed Fix**: Use a `Set<Item>` for O(1) lookups during the "Smart" check.
+
+- [ ] **10. `AutoStep` Event-Driven Updates**
+  - **Issue**: Sets the `STEP_HEIGHT` attribute every single tick.
+  - **Proposed Fix**: Only update the attribute when the player spawns or when the configuration is changed.
+
+- [ ] **11. `AutoTarget` Threading Refinement**
+  - **Issue**: Uses `synchronized` blocks which can cause minor contention between the background scan and the render thread.
+  - **Proposed Fix**: Use `AtomicReference` or a `volatile` result object to swap the scan results atomically without locking.
