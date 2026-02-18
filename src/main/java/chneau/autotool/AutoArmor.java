@@ -33,7 +33,9 @@ public class AutoArmor {
 		// button
 		Button armorButton = Button.builder(Component.literal("A"), (btn) -> {
 			handleAutoArmor(client, mode);
-		}).bounds(area.left() + area.width() - 60, area.topAbove(), 15, 15).build();
+		}).bounds(area.left() + area.width() - 60, area.topAbove(), 15, 15)
+				.tooltip(net.minecraft.client.gui.components.Tooltip.create(Component.literal("Equip Best Armor")))
+				.build();
 
 		Screens.getWidgets(screen).add(armorButton);
 	}

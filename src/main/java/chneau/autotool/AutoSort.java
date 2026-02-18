@@ -39,7 +39,9 @@ public class AutoSort {
 		// Deposit button
 		Button sortButton = Button.builder(Component.literal("S"), (btn) -> {
 			sortInventory(client, mode);
-		}).bounds(area.left() + area.width() - 40, area.topAbove(), 15, 15).build();
+		}).bounds(area.left() + area.width() - 40, area.topAbove(), 15, 15)
+				.tooltip(net.minecraft.client.gui.components.Tooltip.create(Component.literal("Sort Inventory")))
+				.build();
 
 		Screens.getWidgets(screen).add(sortButton);
 	}

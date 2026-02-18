@@ -49,7 +49,9 @@ public class AutoDeposit {
 		// Position button above the top right of the container area
 		Button depositButton = Button.builder(Component.literal("D"), (btn) -> {
 			handleDeposit(client, containerScreen, isFurnace);
-		}).bounds(area.left() + area.width() - 20, area.topAbove(), 15, 15).build();
+		}).bounds(area.left() + area.width() - 20, area.topAbove(), 15, 15)
+				.tooltip(net.minecraft.client.gui.components.Tooltip.create(Component.literal("Deposit Items")))
+				.build();
 
 		Screens.getWidgets(screen).add(depositButton);
 	}
