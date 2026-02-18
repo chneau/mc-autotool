@@ -1,31 +1,24 @@
 package chneau.autotool;
-
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-
 public class TargetConfigScreen extends BaseConfigScreen {
-
 	public TargetConfigScreen(Screen parent, Options options) {
 		super(parent, options, Component.literal("Targeting Settings"));
 	}
-
 	private enum HudColor {
 		WHITE(0xFFFFFFFF), YELLOW(0xFFFFFF00), RED(0xFFFF0000), AQUA(0xFF00FFFF), GREEN(0xFF00FF00);
-
 		final int color;
 		HudColor(int color) {
 			this.color = color;
 		}
 	}
-
 	@Override
 	protected void addOptions() {
 		Config config = ConfigManager.getConfig();
-
 		this.list.addSmall(
 				createIntOption("👹 Monsters", "Max number of monsters to show on HUD.", config.targetMonster,
 						v -> config.targetMonster = v),
@@ -51,7 +44,6 @@ public class TargetConfigScreen extends BaseConfigScreen {
 						v -> config.targetIron = v),
 				createIntOption("🧱 Debris", "Max number of ancient debris to show on HUD.", config.targetDebris,
 						v -> config.targetDebris = v));
-
 		HudColor currentColor = HudColor.WHITE;
 		for (HudColor hc : HudColor.values()) {
 			if (hc.color == config.targetHudColor) {
@@ -59,7 +51,6 @@ public class TargetConfigScreen extends BaseConfigScreen {
 				break;
 			}
 		}
-
 		this.list.addSmall(
 				createEnumOption("HUD Position", "The corner of the screen where the target list is shown.",
 						Config.HudPosition.values(), config.targetHudPosition, v -> config.targetHudPosition = v),
@@ -68,15 +59,12 @@ public class TargetConfigScreen extends BaseConfigScreen {
 		this.list.addSmall(createEnumOption("HUD Color", "Text color for the HUD targets.", HudColor.values(),
 				currentColor, v -> config.targetHudColor = v.color), null);
 	}
-
 	@Override
 	protected void addFooter() {
 		LinearLayout linearLayout = LinearLayout.horizontal().spacing(8);
-
 		linearLayout.addChild(Button.builder(CommonComponents.GUI_DONE, (button) -> {
 			this.onClose();
 		}).width(150).build());
-
 		this.layout.addToFooter(linearLayout);
 	}
 }

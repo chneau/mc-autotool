@@ -1,25 +1,20 @@
 package chneau.autotool;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import net.fabricmc.loader.api.FabricLoader;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-
 public class ConfigManager {
 	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 	private static final Path CONFIG_PATH = FabricLoader.getInstance().getConfigDir().resolve("mc-autotool.json");
 	private static Config instance;
-
 	public static Config getConfig() {
 		if (instance == null) {
 			load();
 		}
 		return instance;
 	}
-
 	public static void load() {
 		if (Files.exists(CONFIG_PATH)) {
 			try (var reader = Files.newBufferedReader(CONFIG_PATH)) {
@@ -34,7 +29,6 @@ public class ConfigManager {
 			save();
 		}
 	}
-
 	public static void save() {
 		try {
 			Files.createDirectories(CONFIG_PATH.getParent());

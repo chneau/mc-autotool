@@ -1,14 +1,10 @@
 package chneau.autotool;
-
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-
 public class Throttler {
 	private static int globalTicks = 0;
-
 	public static void register() {
 		ClientTickEvents.END_CLIENT_TICK.register(client -> globalTicks++);
 	}
-
 	/**
 	 * Staggers tasks based on the owner's hash code so that different modules run
 	 * their logic on different ticks, even if they use the same interval.

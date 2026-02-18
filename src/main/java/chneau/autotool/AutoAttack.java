@@ -1,5 +1,4 @@
 package chneau.autotool;
-
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents.EndTick;
 import net.minecraft.client.Minecraft;
@@ -11,16 +10,13 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult.Type;
-
 public class AutoAttack implements EndTick {
 	private long lastAttack = System.currentTimeMillis();
 	private ItemStack lastStack = ItemStack.EMPTY;
 	private long cachedDelay = 0;
-
 	public void register() {
 		ClientTickEvents.END_CLIENT_TICK.register(this);
 	}
-
 	@Override
 	public void onEndTick(Minecraft client) {
 		var mode = ConfigManager.getConfig().autoAttack;
@@ -29,13 +25,10 @@ public class AutoAttack implements EndTick {
 		var player = client.player;
 		if (player == null || !Util.isCurrentPlayer(player) || player.getInventory() == null || client.level == null)
 			return;
-
 		var inventory = player.getInventory();
 		var itemStackMainHand = inventory.getItem(inventory.getSelectedSlot());
-
 		if (mode == Config.AttackMode.SWORD && !itemStackMainHand.is(ItemTags.SWORDS))
 			return;
-
 		Entity entityToAttack = null;
 		if (client.hitResult != null && client.hitResult.getType() == Type.ENTITY) {
 			entityToAttack = ((EntityHitResult) client.hitResult).getEntity();
@@ -51,7 +44,6 @@ public class AutoAttack implements EndTick {
 				}
 			}
 		}
-
 		if (entityToAttack instanceof LivingEntity living && living.isAlive() && living.getHealth() > 0) {
 			// If we found an entity through proximity (not hitResult), it must be a monster
 			if (client.hitResult == null || client.hitResult.getType() != Type.ENTITY) {
@@ -59,14 +51,11 @@ public class AutoAttack implements EndTick {
 					return;
 				}
 			}
-
 			var now = System.currentTimeMillis();
-
 			if (!Util.areItemsEqual(itemStackMainHand, lastStack)) {
 				lastStack = itemStackMainHand.copy();
 				cachedDelay = (long) (1000.0 / Util.getWeaponSpeed(itemStackMainHand));
 			}
-
 			if (now - lastAttack < cachedDelay)
 				return;
 			if (client.gameMode != null) {

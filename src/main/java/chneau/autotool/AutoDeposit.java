@@ -1,5 +1,4 @@
 package chneau.autotool;
-
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
@@ -10,12 +9,10 @@ import net.minecraft.world.inventory.AbstractFurnaceMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 public class AutoDeposit {
 	public void register() {
 		ScreenEvents.AFTER_INIT.register((client, screen, width, height) -> {
@@ -24,15 +21,12 @@ public class AutoDeposit {
 			}
 		});
 	}
-
 	private void setupButton(Minecraft client, AbstractContainerScreen<?> containerScreen, Screen screen) {
 		var mode = ConfigManager.getConfig().autoDeposit;
 		if (mode == Config.DepositMode.OFF)
 			return;
-
 		var menu = containerScreen.getMenu();
 		boolean isFurnace = menu instanceof AbstractFurnaceMenu;
-
 		if (isFurnace) {
 			if (mode != Config.DepositMode.FURNACE && mode != Config.DepositMode.ALL)
 				return;
@@ -40,11 +34,9 @@ public class AutoDeposit {
 			if (mode != Config.DepositMode.CHEST && mode != Config.DepositMode.ALL)
 				return;
 		}
-
 		Util.addButton(screen, containerScreen, "D", "Deposit Items", 20,
 				() -> handleDeposit(client, containerScreen, isFurnace));
 	}
-
 	private void handleDeposit(Minecraft client, AbstractContainerScreen<?> screen, boolean isFurnace) {
 		var menu = screen.getMenu();
 		if (isFurnace) {
@@ -53,11 +45,9 @@ public class AutoDeposit {
 			fillContainer(client, (AbstractContainerMenu) menu, true);
 		}
 	}
-
 	private void fillContainer(Minecraft client, AbstractContainerMenu menu, boolean smart) {
 		Set<Item> existingItems = new HashSet<>();
 		List<Integer> playerSlots = new ArrayList<>();
-
 		for (int i = 0; i < menu.slots.size(); i++) {
 			Slot slot = menu.getSlot(i);
 			if (slot.container instanceof Inventory) {
@@ -69,16 +59,13 @@ public class AutoDeposit {
 				}
 			}
 		}
-
 		for (int slotId : playerSlots) {
 			ItemStack playerStack = menu.getSlot(slotId).getItem();
 			if (playerStack.isEmpty())
 				continue;
-
 			if (smart && !existingItems.contains(playerStack.getItem())) {
 				continue;
 			}
-
 			Util.quickMove(client, menu.containerId, slotId);
 		}
 	}

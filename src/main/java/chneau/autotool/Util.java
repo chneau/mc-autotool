@@ -1,9 +1,7 @@
 package chneau.autotool;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.BlockHitResult;
-
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -13,111 +11,60 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
-
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-
 import java.lang.reflect.Field;
-
 import net.minecraft.client.gui.components.Button;
-
 import net.minecraft.client.gui.components.Tooltip;
-
 import net.minecraft.client.gui.screens.Screen;
-
 import net.fabricmc.fabric.api.client.screen.v1.Screens;
-
 import net.minecraft.network.chat.Component;
-
 /**
  *
  * Utility class for common Minecraft client-side operations.
  *
  */
-
 public class Util {
-
 	private static Field leftPosField;
-
 	private static Field topPosField;
-
 	private static Field imageWidthField;
-
 	private static Field imageHeightField;
-
 	static {
-
 		try {
-
 			leftPosField = AbstractContainerScreen.class.getDeclaredField("leftPos");
-
 			leftPosField.setAccessible(true);
-
 			topPosField = AbstractContainerScreen.class.getDeclaredField("topPos");
-
 			topPosField.setAccessible(true);
-
 			imageWidthField = AbstractContainerScreen.class.getDeclaredField("imageWidth");
-
 			imageWidthField.setAccessible(true);
-
 			imageHeightField = AbstractContainerScreen.class.getDeclaredField("imageHeight");
-
 			imageHeightField.setAccessible(true);
-
 		} catch (Exception e) {
-
 			Main.LOGGER.error("Failed to access AbstractContainerScreen fields", e);
-
 		}
-
 	}
-
 	public record ScreenArea(int left, int top, int width, int height) {
-
 		public int topAbove() {
-
 			return top - 18;
-
 		}
-
 	}
-
 	public static ScreenArea getScreenArea(AbstractContainerScreen<?> screen) {
-
 		try {
-
 			return new ScreenArea(leftPosField.getInt(screen), topPosField.getInt(screen),
-
 					imageWidthField.getInt(screen), imageHeightField.getInt(screen));
-
 		} catch (Exception e) {
-
 			return new ScreenArea(0, 0, 0, 0);
-
 		}
-
 	}
-
 	public static void addButton(Screen screen, AbstractContainerScreen<?> containerScreen, String label,
-
 			String tooltip, int rightOffset, Runnable action) {
-
 		var area = getScreenArea(containerScreen);
-
 		Button btn = Button.builder(Component.literal(label), (b) -> action.run())
-
 				.bounds(area.left() + area.width() - rightOffset, area.topAbove(), 15, 15)
-
 				.tooltip(Tooltip.create(Component.literal(tooltip))).build();
-
 		Screens.getWidgets(screen).add(btn);
-
 	}
-
 	private Util() {
-
 	}
-
 	/**
 	 * Retrieves the BlockPos of the block the player is currently looking at.
 	 *
@@ -131,7 +78,6 @@ public class Util {
 		}
 		return null;
 	}
-
 	/**
 	 * Checks if the given player is the local client player.
 	 *
@@ -146,22 +92,18 @@ public class Util {
 			return false;
 		return player.equals(other);
 	}
-
 	public static void click(Minecraft client, int containerId, int slotId, int button,
 			net.minecraft.world.inventory.ContainerInput type) {
 		if (client.gameMode != null && client.player != null) {
 			client.gameMode.handleContainerInput(containerId, slotId, button, type, client.player);
 		}
 	}
-
 	public static void quickMove(Minecraft client, int containerId, int slotId) {
 		click(client, containerId, slotId, 0, net.minecraft.world.inventory.ContainerInput.QUICK_MOVE);
 	}
-
 	public static void pickup(Minecraft client, int containerId, int slotId) {
 		click(client, containerId, slotId, 0, net.minecraft.world.inventory.ContainerInput.PICKUP);
 	}
-
 	public static void swap(Minecraft client, int containerId, int fromSlot, int toSlot) {
 		if (client.player.inventoryMenu.getSlot(toSlot).getItem().isEmpty()) {
 			quickMove(client, containerId, fromSlot);
@@ -171,33 +113,27 @@ public class Util {
 			pickup(client, containerId, fromSlot);
 		}
 	}
-
 	public static boolean areItemsEqual(ItemStack a, ItemStack b) {
 		return ItemStack.isSameItemSameComponents(a, b);
 	}
-
 	public static double getWeaponDamage(ItemStack stack) {
 		var modifiers = stack.getOrDefault(DataComponents.ATTRIBUTE_MODIFIERS, ItemAttributeModifiers.EMPTY);
 		return modifiers.compute(Attributes.ATTACK_DAMAGE, 1.0, EquipmentSlot.MAINHAND);
 	}
-
 	public static double getWeaponSpeed(ItemStack stack) {
 		var modifiers = stack.getOrDefault(DataComponents.ATTRIBUTE_MODIFIERS, ItemAttributeModifiers.EMPTY);
 		return modifiers.compute(Attributes.ATTACK_SPEED, 4.0, EquipmentSlot.MAINHAND);
 	}
-
 	public static double getArmorValue(ItemStack stack, EquipmentSlot slot) {
 		var modifiers = stack.getOrDefault(DataComponents.ATTRIBUTE_MODIFIERS, ItemAttributeModifiers.EMPTY);
 		double armor = modifiers.compute(Attributes.ARMOR, 0.0, slot);
 		double toughness = modifiers.compute(Attributes.ARMOR_TOUGHNESS, 0.0, slot);
 		return armor + toughness;
 	}
-
 	public static int getEnchantmentLevelSum(ItemStack stack) {
 		var enchants = stack.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY);
 		return enchants.keySet().stream().mapToInt(enchants::getLevel).sum();
 	}
-
 	public static int getItemWeight(ItemStack stack) {
 		if (stack.isEmpty())
 			return 100;

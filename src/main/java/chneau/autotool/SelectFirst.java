@@ -1,20 +1,16 @@
 package chneau.autotool;
-
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.tags.ItemTags;
-
 public class SelectFirst implements Select {
 	@Override
 	public int selectTool(Inventory inventory, BlockState blockState) {
 		return selectAnyToolInContainer(inventory, blockState, HOTBAR_SIZE);
 	}
-
 	@Override
 	public int selectAnyTool(Inventory inventory, BlockState blockState) {
 		return selectAnyToolInContainer(inventory, blockState, inventory.getContainerSize());
 	}
-
 	private int selectAnyToolInContainer(Inventory inventory, BlockState blockState, int limit) {
 		for (var i = 0; i < limit; i++) {
 			var stack = inventory.getItem(i);
@@ -26,17 +22,14 @@ public class SelectFirst implements Select {
 		}
 		return -1;
 	}
-
 	@Override
 	public int selectWeapon(Inventory inventory) {
 		return selectAnyWeaponInContainer(inventory, HOTBAR_SIZE);
 	}
-
 	@Override
 	public int selectAnyWeapon(Inventory inventory) {
 		return selectAnyWeaponInContainer(inventory, inventory.getContainerSize());
 	}
-
 	private int selectAnyWeaponInContainer(Inventory inventory, int limit) {
 		for (var i = 0; i < limit; i++) {
 			var stack = inventory.getItem(i);

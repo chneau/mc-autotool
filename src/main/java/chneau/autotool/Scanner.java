@@ -1,5 +1,4 @@
 package chneau.autotool;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.LivingEntity;
@@ -9,21 +8,17 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.tags.BlockTags;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 public class Scanner {
 	public static final int BLOCK_SCAN_RADIUS = 16;
-
 	public static class Target {
 		public final String category;
 		public final String name;
 		public final Vec3 pos;
 		public final int priority;
-
 		public Target(String category, String name, Vec3 pos, int priority) {
 			this.category = category;
 			this.name = name;
@@ -31,17 +26,14 @@ public class Scanner {
 			this.priority = priority;
 		}
 	}
-
 	public static Map<String, List<Target>> scanEntities(Minecraft client, Config config) {
 		Map<String, List<Target>> categoryEntityTargets = new HashMap<>();
 		if (client.level == null || client.player == null)
 			return categoryEntityTargets;
-
 		for (var entity : client.level.entitiesForRendering()) {
 			if (!(entity instanceof LivingEntity living) || !living.isAlive() || living == client.player) {
 				continue;
 			}
-
 			String category = null;
 			int priority = 100;
 			if (config.targetMonster > 0 && living instanceof Monster) {
@@ -54,7 +46,6 @@ public class Scanner {
 				category = "Passive";
 				priority = 50;
 			}
-
 			if (category != null) {
 				categoryEntityTargets.computeIfAbsent(category, k -> new ArrayList<>())
 						.add(new Target(category, living.getName().getString(), living.position(), priority));
@@ -62,25 +53,20 @@ public class Scanner {
 		}
 		return categoryEntityTargets;
 	}
-
 	public static Map<String, List<Target>> scanBlocks(Minecraft client, Config config) {
 		Map<String, List<Target>> results = new HashMap<>();
 		if (client.level == null || client.player == null)
 			return results;
-
 		BlockPos playerPos = client.player.blockPosition();
 		var level = client.level;
-
 		for (int x = -BLOCK_SCAN_RADIUS; x <= BLOCK_SCAN_RADIUS; x++) {
 			for (int y = -BLOCK_SCAN_RADIUS; y <= BLOCK_SCAN_RADIUS; y++) {
 				for (int z = -BLOCK_SCAN_RADIUS; z <= BLOCK_SCAN_RADIUS; z++) {
 					BlockPos pos = playerPos.offset(x, y, z);
 					BlockState state = level.getBlockState(pos);
-
 					String category = null;
 					String name = null;
 					int priority = 100;
-
 					if (config.targetDiamond > 0
 							&& (state.is(Blocks.DIAMOND_ORE) || state.is(Blocks.DEEPSLATE_DIAMOND_ORE))) {
 						category = "Diamond";
@@ -115,7 +101,6 @@ public class Scanner {
 						name = "Mob Spawner";
 						priority = 22;
 					}
-
 					if (category != null) {
 						results.computeIfAbsent(category, k -> new ArrayList<>())
 								.add(new Target(category, name, Vec3.atCenterOf(pos), priority));
