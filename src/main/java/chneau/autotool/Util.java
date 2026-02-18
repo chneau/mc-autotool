@@ -47,7 +47,8 @@ public class Util {
 		if (c.player != null)
 			c.execute(() -> {
 				if (c.player != null)
-					c.player.displayClientMessage(Component.literal(m).withStyle(net.minecraft.ChatFormatting.RED), false);
+					c.player.displayClientMessage(Component.literal(m).withStyle(net.minecraft.ChatFormatting.RED),
+							false);
 			});
 	}
 	public static void selectSlot(Minecraft c, int s) {

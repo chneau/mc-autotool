@@ -1,5 +1,6 @@
 {
 	"scripts": {
+		"format": "./gradlew spotlessApply",
 		"start": "./gradlew runClient",
 		"build": "./gradlew build",
 		"clean": "./gradlew clean",
