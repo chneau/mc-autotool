@@ -10,17 +10,19 @@ import java.util.ArrayList;
 import java.util.List;
 public class AutoSort {
 	public void register() {
-		ScreenEvents.AFTER_INIT.register((client, screen, width, height) -> {
+		ScreenEvents.AFTER_INIT.register((client, screen, width, height) -> Safe.run("AutoSort.ScreenInit", () -> {
 			if (screen instanceof AbstractContainerScreen<?> containerScreen) {
 				setupButton(client, containerScreen, screen);
 			}
-		});
+		}));
 	}
+
 	private void setupButton(Minecraft client, AbstractContainerScreen<?> containerScreen, Screen screen) {
 		var mode = ConfigManager.getConfig().autoSort;
 		if (mode == Config.SortMode.OFF || containerScreen.getMenu() instanceof AbstractFurnaceMenu)
 			return;
-		Util.addButton(screen, containerScreen, "S", "Sort Inventory", 40, () -> sortInventory(client, mode));
+		Util.addButton(screen, containerScreen, "S", "Sort Inventory", 40,
+				() -> Safe.run("AutoSort.sortInventory", () -> sortInventory(client, mode)));
 	}
 	private void sortInventory(Minecraft client, Config.SortMode mode) {
 		var player = client.player;

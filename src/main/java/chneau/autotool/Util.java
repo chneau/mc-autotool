@@ -63,6 +63,18 @@ public class Util {
 				.tooltip(Tooltip.create(Component.literal(tooltip))).build();
 		Screens.getWidgets(screen).add(btn);
 	}
+	public static void chatError(String message) {
+		var client = Minecraft.getInstance();
+		if (client.player != null) {
+			client.execute(() -> {
+				if (client.player != null) {
+					client.player
+							.sendSystemMessage(Component.literal(message).withStyle(net.minecraft.ChatFormatting.RED));
+				}
+			});
+		}
+	}
+
 	private Util() {
 	}
 	/**

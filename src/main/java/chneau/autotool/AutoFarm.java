@@ -18,7 +18,7 @@ import net.minecraft.core.BlockPos;
 public class AutoFarm implements EndTick {
 	private BlockPos lastTargetedBlock = null;
 	public void register() {
-		ClientTickEvents.END_CLIENT_TICK.register(this);
+		ClientTickEvents.END_CLIENT_TICK.register(client -> Safe.run("AutoFarm", () -> this.onEndTick(client)));
 	}
 	@Override
 	public void onEndTick(Minecraft client) {

@@ -9,17 +9,19 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.component.DataComponents;
 public class AutoArmor {
 	public void register() {
-		ScreenEvents.AFTER_INIT.register((client, screen, width, height) -> {
+		ScreenEvents.AFTER_INIT.register((client, screen, width, height) -> Safe.run("AutoArmor.ScreenInit", () -> {
 			if (screen instanceof InventoryScreen inventoryScreen) {
 				setupButton(client, inventoryScreen, screen);
 			}
-		});
+		}));
 	}
+
 	private void setupButton(Minecraft client, AbstractContainerScreen<?> containerScreen, Screen screen) {
 		var mode = ConfigManager.getConfig().autoArmor;
 		if (mode == Config.ArmorMode.OFF)
 			return;
-		Util.addButton(screen, containerScreen, "A", "Equip Best Armor", 60, () -> handleAutoArmor(client, mode));
+		Util.addButton(screen, containerScreen, "A", "Equip Best Armor", 60,
+				() -> Safe.run("AutoArmor.handleAutoArmor", () -> handleAutoArmor(client, mode)));
 	}
 	private void handleAutoArmor(Minecraft client, Config.ArmorMode mode) {
 		var player = client.player;

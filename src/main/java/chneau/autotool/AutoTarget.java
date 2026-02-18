@@ -18,7 +18,8 @@ public class AutoTarget {
 	private Map<String, List<Scanner.Target>> categoryEntityTargets = new HashMap<>();
 	private boolean isScanning = false;
 	public void register() {
-		HudRenderCallback.EVENT.register(this::onHudRender);
+		HudRenderCallback.EVENT.register(
+				(drawContext, tickCounter) -> Safe.run("AutoTarget", () -> this.onHudRender(drawContext, tickCounter)));
 	}
 	private void onHudRender(GuiGraphics drawContext, DeltaTracker tickCounter) {
 		Minecraft client = Minecraft.getInstance();
@@ -41,10 +42,10 @@ public class AutoTarget {
 		if (now - lastBlockScan > 2000 && !isScanning) {
 			lastBlockScan = now;
 			isScanning = true;
-			CompletableFuture.runAsync(() -> {
+			CompletableFuture.runAsync(() -> Safe.run("AutoTarget.scanBlocks", () -> {
 				categoryBlockTargets = Scanner.scanBlocks(client, config); // Atomic swap
 				isScanning = false;
-			});
+			}));
 		}
 		Map<String, List<Scanner.Target>> currentBlockResults = categoryBlockTargets; // Capture reference
 		addLimitedTargets(allPotentialTargets, currentBlockResults.get("Diamond"), config.targetDiamond,

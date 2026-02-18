@@ -4,11 +4,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 public class AutoStep {
 	public void register() {
-		ClientEntityEvents.ENTITY_LOAD.register((entity, world) -> {
+		ClientEntityEvents.ENTITY_LOAD.register((entity, world) -> Safe.run("AutoStep", () -> {
 			if (Util.isCurrentPlayer(entity)) {
 				update();
 			}
-		});
+		}));
 	}
 	public static void update() {
 		Minecraft client = Minecraft.getInstance();

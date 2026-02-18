@@ -15,12 +15,13 @@ import java.util.List;
 import java.util.Set;
 public class AutoDeposit {
 	public void register() {
-		ScreenEvents.AFTER_INIT.register((client, screen, width, height) -> {
+		ScreenEvents.AFTER_INIT.register((client, screen, width, height) -> Safe.run("AutoDeposit.ScreenInit", () -> {
 			if (screen instanceof AbstractContainerScreen<?> containerScreen) {
 				setupButton(client, containerScreen, screen);
 			}
-		});
+		}));
 	}
+
 	private void setupButton(Minecraft client, AbstractContainerScreen<?> containerScreen, Screen screen) {
 		var mode = ConfigManager.getConfig().autoDeposit;
 		if (mode == Config.DepositMode.OFF)
@@ -35,7 +36,7 @@ public class AutoDeposit {
 				return;
 		}
 		Util.addButton(screen, containerScreen, "D", "Deposit Items", 20,
-				() -> handleDeposit(client, containerScreen, isFurnace));
+				() -> Safe.run("AutoDeposit.handleDeposit", () -> handleDeposit(client, containerScreen, isFurnace)));
 	}
 	private void handleDeposit(Minecraft client, AbstractContainerScreen<?> screen, boolean isFurnace) {
 		var menu = screen.getMenu();

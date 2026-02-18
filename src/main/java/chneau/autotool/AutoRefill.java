@@ -10,7 +10,8 @@ import net.minecraft.world.level.block.AbstractFurnaceBlock;
 public class AutoRefill implements UseBlockCallback {
 	private ItemStack lastHeldItem = ItemStack.EMPTY;
 	public void register() {
-		UseBlockCallback.EVENT.register(this);
+		UseBlockCallback.EVENT.register((player, world, hand, bhr) -> Safe.call("AutoRefill",
+				() -> this.interact(player, world, hand, bhr), InteractionResult.PASS));
 	}
 	@Override
 	public InteractionResult interact(Player player, Level world, InteractionHand hand, BlockHitResult bhr) {

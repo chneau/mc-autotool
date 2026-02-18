@@ -26,7 +26,7 @@ public class AutoFish implements EndTick {
 		}
 	}
 	public void register() {
-		ClientTickEvents.END_CLIENT_TICK.register(this);
+		ClientTickEvents.END_CLIENT_TICK.register(client -> Safe.run("AutoFish", () -> this.onEndTick(client)));
 	}
 	@Override
 	public void onEndTick(Minecraft client) {
