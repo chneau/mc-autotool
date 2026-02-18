@@ -1,41 +1,71 @@
 package chneau.autotool;
 
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents.EndTick;
+import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
+import net.fabricmc.fabric.api.client.screen.v1.Screens;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.AbstractFurnaceMenu;
 import net.minecraft.world.item.ItemStack;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AutoSort implements EndTick {
-	private Screen lastScreen = null;
+public class AutoSort {
+	private static Field leftPosField;
+	private static Field topPosField;
+	private static Field imageWidthField;
 
-	public void register() {
-		ClientTickEvents.END_CLIENT_TICK.register(this);
+	static {
+		try {
+			leftPosField = AbstractContainerScreen.class.getDeclaredField("leftPos");
+			leftPosField.setAccessible(true);
+			topPosField = AbstractContainerScreen.class.getDeclaredField("topPos");
+			topPosField.setAccessible(true);
+			imageWidthField = AbstractContainerScreen.class.getDeclaredField("imageWidth");
+			imageWidthField.setAccessible(true);
+		} catch (Exception e) {
+			Main.LOGGER.error("Failed to access AbstractContainerScreen fields", e);
+		}
 	}
 
-	@Override
-	public void onEndTick(Minecraft client) {
+	public void register() {
+		ScreenEvents.AFTER_INIT.register((client, screen, width, height) -> {
+			if (screen instanceof AbstractContainerScreen<?> containerScreen) {
+				setupButton(client, containerScreen, screen);
+			}
+		});
+	}
+
+	private void setupButton(Minecraft client, AbstractContainerScreen<?> containerScreen, Screen screen) {
 		var mode = ConfigManager.getConfig().autoSort;
-		if (mode == Config.SortMode.OFF) {
-			lastScreen = client.screen;
+		if (mode == Config.SortMode.OFF)
+			return;
+
+		var menu = containerScreen.getMenu();
+		if (menu instanceof AbstractFurnaceMenu) {
 			return;
 		}
 
-		boolean isInventoryOpen = client.screen instanceof AbstractContainerScreen;
-		if (isInventoryOpen && client.screen != lastScreen) {
-			if (client.player != null && client.player.containerMenu instanceof AbstractFurnaceMenu) {
-				lastScreen = client.screen;
-				return;
-			}
-			sortInventory(client, mode);
+		try {
+			int leftPos = leftPosField.getInt(containerScreen);
+			int topPos = topPosField.getInt(containerScreen);
+			int imageWidth = imageWidthField.getInt(containerScreen);
+
+			// Position button at the top right of the container area, to the left of
+			// Deposit button
+			Button sortButton = Button.builder(Component.literal("S"), (btn) -> {
+				sortInventory(client, mode);
+			}).bounds(leftPos + imageWidth - 40, topPos + 5, 15, 15).build();
+
+			Screens.getWidgets(screen).add(sortButton);
+		} catch (Exception e) {
+			Main.LOGGER.error("Failed to add sort button", e);
 		}
-		lastScreen = client.screen;
 	}
 
 	private void sortInventory(Minecraft client, Config.SortMode mode) {
