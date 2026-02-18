@@ -3,9 +3,9 @@ name: Publish
 on:
   push:
     branches:
-      - '26.1'
-      - '1.21'
-      - '1.20'
+      - 'v26.1'
+      - 'v1.21'
+      - 'v1.20'
   workflow_dispatch:
     inputs:
       version:
