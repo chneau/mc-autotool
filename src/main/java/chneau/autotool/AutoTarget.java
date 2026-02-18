@@ -27,7 +27,7 @@ public class AutoTarget {
 
 	private void onHudRender(GuiGraphics drawContext, DeltaTracker tickCounter) {
 		Minecraft client = Minecraft.getInstance();
-		if (client.player == null || client.level == null)
+		if (client.player == null || client.level == null || client.options.hideGui)
 			return;
 
 		Config config = ConfigManager.getConfig();
