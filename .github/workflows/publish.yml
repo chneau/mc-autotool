@@ -1,42 +1,68 @@
+name: Publish
+
 on:
   push:
-    tags:
-      - "*"
+    branches:
+      - 'v26.1'
+      - 'v1.21'
+      - 'v1.20'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Minecraft version to publish'
+        required: true
+        default: 'all'
+        type: choice 
+        options:
+          - 'all'
+          - '26.1'
+          - '1.21'
+          - '1.20'
 
 jobs:
-  build:
+  prepare:
     runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
-      - uses: actions/checkout@v3
-
-      - uses: pierotofy/set-swap-space@master
-        with:
-          swap-size-gb: 10
-
-      - uses: actions/setup-java@v3
-        with:
-          distribution: adopt
-          java-version: "21"
-
-      - uses: actions/cache@v3
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
-          restore-keys: ${{ runner.os }}-gradle
-
-      - run: ./gradlew build
-
-      - shell: bash
+      - id: set-matrix
         run: |
-          echo ::set-output name=branch::${GITHUB_REF#refs/heads/}
-          echo ::set-output name=tag::${GITHUB_REF#refs/tags/}
-        id: extract
+          if [ "${{ github.event_name }}" == "push" ]; then
+            VERSION="${{ github.ref_name }}"
+            echo "matrix=[\"${VERSION#v}\"]" >> $GITHUB_OUTPUT
+          elif [ "${{ github.event.inputs.version }}" == "all" ]; then
+            echo 'matrix=["26.1", "1.21", "1.20", "1.19", "1.18", "1.17"]' >> $GITHUB_OUTPUT
+          else
+            echo 'matrix=["${{ github.event.inputs.version }}"]' >> $GITHUB_OUTPUT
+          fi
 
-      - uses: svenstaro/upload-release-action@v2
+  publish:
+    needs: prepare
+    name: Publish for Minecraft ${{ matrix.version }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    strategy:
+      fail-fast: false
+      matrix:
+        version: ${{ fromJson(needs.prepare.outputs.matrix) }}
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v6
+        with:
+          ref: v${{ matrix.version }}
+      - name: Build
+        run: |
+          curl https://mise.run | sh
+          mise exec java@${{ (matrix.version >= '1.21' && '25') || (matrix.version == '1.18' && '25') || (matrix.version >= '1.18' && '17') || '16' }} -- ./gradlew build
+          mv build/libs/$(ls build/libs/ | head -n 1) build/libs/autotool.jar
+          echo "JAR_PATH=build/libs/autotool.jar" >> $GITHUB_ENV
+      - name: Upload Release
+        uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: build/libs/mc-autotool-1.0.0.jar
-          asset_name: autotool.jar
-          tag: ${{ github.ref }}
+          file: ${{ env.JAR_PATH }}
+          tag: ${{ matrix.version }}
           overwrite: true
-          release_name: Autotool for Minecraft ${{ steps.extract.outputs.tag }}
+          make_latest: ${{ matrix.version == '26.1' }}
+          release_name: Autotool for Minecraft ${{ matrix.version }}

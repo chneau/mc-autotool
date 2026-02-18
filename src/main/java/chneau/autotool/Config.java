@@ -1,74 +1,62 @@
 package chneau.autotool;
-
 public class Config {
-    public enum Strategy {
-        OFF,   // Disable tool swapping
-        FIRST, // Pick the first compatible tool found
-        BEST   // Pick the most efficient tool (e.g., Diamond over Stone)
-    }
-
-    public enum AttackMode {
-        OFF,   // Disable auto-attack
-        SWORD, // Only auto-attack when a sword is held
-        ALL    // Auto-attack with any item held
-    }
-
-    public enum SprintMode {
-        OFF,       // Disable auto-sprint
-        ON,        // Sprint if hunger is above vanilla threshold (6 points)
-        HUNGER_50  // Sprint only if hunger is above 50% (10 points)
-    }
-
-    public enum FarmMode {
-        OFF,     // Disable auto-farming
-        HARVEST, // Only harvest mature crops
-        BOTH     // Harvest mature crops and replant seeds
-    }
-
-    public enum RefillMode {
-        OFF,   // Disable auto-refill
-        ON,    // Keep the held stack full whenever possible
-        SMART  // Only refill when the held stack is down to the last item
-    }
-
-    public enum EatMode {
-        OFF,    // Disable auto-eat
-        HUNGER, // Eat whenever hunger is missing
-        HEALTH, // Only eat when health is not full
-        SMART   // Optimize food usage and avoid over-eating
-    }
-
-    public enum SortMode {
-        OFF,       // Disable auto-sort
-        HOTBAR,    // Only sort the hotbar
-        INVENTORY, // Only sort the main inventory
-        BOTH       // Sort both hotbar and main inventory
-    }
-
-    public enum ArmorMode {
-        OFF,    // Disable auto-armor
-        BETTER, // Equip armor with higher raw armor value
-        SMART   // Consider enchantments alongside armor value
-    }
-
-    public AttackMode autoAttack = AttackMode.SWORD;
-    public FarmMode autoFarm = FarmMode.BOTH;
-    public RefillMode autoRefill = RefillMode.ON;
-    public SprintMode autoSprint = SprintMode.ON;
-    public EatMode autoEat = EatMode.SMART;
-    public SortMode autoSort = SortMode.BOTH;
-    public ArmorMode autoArmor = ArmorMode.SMART;
-    public boolean autoFish = true;
-    public Strategy autoSwap = Strategy.BEST;
-
-    public void resetToDefault() {
-        this.autoAttack = AttackMode.SWORD;
-        this.autoFarm = FarmMode.BOTH;
-        this.autoRefill = RefillMode.ON;
-        this.autoSprint = SprintMode.ON;
-        this.autoEat = EatMode.SMART;
-        this.autoSort = SortMode.BOTH;
-        this.autoArmor = ArmorMode.SMART;
-        this.autoSwap = Strategy.BEST;
-    }
+	public enum Strategy {
+		OFF, FIRST, BEST
+	}
+	public enum AttackMode {
+		OFF, SWORD, ALL
+	}
+	public enum SprintMode {
+		OFF, ON, HUNGER_50
+	}
+	public enum FarmMode {
+		OFF, HARVEST, BOTH
+	}
+	public enum RefillMode {
+		OFF, ON, SMART
+	}
+	public enum EatMode {
+		OFF, HUNGER, HEALTH, SMART
+	}
+	public enum SortMode {
+		OFF, HOTBAR, INVENTORY, BOTH, ALL
+	}
+	public enum ArmorMode {
+		OFF, BETTER, SMART
+	}
+	public enum FishMode {
+		OFF, ON
+	}
+	public enum HudPosition {
+		TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT
+	}
+	public enum StepMode {
+		OFF, ON
+	}
+	public enum DepositMode {
+		OFF, CHEST, FURNACE, ALL
+	}
+	public Strategy autoSwap = Strategy.BEST;
+	public AttackMode autoAttack = AttackMode.SWORD;
+	public FarmMode autoFarm = FarmMode.BOTH;
+	public RefillMode autoRefill = RefillMode.ON;
+	public SprintMode autoSprint = SprintMode.ON;
+	public EatMode autoEat = EatMode.SMART;
+	public SortMode autoSort = SortMode.ALL;
+	public ArmorMode autoArmor = ArmorMode.SMART;
+	public FishMode autoFish = FishMode.ON;
+	public int targetMonster = 1, targetPassive = 0, targetPlayer = 0, targetDiamond = 0, targetEmerald = 0,
+			targetGold = 0, targetIron = 0, targetDebris = 0, targetChest = 0, targetSpawner = 0, targetLimit = 5,
+			targetHudColor = 0xFFFFFFFF;
+	public HudPosition targetHudPosition = HudPosition.TOP_LEFT;
+	public StepMode autoStep = StepMode.ON;
+	public DepositMode autoDeposit = DepositMode.ALL;
+	public void resetToDefault() {
+		var d = new Config();
+		for (var f : getClass().getFields())
+			try {
+				f.set(this, f.get(d));
+			} catch (Exception ignored) {
+			}
+	}
 }
