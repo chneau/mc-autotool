@@ -1,13 +1,10 @@
 package chneau.autotool;
 
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
-import net.fabricmc.fabric.api.client.screen.v1.Screens;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.AbstractFurnaceMenu;
 import net.minecraft.world.item.ItemStack;
 
@@ -25,25 +22,10 @@ public class AutoSort {
 
 	private void setupButton(Minecraft client, AbstractContainerScreen<?> containerScreen, Screen screen) {
 		var mode = ConfigManager.getConfig().autoSort;
-		if (mode == Config.SortMode.OFF)
+		if (mode == Config.SortMode.OFF || containerScreen.getMenu() instanceof AbstractFurnaceMenu)
 			return;
 
-		var menu = containerScreen.getMenu();
-		if (menu instanceof AbstractFurnaceMenu) {
-			return;
-		}
-
-		var area = Util.getScreenArea(containerScreen);
-
-		// Position button above the top right of the container area, to the left of
-		// Deposit button
-		Button sortButton = Button.builder(Component.literal("S"), (btn) -> {
-			sortInventory(client, mode);
-		}).bounds(area.left() + area.width() - 40, area.topAbove(), 15, 15)
-				.tooltip(net.minecraft.client.gui.components.Tooltip.create(Component.literal("Sort Inventory")))
-				.build();
-
-		Screens.getWidgets(screen).add(sortButton);
+		Util.addButton(screen, containerScreen, "S", "Sort Inventory", 40, () -> sortInventory(client, mode));
 	}
 
 	private void sortInventory(Minecraft client, Config.SortMode mode) {

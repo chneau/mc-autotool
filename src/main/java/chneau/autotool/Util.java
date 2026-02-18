@@ -15,27 +15,61 @@ import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+
 import java.lang.reflect.Field;
 
+import net.minecraft.client.gui.components.Button;
+
+import net.minecraft.client.gui.components.Tooltip;
+
+import net.minecraft.client.gui.screens.Screen;
+
+import net.fabricmc.fabric.api.client.screen.v1.Screens;
+
+import net.minecraft.network.chat.Component;
+
 /**
+ *
  * Utility class for common Minecraft client-side operations.
+ *
  */
+
 public class Util {
+
 	private static Field leftPosField;
+
 	private static Field topPosField;
+
 	private static Field imageWidthField;
 
+	private static Field imageHeightField;
+
 	static {
+
 		try {
+
 			leftPosField = AbstractContainerScreen.class.getDeclaredField("leftPos");
+
 			leftPosField.setAccessible(true);
+
 			topPosField = AbstractContainerScreen.class.getDeclaredField("topPos");
+
 			topPosField.setAccessible(true);
+
 			imageWidthField = AbstractContainerScreen.class.getDeclaredField("imageWidth");
+
 			imageWidthField.setAccessible(true);
+
+			imageHeightField = AbstractContainerScreen.class.getDeclaredField("imageHeight");
+
+			imageHeightField.setAccessible(true);
+
 		} catch (Exception e) {
+
 			Main.LOGGER.error("Failed to access AbstractContainerScreen fields", e);
+
 		}
+
 	}
 
 	public record ScreenArea(int left, int top, int width, int height) {
@@ -52,17 +86,11 @@ public class Util {
 
 		try {
 
-			Field imageHeightField = AbstractContainerScreen.class.getDeclaredField("imageHeight");
-
-			imageHeightField.setAccessible(true);
-
 			return new ScreenArea(leftPosField.getInt(screen), topPosField.getInt(screen),
 
 					imageWidthField.getInt(screen), imageHeightField.getInt(screen));
 
 		} catch (Exception e) {
-
-			Main.LOGGER.error("Failed to get screen area", e);
 
 			return new ScreenArea(0, 0, 0, 0);
 
@@ -70,7 +98,24 @@ public class Util {
 
 	}
 
+	public static void addButton(Screen screen, AbstractContainerScreen<?> containerScreen, String label,
+
+			String tooltip, int rightOffset, Runnable action) {
+
+		var area = getScreenArea(containerScreen);
+
+		Button btn = Button.builder(Component.literal(label), (b) -> action.run())
+
+				.bounds(area.left() + area.width() - rightOffset, area.topAbove(), 15, 15)
+
+				.tooltip(Tooltip.create(Component.literal(tooltip))).build();
+
+		Screens.getWidgets(screen).add(btn);
+
+	}
+
 	private Util() {
+
 	}
 
 	/**

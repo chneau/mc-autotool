@@ -1,13 +1,10 @@
 package chneau.autotool;
 
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
-import net.fabricmc.fabric.api.client.screen.v1.Screens;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.component.DataComponents;
@@ -26,18 +23,7 @@ public class AutoArmor {
 		if (mode == Config.ArmorMode.OFF)
 			return;
 
-		var area = Util.getScreenArea(containerScreen);
-
-		// Position button above the top right of the container area, to the left of
-		// Sort
-		// button
-		Button armorButton = Button.builder(Component.literal("A"), (btn) -> {
-			handleAutoArmor(client, mode);
-		}).bounds(area.left() + area.width() - 60, area.topAbove(), 15, 15)
-				.tooltip(net.minecraft.client.gui.components.Tooltip.create(Component.literal("Equip Best Armor")))
-				.build();
-
-		Screens.getWidgets(screen).add(armorButton);
+		Util.addButton(screen, containerScreen, "A", "Equip Best Armor", 60, () -> handleAutoArmor(client, mode));
 	}
 
 	private void handleAutoArmor(Minecraft client, Config.ArmorMode mode) {

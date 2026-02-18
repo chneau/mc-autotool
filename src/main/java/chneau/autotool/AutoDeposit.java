@@ -1,12 +1,9 @@
 package chneau.autotool;
 
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
-import net.fabricmc.fabric.api.client.screen.v1.Screens;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.AbstractFurnaceMenu;
@@ -44,16 +41,8 @@ public class AutoDeposit {
 				return;
 		}
 
-		var area = Util.getScreenArea(containerScreen);
-
-		// Position button above the top right of the container area
-		Button depositButton = Button.builder(Component.literal("D"), (btn) -> {
-			handleDeposit(client, containerScreen, isFurnace);
-		}).bounds(area.left() + area.width() - 20, area.topAbove(), 15, 15)
-				.tooltip(net.minecraft.client.gui.components.Tooltip.create(Component.literal("Deposit Items")))
-				.build();
-
-		Screens.getWidgets(screen).add(depositButton);
+		Util.addButton(screen, containerScreen, "D", "Deposit Items", 20,
+				() -> handleDeposit(client, containerScreen, isFurnace));
 	}
 
 	private void handleDeposit(Minecraft client, AbstractContainerScreen<?> screen, boolean isFurnace) {
