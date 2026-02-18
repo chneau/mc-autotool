@@ -1,24 +1,17 @@
 package chneau.autotool;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.world.inventory.AbstractFurnaceMenu;
 import net.minecraft.world.item.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
-
 public class AutoSort extends BaseModule implements Safe.ContainerScreenInit {
-	public AutoSort() {
-		super("AutoSort");
-	}
-
 	@Override
 	public void afterInit(Minecraft client,
 			net.minecraft.client.gui.screens.inventory.AbstractContainerScreen<?> screen, int w, int h) {
 		if (config().autoSort != Config.SortMode.OFF && !(screen.getMenu() instanceof AbstractFurnaceMenu))
 			Util.addButton(screen, screen, "S", "Sort Inventory", 40, () -> Safe.run(name, () -> handle(client)));
 	}
-
 	private void handle(Minecraft client) {
 		var p = client.player;
 		var mode = config().autoSort;
@@ -40,7 +33,6 @@ public class AutoSort extends BaseModule implements Safe.ContainerScreenInit {
 				sort(client, pStart + 27, slots - 1);
 		}
 	}
-
 	private void sort(Minecraft client, int start, int end) {
 		var menu = client.player.containerMenu;
 		for (int i = start; i <= end; i++) {

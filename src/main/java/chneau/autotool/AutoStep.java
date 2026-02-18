@@ -1,17 +1,10 @@
 package chneau.autotool;
-
 import net.minecraft.world.entity.ai.attributes.Attributes;
-
 public class AutoStep extends BaseModule implements Safe.PlayerLoad {
-	public AutoStep() {
-		super("AutoStep");
-	}
-
 	@Override
 	public void onLoad() {
 		update();
 	}
-
 	public static void update() {
 		var p = client().player;
 		if (p == null)

@@ -1,5 +1,4 @@
 package chneau.autotool;
-
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
@@ -8,11 +7,10 @@ import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
 import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.minecraft.client.Minecraft;
-
 public abstract class BaseModule implements Module {
 	protected final String name;
-	protected BaseModule(String name) {
-		this.name = name;
+	protected BaseModule() {
+		this.name = getClass().getSimpleName();
 	}
 	protected static Config config() {
 		return ConfigManager.getConfig();

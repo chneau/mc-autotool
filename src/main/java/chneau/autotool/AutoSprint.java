@@ -1,13 +1,7 @@
 package chneau.autotool;
-
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.client.Minecraft;
-
 public class AutoSprint extends BaseModule implements ClientTickEvents.EndTick {
-	public AutoSprint() {
-		super("AutoSprint");
-	}
-
 	@Override
 	public void onEndTick(Minecraft client) {
 		var mode = config().autoSprint;

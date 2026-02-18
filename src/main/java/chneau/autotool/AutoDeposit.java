@@ -1,15 +1,9 @@
 package chneau.autotool;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractFurnaceMenu;
 import java.util.HashSet;
-
 public class AutoDeposit extends BaseModule implements Safe.ContainerScreenInit {
-	public AutoDeposit() {
-		super("AutoDeposit");
-	}
-
 	@Override
 	public void afterInit(Minecraft client,
 			net.minecraft.client.gui.screens.inventory.AbstractContainerScreen<?> screen, int w, int h) {
@@ -22,7 +16,6 @@ public class AutoDeposit extends BaseModule implements Safe.ContainerScreenInit 
 			Util.addButton(screen, screen, "D", "Deposit Items", 20,
 					() -> Safe.run(name, () -> handle(client, furnace)));
 	}
-
 	private void handle(Minecraft client, boolean furnace) {
 		var menu = client.player.containerMenu;
 		var items = new HashSet<>();

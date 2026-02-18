@@ -1,5 +1,4 @@
 package chneau.autotool;
-
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionHand;
@@ -7,14 +6,8 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.AbstractFurnaceBlock;
-
 public class AutoRefill extends BaseModule implements Safe.PlayerUseBlock {
 	private ItemStack lastHeld = ItemStack.EMPTY;
-
-	public AutoRefill() {
-		super("AutoRefill");
-	}
-
 	@Override
 	public InteractionResult interact(Player p, Level w, InteractionHand h, BlockHitResult bhr) {
 		var mode = config().autoRefill;
@@ -30,16 +23,12 @@ public class AutoRefill extends BaseModule implements Safe.PlayerUseBlock {
 				lastHeld = stack.copy();
 			return InteractionResult.PASS;
 		}
-		for (int i = 0; i < inv.getContainerSize(); i++) {
-			if (i == slot)
-				continue;
-			var candidate = inv.getItem(i);
-			if (!candidate.isEmpty() && Util.areItemsEqual(target, candidate)) {
-				inv.setItem(slot, candidate.copy());
+		for (int i = 0; i < inv.getContainerSize(); i++)
+			if (i != slot && !inv.getItem(i).isEmpty() && Util.areItemsEqual(target, inv.getItem(i))) {
+				inv.setItem(slot, inv.getItem(i).copy());
 				inv.setItem(i, ItemStack.EMPTY);
 				break;
 			}
-		}
 		lastHeld = inv.getItem(slot).copy();
 		return InteractionResult.PASS;
 	}

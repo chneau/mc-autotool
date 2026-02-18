@@ -1,22 +1,15 @@
 package chneau.autotool;
-
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.tags.ItemTags;
 import java.util.function.ToDoubleFunction;
-
 public interface Select {
 	int HOTBAR_SIZE = Inventory.getSelectionSize();
-
 	int selectTool(Inventory inventory, BlockState bState);
-
 	int selectWeapon(Inventory inventory);
-
 	int selectAnyTool(Inventory inventory, BlockState bState);
-
 	int selectAnyWeapon(Inventory inventory);
-
 	static int find(Inventory inventory, int limit, ToDoubleFunction<ItemStack> scorer, double minScore) {
 		var bestScore = minScore;
 		var bestIndex = -1;
@@ -29,7 +22,6 @@ public interface Select {
 		}
 		return bestIndex;
 	}
-
 	static Select best() {
 		return new Select() {
 			@Override
@@ -50,7 +42,6 @@ public interface Select {
 			}
 		};
 	}
-
 	static Select first() {
 		return new Select() {
 			@Override

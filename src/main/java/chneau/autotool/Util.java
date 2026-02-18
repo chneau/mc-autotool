@@ -1,5 +1,4 @@
 package chneau.autotool;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.BlockHitResult;
@@ -11,28 +10,11 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import java.lang.reflect.Field;
 import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.screens.Screen;
 import net.fabricmc.fabric.api.client.screen.v1.Screens;
 import net.minecraft.network.chat.Component;
-
 public class Util {
-	private static Field lP, tP, iW, iH;
-	static {
-		try {
-			lP = AbstractContainerScreen.class.getDeclaredField("leftPos");
-			lP.setAccessible(true);
-			tP = AbstractContainerScreen.class.getDeclaredField("topPos");
-			tP.setAccessible(true);
-			iW = AbstractContainerScreen.class.getDeclaredField("imageWidth");
-			iW.setAccessible(true);
-			iH = AbstractContainerScreen.class.getDeclaredField("imageHeight");
-			iH.setAccessible(true);
-		} catch (Exception e) {
-			Main.LOGGER.error("Field access failed", e);
-		}
-	}
 	public record ScreenArea(int left, int top, int width, int height) {
 		public int topAbove() {
 			return top - 18;
@@ -40,6 +22,14 @@ public class Util {
 	}
 	public static ScreenArea getScreenArea(AbstractContainerScreen<?> s) {
 		try {
+			var lP = AbstractContainerScreen.class.getDeclaredField("leftPos");
+			lP.setAccessible(true);
+			var tP = AbstractContainerScreen.class.getDeclaredField("topPos");
+			tP.setAccessible(true);
+			var iW = AbstractContainerScreen.class.getDeclaredField("imageWidth");
+			iW.setAccessible(true);
+			var iH = AbstractContainerScreen.class.getDeclaredField("imageHeight");
+			iH.setAccessible(true);
 			return new ScreenArea(lP.getInt(s), tP.getInt(s), iW.getInt(s), iH.getInt(s));
 		} catch (Exception e) {
 			return new ScreenArea(0, 0, 0, 0);
@@ -48,7 +38,7 @@ public class Util {
 	public static void addButton(Screen s, AbstractContainerScreen<?> cs, String l, String t, int r, Runnable a) {
 		var area = getScreenArea(cs);
 		Screens.getWidgets(s)
-				.add(Button.builder(Component.literal(l), (b) -> a.run())
+				.add(Button.builder(Component.literal(l), b -> a.run())
 						.bounds(area.left() + area.width() - r, area.topAbove(), 15, 15)
 						.tooltip(Tooltip.create(Component.literal(t))).build());
 	}
@@ -60,7 +50,6 @@ public class Util {
 					c.player.sendSystemMessage(Component.literal(m).withStyle(net.minecraft.ChatFormatting.RED));
 			});
 	}
-
 	public static void selectSlot(Minecraft c, int slot) {
 		var p = c.player;
 		if (p == null || p.getInventory().getSelectedSlot() == slot)
@@ -68,8 +57,6 @@ public class Util {
 		p.getInventory().setSelectedSlot(slot);
 		if (p.connection != null)
 			p.connection.send(new net.minecraft.network.protocol.game.ServerboundSetCarriedItemPacket(slot));
-	}
-	private Util() {
 	}
 	public static BlockPos getTargetedBlock(Minecraft c) {
 		return c.hitResult instanceof BlockHitResult bhr ? bhr.getBlockPos() : null;
@@ -133,5 +120,7 @@ public class Util {
 		if (s.has(DataComponents.FOOD))
 			return 6;
 		return s.getItem() instanceof BlockItem ? 7 : 8;
+	}
+	private Util() {
 	}
 }

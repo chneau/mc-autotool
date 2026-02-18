@@ -1,5 +1,4 @@
 package chneau.autotool;
-
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.level.block.*;
@@ -11,13 +10,8 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.core.BlockPos;
-
 public class AutoFarm extends BaseModule implements ClientTickEvents.EndTick {
 	private BlockPos lastTarget = null;
-	public AutoFarm() {
-		super("AutoFarm");
-	}
-
 	@Override
 	public void onEndTick(Minecraft client) {
 		if (config().autoFarm == Config.FarmMode.OFF || client.hitResult == null
@@ -48,7 +42,6 @@ public class AutoFarm extends BaseModule implements ClientTickEvents.EndTick {
 			}
 		}
 	}
-
 	private void plant(Minecraft c, net.minecraft.client.multiplayer.ClientPacketListener nh, BlockPos p,
 			BlockHitResult bhr) {
 		var b = c.level.getBlockState(p).getBlock();
@@ -57,21 +50,17 @@ public class AutoFarm extends BaseModule implements ClientTickEvents.EndTick {
 			nh.send(new ServerboundUseItemOnPacket(InteractionHand.MAIN_HAND,
 					new BlockHitResult(bhr.getLocation(), bhr.getDirection(), p, bhr.isInside()), 0));
 	}
-
 	private void harvest(Minecraft c, net.minecraft.client.multiplayer.ClientPacketListener nh, BlockPos p,
 			BlockHitResult bhr) {
 		if (isHarv(c, p))
 			nh.send(new ServerboundPlayerActionPacket(ServerboundPlayerActionPacket.Action.START_DESTROY_BLOCK, p,
 					bhr.getDirection()));
 	}
-
 	private boolean isHarv(Minecraft c, BlockPos p) {
 		var s = c.level.getBlockState(p);
 		var b = s.getBlock();
-		if (b instanceof NetherWartBlock)
-			return s.getValue(NetherWartBlock.AGE) == 3;
-		if (b instanceof CropBlock cb)
-			return cb.isMaxAge(s);
-		return false;
+		return b instanceof NetherWartBlock
+				? s.getValue(NetherWartBlock.AGE) == 3
+				: b instanceof CropBlock cb && cb.isMaxAge(s);
 	}
 }

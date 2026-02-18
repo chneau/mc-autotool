@@ -1,19 +1,12 @@
 package chneau.autotool;
-
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.component.DataComponents;
-
 public class AutoEat extends BaseModule implements ClientTickEvents.EndTick {
 	private long lastAct = 0;
 	private int lastSlot = -1;
 	private boolean eating = false;
 	private double lx, ly, lz;
-
-	public AutoEat() {
-		super("AutoEat");
-	}
-
 	@Override
 	public void onEndTick(Minecraft client) {
 		var mode = config().autoEat;
@@ -54,27 +47,23 @@ public class AutoEat extends BaseModule implements ClientTickEvents.EndTick {
 				stop(client);
 		}
 	}
-
 	private boolean should(net.minecraft.world.entity.player.Player p, Config.EatMode m) {
 		int h = p.getFoodData().getFoodLevel();
 		float hl = p.getHealth(), mh = p.getMaxHealth();
 		return (m == Config.EatMode.HUNGER && h < 20) || (m == Config.EatMode.HEALTH && hl < mh)
 				|| (m == Config.EatMode.SMART && (h <= 14 || (hl < mh && h < 20)));
 	}
-
 	private int find(net.minecraft.world.entity.player.Inventory inv, int h, boolean s) {
 		int best = -1, need = 20 - h, bestDiff = Integer.MAX_VALUE;
 		for (int i = 0; i < 9; i++) {
-			var stack = inv.getItem(i);
-			var f = stack.get(DataComponents.FOOD);
+			var f = inv.getItem(i).get(DataComponents.FOOD);
 			if (f != null) {
 				int v = f.nutrition();
 				if (s) {
 					if (h > 10 && v > need + 4)
 						continue;
-					int d = Math.abs(v - need);
-					if (d < bestDiff) {
-						bestDiff = d;
+					if (Math.abs(v - need) < bestDiff) {
+						bestDiff = Math.abs(v - need);
 						best = i;
 					}
 				} else if (best == -1 || v > inv.getItem(best).get(DataComponents.FOOD).nutrition())
@@ -83,7 +72,6 @@ public class AutoEat extends BaseModule implements ClientTickEvents.EndTick {
 		}
 		return best;
 	}
-
 	private void start(Minecraft c, int s) {
 		if (lastSlot == -1)
 			lastSlot = c.player.getInventory().getSelectedSlot();
@@ -91,7 +79,6 @@ public class AutoEat extends BaseModule implements ClientTickEvents.EndTick {
 		c.options.keyUse.setDown(true);
 		eating = true;
 	}
-
 	private void stop(Minecraft c) {
 		c.options.keyUse.setDown(false);
 		if (lastSlot != -1 && c.player != null)

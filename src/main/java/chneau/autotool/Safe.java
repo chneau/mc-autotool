@@ -1,5 +1,4 @@
 package chneau.autotool;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.core.BlockPos;
@@ -11,139 +10,100 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import java.util.concurrent.CompletableFuture;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.*;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
-import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
-import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
-import net.fabricmc.fabric.api.event.player.UseBlockCallback;
+import net.fabricmc.fabric.api.event.player.*;
 import net.minecraft.world.InteractionResult;
-
 public class Safe {
-	public static void run(String name, Runnable runnable) {
+	public static void run(String n, Runnable r) {
 		try {
-			runnable.run();
+			r.run();
 		} catch (Throwable t) {
-			handle(name, t);
+			handle(n, t);
 		}
 	}
-
-	public static <T> T call(String name, java.util.function.Supplier<T> supplier, T defaultValue) {
+	public static <T> T call(String n, java.util.function.Supplier<T> s, T d) {
 		try {
-			return supplier.get();
+			return s.get();
 		} catch (Throwable t) {
-			handle(name, t);
-			return defaultValue;
+			handle(n, t);
+			return d;
 		}
 	}
-
-	private static void handle(String name, Throwable t) {
-		Main.LOGGER.error("Exception in " + name, t);
-		Util.chatError("[mc-autotool] Error in " + name + ": " + t.getMessage());
+	private static void handle(String n, Throwable t) {
+		Main.LOGGER.error("Error in " + n, t);
+		Util.chatError("[mc-autotool] Error in " + n + ": " + t.getMessage());
 	}
-
-	public static void async(String name, Runnable runnable) {
-		CompletableFuture.runAsync(() -> run(name, runnable));
+	public static void async(String n, Runnable r) {
+		CompletableFuture.runAsync(() -> run(n, r));
 	}
-
-	public static ClientTickEvents.EndTick tick(String name, ClientTickEvents.EndTick original) {
-		return client -> run(name, () -> original.onEndTick(client));
+	public static ClientTickEvents.EndTick tick(String n, ClientTickEvents.EndTick o) {
+		return c -> run(n, () -> o.onEndTick(c));
 	}
-
-	public static ClientTickEvents.EndTick playerTick(String name, ClientTickEvents.EndTick original) {
-		return client -> run(name, () -> {
-			if (client.player == null || !Util.isCurrentPlayer(client.player))
-				return;
-			original.onEndTick(client);
+	public static ClientTickEvents.EndTick playerTick(String n, ClientTickEvents.EndTick o) {
+		return c -> run(n, () -> {
+			if (c.player != null && Util.isCurrentPlayer(c.player))
+				o.onEndTick(c);
 		});
 	}
-
-	public static ScreenEvents.AfterInit screen(String name, ScreenEvents.AfterInit original) {
-		return (client, screen, width, height) -> run(name, () -> original.afterInit(client, screen, width, height));
+	public static ScreenEvents.AfterInit screen(String n, ScreenEvents.AfterInit o) {
+		return (c, s, w, h) -> run(n, () -> o.afterInit(c, s, w, h));
 	}
-
 	public interface ContainerScreenInit {
-		void afterInit(Minecraft client, AbstractContainerScreen<?> screen, int width, int height);
+		void afterInit(Minecraft c, AbstractContainerScreen<?> s, int w, int h);
 	}
-
-	public static ScreenEvents.AfterInit containerScreen(String name, ContainerScreenInit original) {
-		return (client, screen, width, height) -> run(name, () -> {
-			if (screen instanceof AbstractContainerScreen<?> containerScreen) {
-				original.afterInit(client, containerScreen, width, height);
-			}
+	public static ScreenEvents.AfterInit containerScreen(String n, ContainerScreenInit o) {
+		return (c, s, w, h) -> run(n, () -> {
+			if (s instanceof AbstractContainerScreen<?> cs)
+				o.afterInit(c, cs, w, h);
 		});
 	}
-
-	public static UseBlockCallback use(String name, UseBlockCallback original) {
-		return (player, world, hand, bhr) -> call(name, () -> original.interact(player, world, hand, bhr),
+	public static UseBlockCallback use(String n, UseBlockCallback o) {
+		return (p, w, h, b) -> call(n, () -> o.interact(p, w, h, b), InteractionResult.PASS);
+	}
+	public interface PlayerUseBlock {
+		InteractionResult interact(Player p, Level w, InteractionHand h, BlockHitResult b);
+	}
+	public static UseBlockCallback playerUse(String n, PlayerUseBlock o) {
+		return (p, w, h, b) -> call(n, () -> Util.isCurrentPlayer(p) ? o.interact(p, w, h, b) : InteractionResult.PASS,
 				InteractionResult.PASS);
 	}
-
-	public interface PlayerUseBlock {
-		InteractionResult interact(Player player, Level world, InteractionHand hand, BlockHitResult bhr);
+	public static ClientEntityEvents.Load load(String n, ClientEntityEvents.Load o) {
+		return (e, w) -> run(n, () -> o.onLoad(e, w));
 	}
-
-	public static UseBlockCallback playerUse(String name, PlayerUseBlock original) {
-		return (player, world, hand, bhr) -> call(name, () -> {
-			if (!Util.isCurrentPlayer(player))
-				return InteractionResult.PASS;
-			return original.interact(player, world, hand, bhr);
-		}, InteractionResult.PASS);
-	}
-
-	public static ClientEntityEvents.Load load(String name, ClientEntityEvents.Load original) {
-		return (entity, world) -> run(name, () -> original.onLoad(entity, world));
-	}
-
 	public interface PlayerLoad {
 		void onLoad();
 	}
-
-	public static ClientEntityEvents.Load playerLoad(String name, PlayerLoad original) {
-		return (entity, world) -> run(name, () -> {
-			if (Util.isCurrentPlayer(entity)) {
-				original.onLoad();
-			}
+	public static ClientEntityEvents.Load playerLoad(String n, PlayerLoad o) {
+		return (e, w) -> run(n, () -> {
+			if (Util.isCurrentPlayer(e))
+				o.onLoad();
 		});
 	}
-
-	public static AttackBlockCallback attackBlock(String name, AttackBlockCallback original) {
-		return (player, world, hand, pos, dir) -> call(name, () -> original.interact(player, world, hand, pos, dir),
+	public static AttackBlockCallback attackBlock(String n, AttackBlockCallback o) {
+		return (p, w, h, po, d) -> call(n, () -> o.interact(p, w, h, po, d), InteractionResult.PASS);
+	}
+	public interface PlayerAttackBlock {
+		InteractionResult interact(Player p, Level w, InteractionHand h, BlockPos po, Direction d);
+	}
+	public static AttackBlockCallback playerAttackBlock(String n, PlayerAttackBlock o) {
+		return (p, w, h, po, d) -> call(n,
+				() -> Util.isCurrentPlayer(p) ? o.interact(p, w, h, po, d) : InteractionResult.PASS,
 				InteractionResult.PASS);
 	}
-
-	public interface PlayerAttackBlock {
-		InteractionResult interact(Player player, Level world, InteractionHand hand, BlockPos pos, Direction dir);
+	public static AttackEntityCallback attackEntity(String n, AttackEntityCallback o) {
+		return (p, w, h, e, r) -> call(n, () -> o.interact(p, w, h, e, r), InteractionResult.PASS);
 	}
-
-	public static AttackBlockCallback playerAttackBlock(String name, PlayerAttackBlock original) {
-		return (player, world, hand, pos, dir) -> call(name, () -> {
-			if (!Util.isCurrentPlayer(player))
-				return InteractionResult.PASS;
-			return original.interact(player, world, hand, pos, dir);
-		}, InteractionResult.PASS);
-	}
-
-	public static AttackEntityCallback attackEntity(String name, AttackEntityCallback original) {
-		return (player, world, hand, entity, hitResult) -> call(name,
-				() -> original.interact(player, world, hand, entity, hitResult), InteractionResult.PASS);
-	}
-
 	public interface PlayerAttackEntity {
-		InteractionResult interact(Player player, Level world, InteractionHand hand, Entity entity,
-				EntityHitResult hitResult);
+		InteractionResult interact(Player p, Level w, InteractionHand h, Entity e, EntityHitResult r);
 	}
-
-	public static AttackEntityCallback playerAttackEntity(String name, PlayerAttackEntity original) {
-		return (player, world, hand, entity, hitResult) -> call(name, () -> {
-			if (!Util.isCurrentPlayer(player))
-				return InteractionResult.PASS;
-			return original.interact(player, world, hand, entity, hitResult);
-		}, InteractionResult.PASS);
+	public static AttackEntityCallback playerAttackEntity(String n, PlayerAttackEntity o) {
+		return (p, w, h, e, r) -> call(n,
+				() -> Util.isCurrentPlayer(p) ? o.interact(p, w, h, e, r) : InteractionResult.PASS,
+				InteractionResult.PASS);
 	}
-
-	public static HudRenderCallback hud(String name, HudRenderCallback original) {
-		return (drawContext, tickCounter) -> run(name, () -> original.onHudRender(drawContext, tickCounter));
+	public static HudRenderCallback hud(String n, HudRenderCallback o) {
+		return (d, t) -> run(n, () -> o.onHudRender(d, t));
 	}
 }

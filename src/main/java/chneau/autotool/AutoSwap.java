@@ -1,5 +1,4 @@
 package chneau.autotool;
-
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.Entity;
@@ -11,7 +10,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.item.ItemStack;
-
 public class AutoSwap extends BaseModule
 		implements
 			Safe.PlayerAttackBlock,
@@ -21,15 +19,9 @@ public class AutoSwap extends BaseModule
 	private final Select best = Select.best(), first = Select.first();
 	private ItemStack lastHeld = ItemStack.EMPTY;
 	private BlockPos lastBreaking = null;
-
-	public AutoSwap() {
-		super("AutoSwap");
-	}
-
 	private Select getS() {
 		return config().autoSwap == Config.Strategy.BEST ? best : first;
 	}
-
 	@Override
 	public InteractionResult interact(Player p, Level w, InteractionHand h, BlockPos pos, Direction d) {
 		if (config().autoSwap == Config.Strategy.OFF || h != InteractionHand.MAIN_HAND)
@@ -48,7 +40,6 @@ public class AutoSwap extends BaseModule
 			Util.swap(client(), p.inventoryMenu.containerId, any, p.getInventory().getSelectedSlot());
 		return InteractionResult.PASS;
 	}
-
 	@Override
 	public InteractionResult interact(Player p, Level w, InteractionHand h, Entity e, EntityHitResult ehr) {
 		if (config().autoSwap == Config.Strategy.OFF || h != InteractionHand.MAIN_HAND)
@@ -68,7 +59,6 @@ public class AutoSwap extends BaseModule
 			Util.swap(client(), p.inventoryMenu.containerId, any, p.getInventory().getSelectedSlot());
 		return InteractionResult.PASS;
 	}
-
 	@Override
 	public void onEndTick(Minecraft c) {
 		var p = c.player;

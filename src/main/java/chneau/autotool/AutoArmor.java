@@ -1,23 +1,16 @@
 package chneau.autotool;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.component.DataComponents;
-
 public class AutoArmor extends BaseModule implements Safe.ContainerScreenInit {
-	public AutoArmor() {
-		super("AutoArmor");
-	}
-
 	@Override
 	public void afterInit(Minecraft client,
 			net.minecraft.client.gui.screens.inventory.AbstractContainerScreen<?> screen, int w, int h) {
 		if (screen instanceof InventoryScreen inv && config().autoArmor != Config.ArmorMode.OFF)
 			Util.addButton(screen, inv, "A", "Equip Best Armor", 60, () -> Safe.run(name, () -> handle(client)));
 	}
-
 	private void handle(Minecraft client) {
 		var p = client.player;
 		if (p == null || client.gameMode == null)
@@ -45,7 +38,6 @@ public class AutoArmor extends BaseModule implements Safe.ContainerScreenInit {
 			}
 		}
 	}
-
 	private boolean isBetter(ItemStack n, ItemStack o, EquipmentSlot slot) {
 		if (o.isEmpty())
 			return true;

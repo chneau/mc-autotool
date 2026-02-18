@@ -47,7 +47,6 @@ public abstract class BaseConfigScreen extends OptionsSubScreen {
 		AutoStep.update();
 		this.minecraft.setScreen(this.lastScreen);
 	}
-
 	protected void addFooterButtons(Button... buttons) {
 		net.minecraft.client.gui.layouts.LinearLayout linearLayout = net.minecraft.client.gui.layouts.LinearLayout
 				.horizontal().spacing(8);
