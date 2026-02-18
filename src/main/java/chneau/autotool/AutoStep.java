@@ -1,23 +1,26 @@
 package chneau.autotool;
+
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents;
-import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-public class AutoStep implements Module {
-	public void register() {
-		ClientEntityEvents.ENTITY_LOAD.register(Safe.playerLoad("AutoStep", AutoStep::update));
+
+public class AutoStep extends BaseModule {
+	public AutoStep() {
+		super("AutoStep");
 	}
+	@Override
+	public void register() {
+		ClientEntityEvents.ENTITY_LOAD.register(Safe.playerLoad(name, AutoStep::update));
+	}
+
 	public static void update() {
-		Minecraft client = Minecraft.getInstance();
-		var player = client.player;
-		if (player == null)
+		var p = client().player;
+		if (p == null)
 			return;
-		var mode = ConfigManager.getConfig().autoStep;
-		var stepHeightAttr = player.getAttribute(Attributes.STEP_HEIGHT);
-		if (stepHeightAttr != null) {
-			double targetHeight = mode == Config.StepMode.ON ? 1.0 : 0.6;
-			if (stepHeightAttr.getBaseValue() != targetHeight) {
-				stepHeightAttr.setBaseValue(targetHeight);
-			}
+		var attr = p.getAttribute(Attributes.STEP_HEIGHT);
+		if (attr != null) {
+			double h = config().autoStep == Config.StepMode.ON ? 1.0 : 0.6;
+			if (attr.getBaseValue() != h)
+				attr.setBaseValue(h);
 		}
 	}
 }

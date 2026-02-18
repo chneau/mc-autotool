@@ -1,4 +1,5 @@
 package chneau.autotool;
+
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.InteractionResult;
@@ -7,46 +8,43 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.AbstractFurnaceBlock;
-public class AutoRefill implements UseBlockCallback, Module {
-	private ItemStack lastHeldItem = ItemStack.EMPTY;
-	public void register() {
-		UseBlockCallback.EVENT.register(Safe.playerUse("AutoRefill", this::interact));
+
+public class AutoRefill extends BaseModule {
+	private ItemStack lastHeld = ItemStack.EMPTY;
+
+	public AutoRefill() {
+		super("AutoRefill");
 	}
 	@Override
-	public InteractionResult interact(Player player, Level world, InteractionHand hand, BlockHitResult bhr) {
-		var mode = ConfigManager.getConfig().autoRefill;
-		if (mode == Config.RefillMode.OFF)
+	public void register() {
+		UseBlockCallback.EVENT.register(Safe.playerUse(name, this::interact));
+	}
+
+	public InteractionResult interact(Player p, Level w, InteractionHand h, BlockHitResult bhr) {
+		var mode = config().autoRefill;
+		if (mode == Config.RefillMode.OFF || h != InteractionHand.MAIN_HAND
+				|| w.getBlockState(bhr.getBlockPos()).getBlock() instanceof AbstractFurnaceBlock)
 			return InteractionResult.PASS;
-		if (hand != InteractionHand.MAIN_HAND)
-			return InteractionResult.PASS;
-		var state = world.getBlockState(bhr.getBlockPos());
-		if (state.getBlock() instanceof AbstractFurnaceBlock) {
-			return InteractionResult.PASS;
-		}
-		var inventory = player.getInventory();
-		var selectedSlot = inventory.getSelectedSlot();
-		var itemStack = inventory.getItem(selectedSlot);
-		ItemStack targetToRefill = itemStack;
-		if (itemStack.isEmpty() && !lastHeldItem.isEmpty()) {
-			targetToRefill = lastHeldItem;
-		}
-		if (targetToRefill.isEmpty())
-			return InteractionResult.PASS;
-		if (mode == Config.RefillMode.SMART && !itemStack.isEmpty() && itemStack.getCount() > 1) {
-			lastHeldItem = itemStack.copy();
+		var inv = p.getInventory();
+		var slot = inv.getSelectedSlot();
+		var stack = inv.getItem(slot);
+		var target = stack.isEmpty() ? lastHeld : stack;
+		if (target.isEmpty() || (mode == Config.RefillMode.SMART && !stack.isEmpty() && stack.getCount() > 1)) {
+			if (!stack.isEmpty())
+				lastHeld = stack.copy();
 			return InteractionResult.PASS;
 		}
-		for (int i = 0; i < inventory.getContainerSize(); i++) {
-			if (i == selectedSlot)
+		for (int i = 0; i < inv.getContainerSize(); i++) {
+			if (i == slot)
 				continue;
-			var candidate = inventory.getItem(i);
-			if (!candidate.isEmpty() && Util.areItemsEqual(targetToRefill, candidate)) {
-				inventory.setItem(selectedSlot, candidate.copy());
-				inventory.setItem(i, ItemStack.EMPTY);
+			var candidate = inv.getItem(i);
+			if (!candidate.isEmpty() && Util.areItemsEqual(target, candidate)) {
+				inv.setItem(slot, candidate.copy());
+				inv.setItem(i, ItemStack.EMPTY);
 				break;
 			}
 		}
-		lastHeldItem = inventory.getItem(selectedSlot).copy();
+		lastHeld = inv.getItem(slot).copy();
 		return InteractionResult.PASS;
 	}
 }

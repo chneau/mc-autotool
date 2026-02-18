@@ -1,136 +1,99 @@
 package chneau.autotool;
+
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.DeltaTracker;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-public class AutoTarget implements Module {
-	private long lastBlockScan = 0;
-	private volatile Map<String, List<Scanner.Target>> categoryBlockTargets = new HashMap<>();
-	private Map<String, List<Scanner.Target>> categoryEntityTargets = new HashMap<>();
-	private boolean isScanning = false;
+import java.util.*;
+
+public class AutoTarget extends BaseModule {
+	private long lastBS = 0;
+	private volatile Map<String, List<Scanner.Target>> bTargets = new HashMap<>();
+	private Map<String, List<Scanner.Target>> eTargets = new HashMap<>();
+	private boolean scanning = false;
+
+	public AutoTarget() {
+		super("AutoTarget");
+	}
+	@Override
 	public void register() {
-		HudRenderCallback.EVENT.register(Safe.hud("AutoTarget", this::onHudRender));
+		HudRenderCallback.EVENT.register(Safe.hud(name, this::render));
 	}
 
-	private void onHudRender(GuiGraphics drawContext, DeltaTracker tickCounter) {
-		Minecraft client = Minecraft.getInstance();
-		if (client.player == null || client.level == null || client.options.hideGui)
+	private void render(GuiGraphics draw, DeltaTracker dt) {
+		var c = client();
+		if (c.player == null || c.level == null || c.options.hideGui)
 			return;
-		Config config = ConfigManager.getConfig();
-		List<Scanner.Target> allPotentialTargets = new ArrayList<>();
-		// 1. Entities (Optimized: only scan every 10 frames)
-		if (Throttler.shouldRun(this, 10)) {
-			categoryEntityTargets = Scanner.scanEntities(client, config);
-		}
-		addLimitedTargets(allPotentialTargets, categoryEntityTargets.get("Monster"), config.targetMonster,
-				client.player.position());
-		addLimitedTargets(allPotentialTargets, categoryEntityTargets.get("Player"), config.targetPlayer,
-				client.player.position());
-		addLimitedTargets(allPotentialTargets, categoryEntityTargets.get("Passive"), config.targetPassive,
-				client.player.position());
-		// 2. Blocks (Offloaded to background)
-		long now = System.currentTimeMillis();
-		if (now - lastBlockScan > 2000 && !isScanning) {
-			lastBlockScan = now;
-			isScanning = true;
-			Safe.async("AutoTarget.scanBlocks", () -> {
-				categoryBlockTargets = Scanner.scanBlocks(client, config); // Atomic swap
-				isScanning = false;
+		var cfg = config();
+		if (Throttler.shouldRun(this, 10))
+			eTargets = Scanner.scanEntities(c, cfg);
+		if (System.currentTimeMillis() - lastBS > 2000 && !scanning) {
+			lastBS = System.currentTimeMillis();
+			scanning = true;
+			Safe.async(name + ".scan", () -> {
+				bTargets = Scanner.scanBlocks(c, cfg);
+				scanning = false;
 			});
 		}
-		Map<String, List<Scanner.Target>> currentBlockResults = categoryBlockTargets; // Capture reference
-		addLimitedTargets(allPotentialTargets, currentBlockResults.get("Diamond"), config.targetDiamond,
-				client.player.position());
-		addLimitedTargets(allPotentialTargets, currentBlockResults.get("Emerald"), config.targetEmerald,
-				client.player.position());
-		addLimitedTargets(allPotentialTargets, currentBlockResults.get("Gold"), config.targetGold,
-				client.player.position());
-		addLimitedTargets(allPotentialTargets, currentBlockResults.get("Iron"), config.targetIron,
-				client.player.position());
-		addLimitedTargets(allPotentialTargets, currentBlockResults.get("Debris"), config.targetDebris,
-				client.player.position());
-		addLimitedTargets(allPotentialTargets, currentBlockResults.get("Chest"), config.targetChest,
-				client.player.position());
-		addLimitedTargets(allPotentialTargets, currentBlockResults.get("Spawner"), config.targetSpawner,
-				client.player.position());
-		// Improved sorting: priority first, then distance
-		allPotentialTargets.sort(Comparator.<Scanner.Target>comparingInt(t -> t.priority)
-				.thenComparingDouble(t -> client.player.distanceToSqr(t.pos)));
-		List<Scanner.Target> finalTargets = allPotentialTargets.stream().limit(config.targetLimit)
-				.collect(Collectors.toList());
-		int screenWidth = client.getWindow().getGuiScaledWidth();
-		int screenHeight = client.getWindow().getGuiScaledHeight();
-		// Calculate text widths
-		List<TargetInfo> renderInfos = new ArrayList<>();
-		int maxTextWidth = 0;
-		for (Scanner.Target target : finalTargets) {
-			double diffX = target.pos.x - client.player.getX();
-			double diffY = target.pos.y - client.player.getEyeY();
-			double diffZ = target.pos.z - client.player.getZ();
-			float angleToTarget = (float) Math.toDegrees(Math.atan2(-diffX, diffZ));
-			float relativeYaw = Mth
-					.wrapDegrees(angleToTarget - client.player.getYRot(tickCounter.getGameTimeDeltaTicks()));
-			double horizDist = Math.sqrt(diffX * diffX + diffZ * diffZ);
-			// Minecraft Pitch: -90 is UP, +90 is DOWN.
-			// atan2(y, dist): Positive y (up) gives positive angle.
-			// We need to negate it to match MC's pitch.
-			float anglePitch = (float) -Math.toDegrees(Math.atan2(diffY, horizDist));
-			float relativePitch = anglePitch - client.player.getXRot(tickCounter.getGameTimeDeltaTicks());
-			double dist = Math.sqrt(client.player.distanceToSqr(target.pos));
-			String emoji = getCategoryEmoji(target.category);
-			String text = String.format("%s   %.1fm %s", emoji, dist, target.name);
-			renderInfos.add(new TargetInfo(text, relativeYaw, relativePitch, config.targetHudColor));
-			maxTextWidth = Math.max(maxTextWidth, client.font.width(text));
+		var all = new ArrayList<Scanner.Target>();
+		add(all, eTargets.get("Monster"), cfg.targetMonster, c.player.position());
+		add(all, eTargets.get("Player"), cfg.targetPlayer, c.player.position());
+		add(all, eTargets.get("Passive"), cfg.targetPassive, c.player.position());
+		for (var k : new String[]{"Diamond", "Emerald", "Gold", "Iron", "Debris", "Chest", "Spawner"})
+			add(all, bTargets.get(k), getCfgLimit(cfg, k), c.player.position());
+		all.sort(Comparator.<Scanner.Target>comparingInt(t -> t.priority)
+				.thenComparingDouble(t -> c.player.distanceToSqr(t.pos)));
+		var finalT = all.stream().limit(cfg.targetLimit).toList();
+		var infos = new ArrayList<TInfo>();
+		int maxW = 0;
+		for (var t : finalT) {
+			var d = t.pos.subtract(c.player.getX(), c.player.getEyeY(), c.player.getZ());
+			float yaw = Mth.wrapDegrees(
+					(float) Math.toDegrees(Math.atan2(-d.x, d.z)) - c.player.getYRot(dt.getGameTimeDeltaTicks()));
+			float pitch = (float) -Math.toDegrees(Math.atan2(d.y, Math.sqrt(d.x * d.x + d.z * d.z)))
+					- c.player.getXRot(dt.getGameTimeDeltaTicks());
+			var text = String.format("%s   %.1fm %s", getEmoji(t.category), Math.sqrt(c.player.distanceToSqr(t.pos)),
+					t.name);
+			infos.add(new TInfo(text, yaw, pitch));
+			maxW = Math.max(maxW, c.font.width(text));
 		}
-		if (renderInfos.isEmpty())
+		if (infos.isEmpty())
 			return;
-		int totalHeight = renderInfos.size() * 12;
-		int startY;
-		if (config.targetHudPosition == Config.HudPosition.BOTTOM_LEFT
-				|| config.targetHudPosition == Config.HudPosition.BOTTOM_RIGHT) {
-			startY = screenHeight - 10 - totalHeight;
-		} else {
-			startY = 10;
-		}
-		int xBase;
-		boolean isRightSide = config.targetHudPosition == Config.HudPosition.TOP_RIGHT
-				|| config.targetHudPosition == Config.HudPosition.BOTTOM_RIGHT;
-		if (isRightSide) {
-			xBase = screenWidth - 10 - maxTextWidth;
-		} else {
-			xBase = 10;
-		}
-		int y = startY;
-		for (TargetInfo info : renderInfos) {
-			int x = xBase;
-			if (isRightSide) {
-				x = screenWidth - 10 - client.font.width(info.text);
-			}
-			// Draw text
-			drawContext.drawString(client.font, info.text, x, y, info.color, true);
-			// Draw arrow (inserted in the gap)
-			// The gap is after the emoji (approx 2 chars width)
-			int emojiWidth = client.font.width("XX "); // Approximate width for emoji + space
-			int arrowX = x + emojiWidth - 4; // Adjust position to fit in the gap
-			int arrowY = y + 4; // Center vertically (font height is 9, line height 12)
-			Draw.drawArrow(drawContext, arrowX, arrowY, info.relativeYaw, info.relativePitch, info.color);
+		int h = infos.size() * 12, sw = c.getWindow().getGuiScaledWidth(), sh = c.getWindow().getGuiScaledHeight();
+		int y = (cfg.targetHudPosition.name().startsWith("BOTTOM") ? sh - 10 - h : 10),
+				xB = (cfg.targetHudPosition.name().endsWith("RIGHT") ? sw - 10 - maxW : 10);
+		for (var info : infos) {
+			int x = cfg.targetHudPosition.name().endsWith("RIGHT") ? sw - 10 - c.font.width(info.t) : xB;
+			draw.drawString(c.font, info.t, x, y, cfg.targetHudColor, true);
+			Draw.drawArrow(draw, x + c.font.width("XX ") - 4, y + 4, info.y, info.p, cfg.targetHudColor);
 			y += 12;
 		}
 	}
-	private record TargetInfo(String text, float relativeYaw, float relativePitch, int color) {
+
+	private void add(List<Scanner.Target> all, List<Scanner.Target> l, int lim, Vec3 p) {
+		if (l != null && lim > 0) {
+			var s = new ArrayList<>(l);
+			s.sort(Comparator.comparingDouble(t -> t.pos.distanceToSqr(p)));
+			all.addAll(s.stream().limit(lim).toList());
+		}
 	}
-	private String getCategoryEmoji(String category) {
-		if (category == null)
-			return "";
-		return switch (category) {
+
+	private int getCfgLimit(Config c, String k) {
+		return switch (k) {
+			case "Diamond" -> c.targetDiamond;
+			case "Emerald" -> c.targetEmerald;
+			case "Gold" -> c.targetGold;
+			case "Iron" -> c.targetIron;
+			case "Debris" -> c.targetDebris;
+			case "Chest" -> c.targetChest;
+			case "Spawner" -> c.targetSpawner;
+			default -> 0;
+		};
+	}
+
+	private String getEmoji(String c) {
+		return switch (c) {
 			case "Monster" -> "👹";
 			case "Player" -> "👤";
 			case "Passive" -> "🐷";
@@ -144,12 +107,7 @@ public class AutoTarget implements Module {
 			default -> "";
 		};
 	}
-	private void addLimitedTargets(List<Scanner.Target> allPotentialTargets, List<Scanner.Target> categoryList,
-			int limit, Vec3 playerPos) {
-		if (categoryList == null || limit <= 0)
-			return;
-		List<Scanner.Target> sorted = new ArrayList<>(categoryList); // Defensive copy
-		sorted.sort(Comparator.comparingDouble(t -> t.pos.distanceToSqr(playerPos)));
-		allPotentialTargets.addAll(sorted.stream().limit(limit).collect(Collectors.toList()));
+
+	private record TInfo(String t, float y, float p) {
 	}
 }

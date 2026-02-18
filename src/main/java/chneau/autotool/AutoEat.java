@@ -1,142 +1,106 @@
 package chneau.autotool;
+
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents.EndTick;
 import net.minecraft.client.Minecraft;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.component.DataComponents;
-public class AutoEat implements EndTick, Module {
-	private long lastActivity = System.currentTimeMillis();
+
+public class AutoEat extends BaseModule implements ClientTickEvents.EndTick {
+	private long lastAct = 0;
 	private int lastSlot = -1;
-	private boolean isEating = false;
-	private double lastX, lastY, lastZ;
-	public void register() {
-		ClientTickEvents.END_CLIENT_TICK.register(Safe.playerTick("AutoEat", this));
+	private boolean eating = false;
+	private double lx, ly, lz;
+
+	public AutoEat() {
+		super("AutoEat");
 	}
 	@Override
+	public void register() {
+		ClientTickEvents.END_CLIENT_TICK.register(Safe.playerTick(name, this));
+	}
+
+	@Override
 	public void onEndTick(Minecraft client) {
-		var mode = ConfigManager.getConfig().autoEat;
+		var mode = config().autoEat;
 		if (mode == Config.EatMode.OFF) {
-			if (isEating)
-				stopEating(client);
+			if (eating)
+				stop(client);
 			return;
 		}
-		var player = client.player;
-		// Activity check: Detect manual activity efficiently
-		boolean active = false;
-		// 1. Check for movement
-		if (player.getX() != lastX || player.getY() != lastY || player.getZ() != lastZ) {
-			active = true;
-		}
-		lastX = player.getX();
-		lastY = player.getY();
-		lastZ = player.getZ();
-		// 2. Check for common action keys
-		if (!active) {
-			if (client.options.keyAttack.isDown() || (client.options.keyUse.isDown() && !isEating)
-					|| client.options.keyJump.isDown() || client.options.keyShift.isDown()
-					|| client.options.keySprint.isDown()) {
-				active = true;
-			}
-		}
-		// 3. Check if any screen is open
-		if (!active && client.screen != null) {
-			active = true;
-		}
-		if (active) {
-			lastActivity = System.currentTimeMillis();
-			if (isEating)
-				stopEating(client);
+		var p = client.player;
+		boolean act = p.getX() != lx || p.getY() != ly || p.getZ() != lz || client.options.keyAttack.isDown()
+				|| (client.options.keyUse.isDown() && !eating) || client.options.keyJump.isDown()
+				|| client.options.keyShift.isDown() || client.options.keySprint.isDown() || client.screen != null;
+		lx = p.getX();
+		ly = p.getY();
+		lz = p.getZ();
+		if (act) {
+			lastAct = System.currentTimeMillis();
+			if (eating)
+				stop(client);
 			return;
 		}
-		if (System.currentTimeMillis() - lastActivity < 1000) {
+		if (System.currentTimeMillis() - lastAct < 1000)
 			return;
-		}
-		if (isEating) {
-			if (player.isUsingItem()) {
-				return; // Still busy eating
-			}
-			// If we were eating but stopped, check if we finished or were interrupted
-			if (!shouldEat(player, mode)) {
-				stopEating(client);
+		if (eating) {
+			if (p.isUsingItem())
+				return;
+			if (!should(p, mode)) {
+				stop(client);
 				return;
 			}
-			// If we still need to eat, we'll continue below (isEating will be set to true
-			// again)
-			isEating = false;
+			eating = false;
 		}
-		if (shouldEat(player, mode)) {
-			int hunger = player.getFoodData().getFoodLevel();
-			int foodSlot = findBestFood(player.getInventory(), hunger, mode == Config.EatMode.SMART);
-			if (foodSlot != -1) {
-				startEating(client, foodSlot);
-			} else if (isEating) {
-				stopEating(client);
-			}
+		if (should(p, mode)) {
+			int slot = find(p.getInventory(), p.getFoodData().getFoodLevel(), mode == Config.EatMode.SMART);
+			if (slot != -1)
+				start(client, slot);
+			else if (eating)
+				stop(client);
 		}
 	}
-	private boolean shouldEat(net.minecraft.world.entity.player.Player player, Config.EatMode mode) {
-		int hunger = player.getFoodData().getFoodLevel();
-		float health = player.getHealth();
-		float maxHealth = player.getMaxHealth();
-		if (mode == Config.EatMode.HUNGER && hunger < 20)
-			return true;
-		if (mode == Config.EatMode.HEALTH && health < maxHealth)
-			return true;
-		if (mode == Config.EatMode.SMART) {
-			if (hunger <= 14)
-				return true;
-			if (health < maxHealth && hunger < 20)
-				return true;
-		}
-		return false;
+
+	private boolean should(net.minecraft.world.entity.player.Player p, Config.EatMode m) {
+		int h = p.getFoodData().getFoodLevel();
+		float hl = p.getHealth(), mh = p.getMaxHealth();
+		return (m == Config.EatMode.HUNGER && h < 20) || (m == Config.EatMode.HEALTH && hl < mh)
+				|| (m == Config.EatMode.SMART && (h <= 14 || (hl < mh && h < 20)));
 	}
-	private int findBestFood(Inventory inventory, int currentHunger, boolean smart) {
-		int bestSlot = -1;
-		int needed = 20 - currentHunger;
-		int bestDifference = Integer.MAX_VALUE;
-		for (int i = 0; i < 9; i++) { // Check hotbar
-			ItemStack stack = inventory.getItem(i);
-			var food = stack.get(DataComponents.FOOD);
-			if (food != null) {
-				int value = food.nutrition();
-				if (smart) {
-					// Don't eat if it heals way more than needed, unless we are very hungry
-					if (currentHunger > 10 && value > needed + 4)
+
+	private int find(net.minecraft.world.entity.player.Inventory inv, int h, boolean s) {
+		int best = -1, need = 20 - h, bestDiff = Integer.MAX_VALUE;
+		for (int i = 0; i < 9; i++) {
+			var stack = inv.getItem(i);
+			var f = stack.get(DataComponents.FOOD);
+			if (f != null) {
+				int v = f.nutrition();
+				if (s) {
+					if (h > 10 && v > need + 4)
 						continue;
-					int diff = Math.abs(value - needed);
-					if (diff < bestDifference) {
-						bestDifference = diff;
-						bestSlot = i;
+					int d = Math.abs(v - need);
+					if (d < bestDiff) {
+						bestDiff = d;
+						best = i;
 					}
-				} else {
-					if (bestSlot == -1 || value > inventory.getItem(bestSlot).get(DataComponents.FOOD).nutrition()) {
-						bestSlot = i;
-					}
-				}
+				} else if (best == -1 || v > inv.getItem(best).get(DataComponents.FOOD).nutrition())
+					best = i;
 			}
 		}
-		return bestSlot;
+		return best;
 	}
-	private void startEating(Minecraft client, int slot) {
-		var player = client.player;
-		if (player == null)
-			return;
-		if (lastSlot == -1) {
-			lastSlot = player.getInventory().getSelectedSlot();
-		}
-		if (player.getInventory().getSelectedSlot() != slot) {
-			player.getInventory().setSelectedSlot(slot);
-		}
-		client.options.keyUse.setDown(true);
-		isEating = true;
+
+	private void start(Minecraft c, int s) {
+		if (lastSlot == -1)
+			lastSlot = c.player.getInventory().getSelectedSlot();
+		c.player.getInventory().setSelectedSlot(s);
+		c.options.keyUse.setDown(true);
+		eating = true;
 	}
-	private void stopEating(Minecraft client) {
-		client.options.keyUse.setDown(false);
-		if (lastSlot != -1 && client.player != null) {
-			client.player.getInventory().setSelectedSlot(lastSlot);
-		}
+
+	private void stop(Minecraft c) {
+		c.options.keyUse.setDown(false);
+		if (lastSlot != -1 && c.player != null)
+			c.player.getInventory().setSelectedSlot(lastSlot);
 		lastSlot = -1;
-		isEating = false;
+		eating = false;
 	}
 }

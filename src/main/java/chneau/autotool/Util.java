@@ -1,45 +1,36 @@
 package chneau.autotool;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.*;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import java.lang.reflect.Field;
-import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.screens.Screen;
 import net.fabricmc.fabric.api.client.screen.v1.Screens;
 import net.minecraft.network.chat.Component;
-/**
- *
- * Utility class for common Minecraft client-side operations.
- *
- */
+
 public class Util {
-	private static Field leftPosField;
-	private static Field topPosField;
-	private static Field imageWidthField;
-	private static Field imageHeightField;
+	private static Field lP, tP, iW, iH;
 	static {
 		try {
-			leftPosField = AbstractContainerScreen.class.getDeclaredField("leftPos");
-			leftPosField.setAccessible(true);
-			topPosField = AbstractContainerScreen.class.getDeclaredField("topPos");
-			topPosField.setAccessible(true);
-			imageWidthField = AbstractContainerScreen.class.getDeclaredField("imageWidth");
-			imageWidthField.setAccessible(true);
-			imageHeightField = AbstractContainerScreen.class.getDeclaredField("imageHeight");
-			imageHeightField.setAccessible(true);
+			lP = AbstractContainerScreen.class.getDeclaredField("leftPos");
+			lP.setAccessible(true);
+			tP = AbstractContainerScreen.class.getDeclaredField("topPos");
+			tP.setAccessible(true);
+			iW = AbstractContainerScreen.class.getDeclaredField("imageWidth");
+			iW.setAccessible(true);
+			iH = AbstractContainerScreen.class.getDeclaredField("imageHeight");
+			iH.setAccessible(true);
 		} catch (Exception e) {
-			Main.LOGGER.error("Failed to access AbstractContainerScreen fields", e);
+			Main.LOGGER.error("Field access failed", e);
 		}
 	}
 	public record ScreenArea(int left, int top, int width, int height) {
@@ -47,124 +38,91 @@ public class Util {
 			return top - 18;
 		}
 	}
-	public static ScreenArea getScreenArea(AbstractContainerScreen<?> screen) {
+	public static ScreenArea getScreenArea(AbstractContainerScreen<?> s) {
 		try {
-			return new ScreenArea(leftPosField.getInt(screen), topPosField.getInt(screen),
-					imageWidthField.getInt(screen), imageHeightField.getInt(screen));
+			return new ScreenArea(lP.getInt(s), tP.getInt(s), iW.getInt(s), iH.getInt(s));
 		} catch (Exception e) {
 			return new ScreenArea(0, 0, 0, 0);
 		}
 	}
-	public static void addButton(Screen screen, AbstractContainerScreen<?> containerScreen, String label,
-			String tooltip, int rightOffset, Runnable action) {
-		var area = getScreenArea(containerScreen);
-		Button btn = Button.builder(Component.literal(label), (b) -> action.run())
-				.bounds(area.left() + area.width() - rightOffset, area.topAbove(), 15, 15)
-				.tooltip(Tooltip.create(Component.literal(tooltip))).build();
-		Screens.getWidgets(screen).add(btn);
+	public static void addButton(Screen s, AbstractContainerScreen<?> cs, String l, String t, int r, Runnable a) {
+		var area = getScreenArea(cs);
+		Screens.getWidgets(s)
+				.add(Button.builder(Component.literal(l), (b) -> a.run())
+						.bounds(area.left() + area.width() - r, area.topAbove(), 15, 15)
+						.tooltip(Tooltip.create(Component.literal(t))).build());
 	}
-	public static void chatError(String message) {
-		var client = Minecraft.getInstance();
-		if (client.player != null) {
-			client.execute(() -> {
-				if (client.player != null) {
-					client.player
-							.sendSystemMessage(Component.literal(message).withStyle(net.minecraft.ChatFormatting.RED));
-				}
+	public static void chatError(String m) {
+		var c = Minecraft.getInstance();
+		if (c.player != null)
+			c.execute(() -> {
+				if (c.player != null)
+					c.player.sendSystemMessage(Component.literal(m).withStyle(net.minecraft.ChatFormatting.RED));
 			});
-		}
 	}
-
 	private Util() {
 	}
-	/**
-	 * Retrieves the BlockPos of the block the player is currently looking at.
-	 *
-	 * @param client
-	 *            The Minecraft client instance.
-	 * @return The BlockPos of the targeted block, or null if no block is targeted.
-	 */
-	public static BlockPos getTargetedBlock(Minecraft client) {
-		if (client.hitResult instanceof BlockHitResult bhr) {
-			return bhr.getBlockPos();
-		}
-		return null;
+	public static BlockPos getTargetedBlock(Minecraft c) {
+		return c.hitResult instanceof BlockHitResult bhr ? bhr.getBlockPos() : null;
 	}
-	/**
-	 * Checks if the given player is the local client player.
-	 *
-	 * @param other
-	 *            The entity to check.
-	 * @return True if the entity is the local client player.
-	 */
-	public static boolean isCurrentPlayer(net.minecraft.world.entity.Entity other) {
-		var instance = Minecraft.getInstance();
-		var player = instance.player;
-		if (player == null || other == null)
-			return false;
-		return player.equals(other);
+	public static boolean isCurrentPlayer(net.minecraft.world.entity.Entity o) {
+		return Minecraft.getInstance().player != null && Minecraft.getInstance().player.equals(o);
 	}
-	public static void click(Minecraft client, int containerId, int slotId, int button,
-			net.minecraft.world.inventory.ContainerInput type) {
-		if (client.gameMode != null && client.player != null) {
-			client.gameMode.handleContainerInput(containerId, slotId, button, type, client.player);
-		}
+	public static void click(Minecraft c, int id, int s, int b, net.minecraft.world.inventory.ContainerInput t) {
+		if (c.gameMode != null && c.player != null)
+			c.gameMode.handleContainerInput(id, s, b, t, c.player);
 	}
-	public static void quickMove(Minecraft client, int containerId, int slotId) {
-		click(client, containerId, slotId, 0, net.minecraft.world.inventory.ContainerInput.QUICK_MOVE);
+	public static void quickMove(Minecraft c, int id, int s) {
+		click(c, id, s, 0, net.minecraft.world.inventory.ContainerInput.QUICK_MOVE);
 	}
-	public static void pickup(Minecraft client, int containerId, int slotId) {
-		click(client, containerId, slotId, 0, net.minecraft.world.inventory.ContainerInput.PICKUP);
+	public static void pickup(Minecraft c, int id, int s) {
+		click(c, id, s, 0, net.minecraft.world.inventory.ContainerInput.PICKUP);
 	}
-	public static void swap(Minecraft client, int containerId, int fromSlot, int toSlot) {
-		if (client.player.inventoryMenu.getSlot(toSlot).getItem().isEmpty()) {
-			quickMove(client, containerId, fromSlot);
-		} else {
-			pickup(client, containerId, fromSlot);
-			pickup(client, containerId, toSlot);
-			pickup(client, containerId, fromSlot);
+	public static void swap(Minecraft c, int id, int f, int t) {
+		if (c.player.inventoryMenu.getSlot(t).getItem().isEmpty())
+			quickMove(c, id, f);
+		else {
+			pickup(c, id, f);
+			pickup(c, id, t);
+			pickup(c, id, f);
 		}
 	}
 	public static boolean areItemsEqual(ItemStack a, ItemStack b) {
 		return ItemStack.isSameItemSameComponents(a, b);
 	}
-	public static double getWeaponDamage(ItemStack stack) {
-		var modifiers = stack.getOrDefault(DataComponents.ATTRIBUTE_MODIFIERS, ItemAttributeModifiers.EMPTY);
-		return modifiers.compute(Attributes.ATTACK_DAMAGE, 1.0, EquipmentSlot.MAINHAND);
+	public static double getWeaponDamage(ItemStack s) {
+		return s.getOrDefault(DataComponents.ATTRIBUTE_MODIFIERS, ItemAttributeModifiers.EMPTY)
+				.compute(Attributes.ATTACK_DAMAGE, 1.0, EquipmentSlot.MAINHAND);
 	}
-	public static double getWeaponSpeed(ItemStack stack) {
-		var modifiers = stack.getOrDefault(DataComponents.ATTRIBUTE_MODIFIERS, ItemAttributeModifiers.EMPTY);
-		return modifiers.compute(Attributes.ATTACK_SPEED, 4.0, EquipmentSlot.MAINHAND);
+	public static double getWeaponSpeed(ItemStack s) {
+		return s.getOrDefault(DataComponents.ATTRIBUTE_MODIFIERS, ItemAttributeModifiers.EMPTY)
+				.compute(Attributes.ATTACK_SPEED, 4.0, EquipmentSlot.MAINHAND);
 	}
-	public static double getArmorValue(ItemStack stack, EquipmentSlot slot) {
-		var modifiers = stack.getOrDefault(DataComponents.ATTRIBUTE_MODIFIERS, ItemAttributeModifiers.EMPTY);
-		double armor = modifiers.compute(Attributes.ARMOR, 0.0, slot);
-		double toughness = modifiers.compute(Attributes.ARMOR_TOUGHNESS, 0.0, slot);
-		return armor + toughness;
+	public static double getArmorValue(ItemStack s, EquipmentSlot sl) {
+		var m = s.getOrDefault(DataComponents.ATTRIBUTE_MODIFIERS, ItemAttributeModifiers.EMPTY);
+		return m.compute(Attributes.ARMOR, 0.0, sl) + m.compute(Attributes.ARMOR_TOUGHNESS, 0.0, sl);
 	}
-	public static int getEnchantmentLevelSum(ItemStack stack) {
-		var enchants = stack.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY);
-		return enchants.keySet().stream().mapToInt(enchants::getLevel).sum();
+	public static int getEnchantmentLevelSum(ItemStack s) {
+		var e = s.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY);
+		return e.keySet().stream().mapToInt(e::getLevel).sum();
 	}
-	public static int getItemWeight(ItemStack stack) {
-		if (stack.isEmpty())
+	public static int getItemWeight(ItemStack s) {
+		if (s.isEmpty())
 			return 100;
-		if (stack.is(ItemTags.SWORDS))
+		if (s.is(ItemTags.SWORDS))
 			return 0;
-		if (stack.is(Items.BOW) || stack.is(Items.CROSSBOW))
+		if (s.is(Items.BOW) || s.is(Items.CROSSBOW))
 			return 1;
-		if (stack.is(ItemTags.PICKAXES))
+		if (s.is(ItemTags.PICKAXES))
 			return 2;
-		if (stack.is(ItemTags.AXES))
+		if (s.is(ItemTags.AXES))
 			return 3;
-		if (stack.is(ItemTags.SHOVELS))
+		if (s.is(ItemTags.SHOVELS))
 			return 4;
-		if (stack.is(ItemTags.HOES))
+		if (s.is(ItemTags.HOES))
 			return 5;
-		if (stack.has(DataComponents.FOOD))
+		if (s.has(DataComponents.FOOD))
 			return 6;
-		if (stack.getItem() instanceof BlockItem)
-			return 7;
-		return 8;
+		return s.getItem() instanceof BlockItem ? 7 : 8;
 	}
 }
