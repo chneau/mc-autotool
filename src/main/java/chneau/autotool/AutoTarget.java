@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-public class AutoTarget {
+public class AutoTarget implements Module {
 	private long lastBlockScan = 0;
 	private volatile Map<String, List<Scanner.Target>> categoryBlockTargets = new HashMap<>();
 	private Map<String, List<Scanner.Target>> categoryEntityTargets = new HashMap<>();

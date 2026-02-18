@@ -5,13 +5,13 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.component.DataComponents;
-public class AutoEat implements EndTick {
+public class AutoEat implements EndTick, Module {
 	private long lastActivity = System.currentTimeMillis();
 	private int lastSlot = -1;
 	private boolean isEating = false;
 	private double lastX, lastY, lastZ;
 	public void register() {
-		ClientTickEvents.END_CLIENT_TICK.register(Safe.tick("AutoEat", this));
+		ClientTickEvents.END_CLIENT_TICK.register(Safe.playerTick("AutoEat", this));
 	}
 	@Override
 	public void onEndTick(Minecraft client) {
@@ -22,8 +22,6 @@ public class AutoEat implements EndTick {
 			return;
 		}
 		var player = client.player;
-		if (player == null || !Util.isCurrentPlayer(player))
-			return;
 		// Activity check: Detect manual activity efficiently
 		boolean active = false;
 		// 1. Check for movement

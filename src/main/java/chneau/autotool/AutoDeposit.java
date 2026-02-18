@@ -13,12 +13,10 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-public class AutoDeposit {
+public class AutoDeposit implements Module {
 	public void register() {
-		ScreenEvents.AFTER_INIT.register(Safe.screen("AutoDeposit.ScreenInit", (client, screen, width, height) -> {
-			if (screen instanceof AbstractContainerScreen<?> containerScreen) {
-				setupButton(client, containerScreen, screen);
-			}
+		ScreenEvents.AFTER_INIT.register(Safe.containerScreen("AutoDeposit", (client, screen, width, height) -> {
+			setupButton(client, screen, screen);
 		}));
 	}
 

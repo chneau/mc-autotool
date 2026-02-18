@@ -16,7 +16,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
-public class AutoSwap implements AttackBlockCallback, AttackEntityCallback, EndTick {
+public class AutoSwap implements AttackBlockCallback, AttackEntityCallback, EndTick, Module {
 	private int last = -1;
 	private final Select best = new SelectBest();
 	private final Select first = new SelectFirst();
@@ -28,16 +28,16 @@ public class AutoSwap implements AttackBlockCallback, AttackEntityCallback, EndT
 		return ConfigManager.getConfig().autoSwap == Config.Strategy.BEST ? best : first;
 	}
 	public void register() {
-		AttackBlockCallback.EVENT.register(Safe.attackBlock("AutoSwap.AttackBlock", this));
-		AttackEntityCallback.EVENT.register(Safe.attackEntity("AutoSwap.AttackEntity", this));
-		ClientTickEvents.END_CLIENT_TICK.register(Safe.tick("AutoSwap.Tick", this));
+		AttackBlockCallback.EVENT.register(
+				Safe.playerAttackBlock("AutoSwap.AttackBlock", (p, w, h, pos, dir) -> interact(p, w, h, pos, dir)));
+		AttackEntityCallback.EVENT.register(
+				Safe.playerAttackEntity("AutoSwap.AttackEntity", (p, w, h, e, ehr) -> interact(p, w, h, e, ehr)));
+		ClientTickEvents.END_CLIENT_TICK.register(Safe.playerTick("AutoSwap.Tick", this));
 	}
 	@Override
 	public InteractionResult interact(Player player, Level world, InteractionHand hand, BlockPos blockPos,
 			Direction direction) {
 		if (ConfigManager.getConfig().autoSwap == Config.Strategy.OFF)
-			return InteractionResult.PASS;
-		if (!Util.isCurrentPlayer(player))
 			return InteractionResult.PASS;
 		if (hand != InteractionHand.MAIN_HAND)
 			return InteractionResult.PASS;
@@ -65,8 +65,6 @@ public class AutoSwap implements AttackBlockCallback, AttackEntityCallback, EndT
 			EntityHitResult ehr) {
 		if (ConfigManager.getConfig().autoSwap == Config.Strategy.OFF)
 			return InteractionResult.PASS;
-		if (!Util.isCurrentPlayer(player))
-			return InteractionResult.PASS;
 		if (hand != InteractionHand.MAIN_HAND)
 			return InteractionResult.PASS;
 		if (last == -1)
@@ -90,9 +88,7 @@ public class AutoSwap implements AttackBlockCallback, AttackEntityCallback, EndT
 	@Override
 	public void onEndTick(Minecraft client) {
 		var player = client.player;
-		if (player == null || player.getInventory() == null)
-			return;
-		if (!Util.isCurrentPlayer(player))
+		if (player.getInventory() == null)
 			return;
 		ItemStack currentHeld = player.getMainHandItem();
 		// Detect broken tool

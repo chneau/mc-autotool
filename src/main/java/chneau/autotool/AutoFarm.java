@@ -15,10 +15,10 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult.Type;
 import net.minecraft.core.BlockPos;
-public class AutoFarm implements EndTick {
+public class AutoFarm implements EndTick, Module {
 	private BlockPos lastTargetedBlock = null;
 	public void register() {
-		ClientTickEvents.END_CLIENT_TICK.register(Safe.tick("AutoFarm", this));
+		ClientTickEvents.END_CLIENT_TICK.register(Safe.playerTick("AutoFarm", this));
 	}
 	@Override
 	public void onEndTick(Minecraft client) {
@@ -26,8 +26,6 @@ public class AutoFarm implements EndTick {
 		if (mode == Config.FarmMode.OFF)
 			return;
 		var player = client.player;
-		if (player == null || !Util.isCurrentPlayer(player))
-			return;
 		if (client.hitResult == null || player.getInventory() == null)
 			return;
 		var targetedBlock = Util.getTargetedBlock(client);

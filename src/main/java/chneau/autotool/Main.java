@@ -15,18 +15,14 @@ public class Main implements ClientModInitializer {
 		LOGGER.info("Initializing mc-autotool...");
 		ConfigManager.load();
 		Throttler.register();
-		(new AutoSwap()).register();
-		(new AutoRefill()).register();
-		(new AutoFarm()).register();
-		(new AutoAttack()).register();
-		(new AutoSprint()).register();
-		(new AutoEat()).register();
-		(new AutoSort()).register();
-		(new AutoArmor()).register();
-		(new AutoFish()).register();
-		(new AutoTarget()).register();
-		(new AutoStep()).register();
-		(new AutoDeposit()).register();
+
+		var modules = new Module[]{new AutoSwap(), new AutoRefill(), new AutoFarm(), new AutoAttack(), new AutoSprint(),
+				new AutoEat(), new AutoSort(), new AutoArmor(), new AutoFish(), new AutoTarget(), new AutoStep(),
+				new AutoDeposit()};
+		for (var module : modules) {
+			module.register();
+		}
+
 		configKey = KeyMappingHelper.registerKeyMapping(new KeyMapping("key.mc-autotool.config",
 				InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_O, KeyMapping.Category.MISC));
 		ClientTickEvents.END_CLIENT_TICK.register(Safe.tick("Main.ConfigKey", client -> {

@@ -8,12 +8,10 @@ import net.minecraft.world.inventory.AbstractFurnaceMenu;
 import net.minecraft.world.item.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
-public class AutoSort {
+public class AutoSort implements Module {
 	public void register() {
-		ScreenEvents.AFTER_INIT.register(Safe.screen("AutoSort.ScreenInit", (client, screen, width, height) -> {
-			if (screen instanceof AbstractContainerScreen<?> containerScreen) {
-				setupButton(client, containerScreen, screen);
-			}
+		ScreenEvents.AFTER_INIT.register(Safe.containerScreen("AutoSort", (client, screen, width, height) -> {
+			setupButton(client, screen, screen);
 		}));
 	}
 

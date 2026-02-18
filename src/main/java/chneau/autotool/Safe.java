@@ -1,5 +1,15 @@
 package chneau.autotool;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.EntityHitResult;
 import java.util.concurrent.CompletableFuture;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -41,8 +51,28 @@ public class Safe {
 		return client -> run(name, () -> original.onEndTick(client));
 	}
 
+	public static ClientTickEvents.EndTick playerTick(String name, ClientTickEvents.EndTick original) {
+		return client -> run(name, () -> {
+			if (client.player == null || !Util.isCurrentPlayer(client.player))
+				return;
+			original.onEndTick(client);
+		});
+	}
+
 	public static ScreenEvents.AfterInit screen(String name, ScreenEvents.AfterInit original) {
 		return (client, screen, width, height) -> run(name, () -> original.afterInit(client, screen, width, height));
+	}
+
+	public interface ContainerScreenInit {
+		void afterInit(Minecraft client, AbstractContainerScreen<?> screen, int width, int height);
+	}
+
+	public static ScreenEvents.AfterInit containerScreen(String name, ContainerScreenInit original) {
+		return (client, screen, width, height) -> run(name, () -> {
+			if (screen instanceof AbstractContainerScreen<?> containerScreen) {
+				original.afterInit(client, containerScreen, width, height);
+			}
+		});
 	}
 
 	public static UseBlockCallback use(String name, UseBlockCallback original) {
@@ -50,8 +80,28 @@ public class Safe {
 				InteractionResult.PASS);
 	}
 
+	public interface PlayerUseBlock {
+		InteractionResult interact(Player player, Level world, InteractionHand hand, BlockHitResult bhr);
+	}
+
+	public static UseBlockCallback playerUse(String name, PlayerUseBlock original) {
+		return (player, world, hand, bhr) -> call(name, () -> {
+			if (!Util.isCurrentPlayer(player))
+				return InteractionResult.PASS;
+			return original.interact(player, world, hand, bhr);
+		}, InteractionResult.PASS);
+	}
+
 	public static ClientEntityEvents.Load load(String name, ClientEntityEvents.Load original) {
 		return (entity, world) -> run(name, () -> original.onLoad(entity, world));
+	}
+
+	public static ClientEntityEvents.Load playerLoad(String name, Runnable original) {
+		return (entity, world) -> run(name, () -> {
+			if (Util.isCurrentPlayer(entity)) {
+				original.run();
+			}
+		});
 	}
 
 	public static AttackBlockCallback attackBlock(String name, AttackBlockCallback original) {
@@ -59,9 +109,34 @@ public class Safe {
 				InteractionResult.PASS);
 	}
 
+	public interface PlayerAttackBlock {
+		InteractionResult interact(Player player, Level world, InteractionHand hand, BlockPos pos, Direction dir);
+	}
+
+	public static AttackBlockCallback playerAttackBlock(String name, PlayerAttackBlock original) {
+		return (player, world, hand, pos, dir) -> call(name, () -> {
+			if (!Util.isCurrentPlayer(player))
+				return InteractionResult.PASS;
+			return original.interact(player, world, hand, pos, dir);
+		}, InteractionResult.PASS);
+	}
+
 	public static AttackEntityCallback attackEntity(String name, AttackEntityCallback original) {
 		return (player, world, hand, entity, hitResult) -> call(name,
 				() -> original.interact(player, world, hand, entity, hitResult), InteractionResult.PASS);
+	}
+
+	public interface PlayerAttackEntity {
+		InteractionResult interact(Player player, Level world, InteractionHand hand, Entity entity,
+				EntityHitResult hitResult);
+	}
+
+	public static AttackEntityCallback playerAttackEntity(String name, PlayerAttackEntity original) {
+		return (player, world, hand, entity, hitResult) -> call(name, () -> {
+			if (!Util.isCurrentPlayer(player))
+				return InteractionResult.PASS;
+			return original.interact(player, world, hand, entity, hitResult);
+		}, InteractionResult.PASS);
 	}
 
 	public static HudRenderCallback hud(String name, HudRenderCallback original) {

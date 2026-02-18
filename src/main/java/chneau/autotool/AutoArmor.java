@@ -7,9 +7,9 @@ import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.component.DataComponents;
-public class AutoArmor {
+public class AutoArmor implements Module {
 	public void register() {
-		ScreenEvents.AFTER_INIT.register(Safe.screen("AutoArmor.ScreenInit", (client, screen, width, height) -> {
+		ScreenEvents.AFTER_INIT.register(Safe.containerScreen("AutoArmor", (client, screen, width, height) -> {
 			if (screen instanceof InventoryScreen inventoryScreen) {
 				setupButton(client, inventoryScreen, screen);
 			}

@@ -2,9 +2,9 @@ package chneau.autotool;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents.EndTick;
 import net.minecraft.client.Minecraft;
-public class AutoSprint implements EndTick {
+public class AutoSprint implements EndTick, Module {
 	public void register() {
-		ClientTickEvents.END_CLIENT_TICK.register(Safe.tick("AutoSprint", this));
+		ClientTickEvents.END_CLIENT_TICK.register(Safe.playerTick("AutoSprint", this));
 	}
 	@Override
 	public void onEndTick(Minecraft client) {
@@ -12,8 +12,6 @@ public class AutoSprint implements EndTick {
 		if (mode == Config.SprintMode.OFF)
 			return;
 		var player = client.player;
-		if (player == null || !Util.isCurrentPlayer(player))
-			return;
 		if (player.horizontalCollision || player.isDescending() || player.isUsingItem())
 			return;
 		int foodLevel = player.getFoodData().getFoodLevel();

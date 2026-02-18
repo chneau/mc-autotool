@@ -10,12 +10,12 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult.Type;
-public class AutoAttack implements EndTick {
+public class AutoAttack implements EndTick, Module {
 	private long lastAttack = System.currentTimeMillis();
 	private ItemStack lastStack = ItemStack.EMPTY;
 	private long cachedDelay = 0;
 	public void register() {
-		ClientTickEvents.END_CLIENT_TICK.register(Safe.tick("AutoAttack", this));
+		ClientTickEvents.END_CLIENT_TICK.register(Safe.playerTick("AutoAttack", this));
 	}
 	@Override
 	public void onEndTick(Minecraft client) {
@@ -23,7 +23,7 @@ public class AutoAttack implements EndTick {
 		if (mode == Config.AttackMode.OFF)
 			return;
 		var player = client.player;
-		if (player == null || !Util.isCurrentPlayer(player) || player.getInventory() == null || client.level == null)
+		if (player.getInventory() == null || client.level == null)
 			return;
 		var inventory = player.getInventory();
 		var itemStackMainHand = inventory.getItem(inventory.getSelectedSlot());

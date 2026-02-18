@@ -2,13 +2,9 @@ package chneau.autotool;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-public class AutoStep {
+public class AutoStep implements Module {
 	public void register() {
-		ClientEntityEvents.ENTITY_LOAD.register(Safe.load("AutoStep", (entity, world) -> {
-			if (Util.isCurrentPlayer(entity)) {
-				update();
-			}
-		}));
+		ClientEntityEvents.ENTITY_LOAD.register(Safe.playerLoad("AutoStep", AutoStep::update));
 	}
 	public static void update() {
 		Minecraft client = Minecraft.getInstance();

@@ -7,7 +7,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.item.Items;
 import java.lang.reflect.Field;
-public class AutoFish implements EndTick {
+public class AutoFish implements EndTick, Module {
 	private static EntityDataAccessor<Boolean> DATA_BITING;
 	private int recastTicks = -1;
 	static {
@@ -26,15 +26,13 @@ public class AutoFish implements EndTick {
 		}
 	}
 	public void register() {
-		ClientTickEvents.END_CLIENT_TICK.register(Safe.tick("AutoFish", this));
+		ClientTickEvents.END_CLIENT_TICK.register(Safe.playerTick("AutoFish", this));
 	}
 	@Override
 	public void onEndTick(Minecraft client) {
 		if (ConfigManager.getConfig().autoFish == Config.FishMode.OFF)
 			return;
 		var player = client.player;
-		if (player == null || !Util.isCurrentPlayer(player))
-			return;
 		boolean holdingRod = player.getMainHandItem().is(Items.FISHING_ROD)
 				|| player.getOffhandItem().is(Items.FISHING_ROD);
 		if (!holdingRod) {

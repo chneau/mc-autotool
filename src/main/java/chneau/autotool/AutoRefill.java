@@ -7,17 +7,15 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.AbstractFurnaceBlock;
-public class AutoRefill implements UseBlockCallback {
+public class AutoRefill implements UseBlockCallback, Module {
 	private ItemStack lastHeldItem = ItemStack.EMPTY;
 	public void register() {
-		UseBlockCallback.EVENT.register(Safe.use("AutoRefill", this));
+		UseBlockCallback.EVENT.register(Safe.playerUse("AutoRefill", this::interact));
 	}
 	@Override
 	public InteractionResult interact(Player player, Level world, InteractionHand hand, BlockHitResult bhr) {
 		var mode = ConfigManager.getConfig().autoRefill;
 		if (mode == Config.RefillMode.OFF)
-			return InteractionResult.PASS;
-		if (!Util.isCurrentPlayer(player))
 			return InteractionResult.PASS;
 		if (hand != InteractionHand.MAIN_HAND)
 			return InteractionResult.PASS;
