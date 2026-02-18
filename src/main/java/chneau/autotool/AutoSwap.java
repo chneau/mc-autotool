@@ -1,12 +1,9 @@
 package chneau.autotool;
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
-import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.network.protocol.game.ServerboundSetCarriedItemPacket;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.phys.EntityHitResult;
@@ -17,8 +14,8 @@ import net.minecraft.world.item.ItemStack;
 
 public class AutoSwap extends BaseModule
 		implements
-			AttackBlockCallback,
-			AttackEntityCallback,
+			Safe.PlayerAttackBlock,
+			Safe.PlayerAttackEntity,
 			ClientTickEvents.EndTick {
 	private int last = -1;
 	private final Select best = Select.best(), first = Select.first();
@@ -27,12 +24,6 @@ public class AutoSwap extends BaseModule
 
 	public AutoSwap() {
 		super("AutoSwap");
-	}
-	@Override
-	public void register() {
-		AttackBlockCallback.EVENT.register(Safe.playerAttackBlock(name + ".Block", this::interact));
-		AttackEntityCallback.EVENT.register(Safe.playerAttackEntity(name + ".Entity", this::interact));
-		ClientTickEvents.END_CLIENT_TICK.register(Safe.playerTick(name + ".Tick", this));
 	}
 
 	private Select getS() {
@@ -49,7 +40,7 @@ public class AutoSwap extends BaseModule
 		int t = getS().selectTool(p.getInventory(), w.getBlockState(pos));
 		if (t != -1) {
 			if (p.getInventory().getSelectedSlot() != t)
-				update(t);
+				Util.selectSlot(client(), t);
 			return InteractionResult.PASS;
 		}
 		int any = getS().selectAnyTool(p.getInventory(), w.getBlockState(pos));
@@ -68,7 +59,7 @@ public class AutoSwap extends BaseModule
 		if (s != -1) {
 			if (p.getInventory().getSelectedSlot() != s) {
 				last = s;
-				update(s);
+				Util.selectSlot(client(), s);
 			}
 			return InteractionResult.PASS;
 		}
@@ -97,18 +88,9 @@ public class AutoSwap extends BaseModule
 		boolean lb = c.mouseHandler.isLeftPressed();
 		if (!lb) {
 			if (last != -1)
-				update(last);
+				Util.selectSlot(client(), last);
 			last = -1;
 		} else if (last == -1)
 			last = p.getInventory().getSelectedSlot();
-	}
-
-	private void update(int pos) {
-		var p = client().player;
-		if (p == null || p.getInventory().getSelectedSlot() == pos)
-			return;
-		p.getInventory().setSelectedSlot(pos);
-		if (p.connection != null)
-			p.connection.send(new ServerboundSetCarriedItemPacket(pos));
 	}
 }

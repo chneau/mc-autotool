@@ -1,7 +1,6 @@
 package chneau.autotool;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
@@ -61,10 +60,8 @@ public class TargetConfigScreen extends BaseConfigScreen {
 	}
 	@Override
 	protected void addFooter() {
-		LinearLayout linearLayout = LinearLayout.horizontal().spacing(8);
-		linearLayout.addChild(Button.builder(CommonComponents.GUI_DONE, (button) -> {
+		addFooterButtons(Button.builder(CommonComponents.GUI_DONE, (button) -> {
 			this.onClose();
 		}).width(150).build());
-		this.layout.addToFooter(linearLayout);
 	}
 }

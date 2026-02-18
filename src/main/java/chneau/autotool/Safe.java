@@ -96,10 +96,14 @@ public class Safe {
 		return (entity, world) -> run(name, () -> original.onLoad(entity, world));
 	}
 
-	public static ClientEntityEvents.Load playerLoad(String name, Runnable original) {
+	public interface PlayerLoad {
+		void onLoad();
+	}
+
+	public static ClientEntityEvents.Load playerLoad(String name, PlayerLoad original) {
 		return (entity, world) -> run(name, () -> {
 			if (Util.isCurrentPlayer(entity)) {
-				original.run();
+				original.onLoad();
 			}
 		});
 	}

@@ -2,6 +2,7 @@ package chneau.autotool;
 import com.mojang.serialization.Codec;
 import net.minecraft.client.OptionInstance;
 import net.minecraft.client.Options;
+import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.options.OptionsSubScreen;
 import net.minecraft.network.chat.CommonComponents;
@@ -45,5 +46,13 @@ public abstract class BaseConfigScreen extends OptionsSubScreen {
 		ConfigManager.save();
 		AutoStep.update();
 		this.minecraft.setScreen(this.lastScreen);
+	}
+
+	protected void addFooterButtons(Button... buttons) {
+		net.minecraft.client.gui.layouts.LinearLayout linearLayout = net.minecraft.client.gui.layouts.LinearLayout
+				.horizontal().spacing(8);
+		for (Button b : buttons)
+			linearLayout.addChild(b);
+		this.layout.addToFooter(linearLayout);
 	}
 }

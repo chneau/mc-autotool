@@ -13,10 +13,6 @@ public class AutoEat extends BaseModule implements ClientTickEvents.EndTick {
 	public AutoEat() {
 		super("AutoEat");
 	}
-	@Override
-	public void register() {
-		ClientTickEvents.END_CLIENT_TICK.register(Safe.playerTick(name, this));
-	}
 
 	@Override
 	public void onEndTick(Minecraft client) {
@@ -91,7 +87,7 @@ public class AutoEat extends BaseModule implements ClientTickEvents.EndTick {
 	private void start(Minecraft c, int s) {
 		if (lastSlot == -1)
 			lastSlot = c.player.getInventory().getSelectedSlot();
-		c.player.getInventory().setSelectedSlot(s);
+		Util.selectSlot(c, s);
 		c.options.keyUse.setDown(true);
 		eating = true;
 	}
@@ -99,7 +95,7 @@ public class AutoEat extends BaseModule implements ClientTickEvents.EndTick {
 	private void stop(Minecraft c) {
 		c.options.keyUse.setDown(false);
 		if (lastSlot != -1 && c.player != null)
-			c.player.getInventory().setSelectedSlot(lastSlot);
+			Util.selectSlot(c, lastSlot);
 		lastSlot = -1;
 		eating = false;
 	}

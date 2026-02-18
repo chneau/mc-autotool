@@ -7,10 +7,6 @@ public class AutoSprint extends BaseModule implements ClientTickEvents.EndTick {
 	public AutoSprint() {
 		super("AutoSprint");
 	}
-	@Override
-	public void register() {
-		ClientTickEvents.END_CLIENT_TICK.register(Safe.playerTick(name, this));
-	}
 
 	@Override
 	public void onEndTick(Minecraft client) {

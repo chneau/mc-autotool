@@ -7,7 +7,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import java.util.*;
 
-public class AutoTarget extends BaseModule {
+public class AutoTarget extends BaseModule implements HudRenderCallback {
 	private long lastBS = 0;
 	private volatile Map<String, List<Scanner.Target>> bTargets = new HashMap<>();
 	private Map<String, List<Scanner.Target>> eTargets = new HashMap<>();
@@ -16,12 +16,9 @@ public class AutoTarget extends BaseModule {
 	public AutoTarget() {
 		super("AutoTarget");
 	}
-	@Override
-	public void register() {
-		HudRenderCallback.EVENT.register(Safe.hud(name, this::render));
-	}
 
-	private void render(GuiGraphics draw, DeltaTracker dt) {
+	@Override
+	public void onHudRender(GuiGraphics draw, DeltaTracker dt) {
 		var c = client();
 		if (c.player == null || c.level == null || c.options.hideGui)
 			return;

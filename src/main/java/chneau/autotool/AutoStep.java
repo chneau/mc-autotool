@@ -1,15 +1,15 @@
 package chneau.autotool;
 
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 
-public class AutoStep extends BaseModule {
+public class AutoStep extends BaseModule implements Safe.PlayerLoad {
 	public AutoStep() {
 		super("AutoStep");
 	}
+
 	@Override
-	public void register() {
-		ClientEntityEvents.ENTITY_LOAD.register(Safe.playerLoad(name, AutoStep::update));
+	public void onLoad() {
+		update();
 	}
 
 	public static void update() {

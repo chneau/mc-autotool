@@ -15,10 +15,6 @@ public class AutoFish extends BaseModule implements ClientTickEvents.EndTick {
 	public AutoFish() {
 		super("AutoFish");
 	}
-	@Override
-	public void register() {
-		ClientTickEvents.END_CLIENT_TICK.register(Safe.playerTick(name, this));
-	}
 
 	@SuppressWarnings("unchecked")
 	private static EntityDataAccessor<Boolean> fetchDataBiting() {

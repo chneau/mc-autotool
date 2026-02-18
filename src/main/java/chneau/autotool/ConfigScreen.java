@@ -2,7 +2,6 @@ package chneau.autotool;
 import net.minecraft.client.OptionInstance;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
@@ -50,16 +49,13 @@ public class ConfigScreen extends BaseConfigScreen {
 	}
 	@Override
 	protected void addFooter() {
-		LinearLayout linearLayout = LinearLayout.horizontal().spacing(8);
-		linearLayout.addChild(Button.builder(Component.literal("Reset to Defaults"), (button) -> {
+		addFooterButtons(Button.builder(Component.literal("Reset to Defaults"), (button) -> {
 			ConfigManager.getConfig().resetToDefault();
 			ConfigManager.save();
 			AutoStep.update();
 			this.minecraft.setScreen(new ConfigScreen(this.lastScreen, this.options));
-		}).width(150).build());
-		linearLayout.addChild(Button.builder(CommonComponents.GUI_DONE, (button) -> {
+		}).width(150).build(), Button.builder(CommonComponents.GUI_DONE, (button) -> {
 			this.onClose();
 		}).width(150).build());
-		this.layout.addToFooter(linearLayout);
 	}
 }

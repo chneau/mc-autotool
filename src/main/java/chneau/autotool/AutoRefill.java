@@ -1,6 +1,5 @@
 package chneau.autotool;
 
-import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionHand;
@@ -9,17 +8,14 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.AbstractFurnaceBlock;
 
-public class AutoRefill extends BaseModule {
+public class AutoRefill extends BaseModule implements Safe.PlayerUseBlock {
 	private ItemStack lastHeld = ItemStack.EMPTY;
 
 	public AutoRefill() {
 		super("AutoRefill");
 	}
-	@Override
-	public void register() {
-		UseBlockCallback.EVENT.register(Safe.playerUse(name, this::interact));
-	}
 
+	@Override
 	public InteractionResult interact(Player p, Level w, InteractionHand h, BlockHitResult bhr) {
 		var mode = config().autoRefill;
 		if (mode == Config.RefillMode.OFF || h != InteractionHand.MAIN_HAND

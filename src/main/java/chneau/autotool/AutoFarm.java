@@ -17,10 +17,6 @@ public class AutoFarm extends BaseModule implements ClientTickEvents.EndTick {
 	public AutoFarm() {
 		super("AutoFarm");
 	}
-	@Override
-	public void register() {
-		ClientTickEvents.END_CLIENT_TICK.register(Safe.playerTick(name, this));
-	}
 
 	@Override
 	public void onEndTick(Minecraft client) {

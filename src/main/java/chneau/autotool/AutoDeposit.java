@@ -1,28 +1,26 @@
 package chneau.autotool;
 
-import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractFurnaceMenu;
 import java.util.HashSet;
 
-public class AutoDeposit extends BaseModule {
+public class AutoDeposit extends BaseModule implements Safe.ContainerScreenInit {
 	public AutoDeposit() {
 		super("AutoDeposit");
 	}
 
 	@Override
-	public void register() {
-		ScreenEvents.AFTER_INIT.register(Safe.containerScreen(name, (client, screen, w, h) -> {
-			var mode = config().autoDeposit;
-			if (mode == Config.DepositMode.OFF)
-				return;
-			boolean furnace = screen.getMenu() instanceof AbstractFurnaceMenu;
-			if ((furnace && (mode == Config.DepositMode.FURNACE || mode == Config.DepositMode.ALL))
-					|| (!furnace && (mode == Config.DepositMode.CHEST || mode == Config.DepositMode.ALL)))
-				Util.addButton(screen, screen, "D", "Deposit Items", 20,
-						() -> Safe.run(name, () -> handle(client, furnace)));
-		}));
+	public void afterInit(Minecraft client,
+			net.minecraft.client.gui.screens.inventory.AbstractContainerScreen<?> screen, int w, int h) {
+		var mode = config().autoDeposit;
+		if (mode == Config.DepositMode.OFF)
+			return;
+		boolean furnace = screen.getMenu() instanceof AbstractFurnaceMenu;
+		if ((furnace && (mode == Config.DepositMode.FURNACE || mode == Config.DepositMode.ALL))
+				|| (!furnace && (mode == Config.DepositMode.CHEST || mode == Config.DepositMode.ALL)))
+			Util.addButton(screen, screen, "D", "Deposit Items", 20,
+					() -> Safe.run(name, () -> handle(client, furnace)));
 	}
 
 	private void handle(Minecraft client, boolean furnace) {

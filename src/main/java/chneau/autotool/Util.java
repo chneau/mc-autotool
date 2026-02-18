@@ -60,6 +60,15 @@ public class Util {
 					c.player.sendSystemMessage(Component.literal(m).withStyle(net.minecraft.ChatFormatting.RED));
 			});
 	}
+
+	public static void selectSlot(Minecraft c, int slot) {
+		var p = c.player;
+		if (p == null || p.getInventory().getSelectedSlot() == slot)
+			return;
+		p.getInventory().setSelectedSlot(slot);
+		if (p.connection != null)
+			p.connection.send(new net.minecraft.network.protocol.game.ServerboundSetCarriedItemPacket(slot));
+	}
 	private Util() {
 	}
 	public static BlockPos getTargetedBlock(Minecraft c) {
