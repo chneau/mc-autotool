@@ -6,42 +6,41 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.component.DataComponents;
 public class AutoArmor extends BaseModule implements Safe.ContainerScreenInit {
 	@Override
-	public void afterInit(Minecraft client,
-			net.minecraft.client.gui.screens.inventory.AbstractContainerScreen<?> screen, int w, int h) {
-		if (screen instanceof InventoryScreen inv && config().autoArmor != Config.ArmorMode.OFF)
-			Util.addButton(screen, inv, "A", "Equip Best Armor", 60, () -> Safe.run(name, () -> handle(client)));
+	public void afterInit(Minecraft c, net.minecraft.client.gui.screens.inventory.AbstractContainerScreen<?> s, int w,
+			int h) {
+		if (s instanceof InventoryScreen inv && config().autoArmor != Config.ArmorMode.OFF)
+			Util.addButton(s, inv, "A", "Equip Best Armor", 60, () -> Safe.run(name, () -> handle(c)));
 	}
-	private void handle(Minecraft client) {
-		var p = client.player;
-		if (p == null || client.gameMode == null)
+	private void handle(Minecraft c) {
+		var p = c.player;
+		if (p == null || c.gameMode == null)
 			return;
 		var menu = p.inventoryMenu;
 		var slots = new EquipmentSlot[]{EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS,
 				EquipmentSlot.FEET};
 		for (int i = 0; i < slots.length; i++) {
 			var slot = slots[i];
-			int menuIdx = 5 + i;
-			var current = menu.getSlot(menuIdx).getItem();
-			int bestSlot = -1;
-			var best = current;
+			int mIdx = 5 + i;
+			var best = menu.getSlot(mIdx).getItem();
+			int bSlot = -1;
 			for (int j = 9; j <= 44; j++) {
 				var stack = menu.getSlot(j).getItem();
 				var eq = stack.get(DataComponents.EQUIPPABLE);
 				if (eq != null && eq.slot() == slot && isBetter(stack, best, slot)) {
 					best = stack;
-					bestSlot = j;
+					bSlot = j;
 				}
 			}
-			if (bestSlot != -1) {
-				Util.swap(client, menu.containerId, bestSlot, menuIdx);
+			if (bSlot != -1) {
+				Util.swap(c, menu.containerId, bSlot, mIdx);
 				return;
 			}
 		}
 	}
-	private boolean isBetter(ItemStack n, ItemStack o, EquipmentSlot slot) {
+	private boolean isBetter(ItemStack n, ItemStack o, EquipmentSlot s) {
 		if (o.isEmpty())
 			return true;
-		double nv = Util.getArmorValue(n, slot), ov = Util.getArmorValue(o, slot);
+		double nv = Util.getArmorValue(n, s), ov = Util.getArmorValue(o, s);
 		if (config().autoArmor == Config.ArmorMode.SMART) {
 			nv += Util.getEnchantmentLevelSum(n) * 0.5;
 			ov += Util.getEnchantmentLevelSum(o) * 0.5;

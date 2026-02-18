@@ -3,48 +3,48 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.component.DataComponents;
 public class AutoEat extends BaseModule implements ClientTickEvents.EndTick {
-	private long lastAct = 0;
-	private int lastSlot = -1;
+	private long last = 0;
+	private int lastS = -1;
 	private boolean eating = false;
 	private double lx, ly, lz;
 	@Override
-	public void onEndTick(Minecraft client) {
-		var mode = config().autoEat;
-		if (mode == Config.EatMode.OFF) {
+	public void onEndTick(Minecraft c) {
+		var m = config().autoEat;
+		if (m == Config.EatMode.OFF) {
 			if (eating)
-				stop(client);
+				stop(c);
 			return;
 		}
-		var p = client.player;
-		boolean act = p.getX() != lx || p.getY() != ly || p.getZ() != lz || client.options.keyAttack.isDown()
-				|| (client.options.keyUse.isDown() && !eating) || client.options.keyJump.isDown()
-				|| client.options.keyShift.isDown() || client.options.keySprint.isDown() || client.screen != null;
+		var p = c.player;
+		boolean act = p.getX() != lx || p.getY() != ly || p.getZ() != lz || c.options.keyAttack.isDown()
+				|| (c.options.keyUse.isDown() && !eating) || c.options.keyJump.isDown() || c.options.keyShift.isDown()
+				|| c.options.keySprint.isDown() || c.screen != null;
 		lx = p.getX();
 		ly = p.getY();
 		lz = p.getZ();
 		if (act) {
-			lastAct = System.currentTimeMillis();
+			last = System.currentTimeMillis();
 			if (eating)
-				stop(client);
+				stop(c);
 			return;
 		}
-		if (System.currentTimeMillis() - lastAct < 1000)
+		if (System.currentTimeMillis() - last < 1000)
 			return;
 		if (eating) {
 			if (p.isUsingItem())
 				return;
-			if (!should(p, mode)) {
-				stop(client);
+			if (!should(p, m)) {
+				stop(c);
 				return;
 			}
 			eating = false;
 		}
-		if (should(p, mode)) {
-			int slot = find(p.getInventory(), p.getFoodData().getFoodLevel(), mode == Config.EatMode.SMART);
-			if (slot != -1)
-				start(client, slot);
+		if (should(p, m)) {
+			int s = find(p.getInventory(), p.getFoodData().getFoodLevel(), m == Config.EatMode.SMART);
+			if (s != -1)
+				start(c, s);
 			else if (eating)
-				stop(client);
+				stop(c);
 		}
 	}
 	private boolean should(net.minecraft.world.entity.player.Player p, Config.EatMode m) {
@@ -73,17 +73,17 @@ public class AutoEat extends BaseModule implements ClientTickEvents.EndTick {
 		return best;
 	}
 	private void start(Minecraft c, int s) {
-		if (lastSlot == -1)
-			lastSlot = c.player.getInventory().getSelectedSlot();
+		if (lastS == -1)
+			lastS = c.player.getInventory().getSelectedSlot();
 		Util.selectSlot(c, s);
 		c.options.keyUse.setDown(true);
 		eating = true;
 	}
 	private void stop(Minecraft c) {
 		c.options.keyUse.setDown(false);
-		if (lastSlot != -1 && c.player != null)
-			Util.selectSlot(c, lastSlot);
-		lastSlot = -1;
+		if (lastS != -1 && c.player != null)
+			Util.selectSlot(c, lastS);
+		lastS = -1;
 		eating = false;
 	}
 }

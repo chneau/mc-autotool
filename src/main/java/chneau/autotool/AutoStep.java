@@ -9,11 +9,11 @@ public class AutoStep extends BaseModule implements Safe.PlayerLoad {
 		var p = client().player;
 		if (p == null)
 			return;
-		var attr = p.getAttribute(Attributes.STEP_HEIGHT);
-		if (attr != null) {
+		var a = p.getAttribute(Attributes.STEP_HEIGHT);
+		if (a != null) {
 			double h = config().autoStep == Config.StepMode.ON ? 1.0 : 0.6;
-			if (attr.getBaseValue() != h)
-				attr.setBaseValue(h);
+			if (a.getBaseValue() != h)
+				a.setBaseValue(h);
 		}
 	}
 }

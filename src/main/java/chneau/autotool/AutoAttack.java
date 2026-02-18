@@ -9,39 +9,38 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 public class AutoAttack extends BaseModule implements ClientTickEvents.EndTick {
-	private long lastAttack = 0, cachedDelay = 0;
+	private long last = 0, delay = 0;
 	private ItemStack lastStack = ItemStack.EMPTY;
 	@Override
-	public void onEndTick(Minecraft client) {
-		var mode = config().autoAttack;
-		if (mode == Config.AttackMode.OFF)
+	public void onEndTick(Minecraft c) {
+		var m = config().autoAttack;
+		if (m == Config.AttackMode.OFF)
 			return;
-		var p = client.player;
-		if (p.getInventory() == null || client.level == null)
+		var p = c.player;
+		if (p.getInventory() == null || c.level == null)
 			return;
-		var hand = p.getMainHandItem();
-		if (mode == Config.AttackMode.SWORD && !hand.is(ItemTags.SWORDS))
+		var h = p.getMainHandItem();
+		if (m == Config.AttackMode.SWORD && !h.is(ItemTags.SWORDS))
 			return;
-		var target = (client.hitResult instanceof EntityHitResult ehr) ? ehr.getEntity() : null;
-		if (target == null)
-			for (var e : client.level.entitiesForRendering())
-				if (e instanceof Monster m && m.isAlive() && m.distanceTo(p) <= 3.5) {
-					target = m;
+		var t = (c.hitResult instanceof EntityHitResult ehr) ? ehr.getEntity() : null;
+		if (t == null)
+			for (var e : c.level.entitiesForRendering())
+				if (e instanceof Monster mo && mo.isAlive() && mo.distanceTo(p) <= 3.5) {
+					t = mo;
 					break;
 				}
-		if (target instanceof LivingEntity le && le.isAlive()
-				&& (client.hitResult != null && client.hitResult.getType() == HitResult.Type.ENTITY
-						|| target instanceof Monster)) {
-			if (!Util.areItemsEqual(hand, lastStack)) {
-				lastStack = hand.copy();
-				cachedDelay = (long) (1000.0 / Util.getWeaponSpeed(hand));
+		if (t instanceof LivingEntity le && le.isAlive()
+				&& (c.hitResult != null && c.hitResult.getType() == HitResult.Type.ENTITY || t instanceof Monster)) {
+			if (!Util.areItemsEqual(h, lastStack)) {
+				lastStack = h.copy();
+				delay = (long) (1000.0 / Util.getWeaponSpeed(h));
 			}
 			var now = System.currentTimeMillis();
-			if (now - lastAttack >= cachedDelay && client.gameMode != null) {
-				client.gameMode.attack(p, target);
+			if (now - last >= delay && c.gameMode != null) {
+				c.gameMode.attack(p, t);
 				p.resetAttackStrengthTicker();
 				p.swing(InteractionHand.MAIN_HAND);
-				lastAttack = now;
+				last = now;
 			}
 		}
 	}

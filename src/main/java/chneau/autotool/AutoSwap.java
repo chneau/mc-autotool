@@ -75,8 +75,7 @@ public class AutoSwap extends BaseModule
 		lastHeld = held.copy();
 		if (c.hitResult == null)
 			lastBreaking = null;
-		boolean lb = c.mouseHandler.isLeftPressed();
-		if (!lb) {
+		if (!c.mouseHandler.isLeftPressed()) {
 			if (last != -1)
 				Util.selectSlot(client(), last);
 			last = -1;

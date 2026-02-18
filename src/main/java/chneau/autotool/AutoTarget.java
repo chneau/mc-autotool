@@ -10,7 +10,7 @@ public class AutoTarget extends BaseModule implements HudRenderCallback {
 	private Map<String, List<Scanner.Target>> eTargets = new HashMap<>();
 	private boolean scanning = false;
 	@Override
-	public void onHudRender(GuiGraphics draw, DeltaTracker dt) {
+	public void onHudRender(GuiGraphics g, DeltaTracker dt) {
 		var c = client();
 		if (c.player == null || c.level == null || c.options.hideGui)
 			return;
@@ -36,12 +36,13 @@ public class AutoTarget extends BaseModule implements HudRenderCallback {
 				.thenComparingDouble(t -> c.player.distanceToSqr(t.pos())));
 		var infos = all.stream().limit(cfg.targetLimit).map(t -> {
 			var d = t.pos().subtract(c.player.getX(), c.player.getEyeY(), c.player.getZ());
-			var yaw = Mth.wrapDegrees(
-					(float) Math.toDegrees(Math.atan2(-d.x, d.z)) - c.player.getYRot(dt.getGameTimeDeltaTicks()));
-			var pitch = (float) -Math.toDegrees(Math.atan2(d.y, Math.sqrt(d.x * d.x + d.z * d.z)))
-					- c.player.getXRot(dt.getGameTimeDeltaTicks());
-			return new TInfo(String.format("%s   %.1fm %s", getEmoji(t.category()),
-					Math.sqrt(c.player.distanceToSqr(t.pos())), t.name()), yaw, pitch);
+			return new TInfo(
+					String.format("%s   %.1fm %s", getEmoji(t.category()), Math.sqrt(c.player.distanceToSqr(t.pos())),
+							t.name()),
+					Mth.wrapDegrees((float) Math.toDegrees(Math.atan2(-d.x, d.z))
+							- c.player.getYRot(dt.getGameTimeDeltaTicks())),
+					(float) -Math.toDegrees(Math.atan2(d.y, Math.sqrt(d.x * d.x + d.z * d.z)))
+							- c.player.getXRot(dt.getGameTimeDeltaTicks()));
 		}).toList();
 		if (infos.isEmpty())
 			return;
@@ -51,8 +52,8 @@ public class AutoTarget extends BaseModule implements HudRenderCallback {
 				xB = cfg.targetHudPosition.name().endsWith("RIGHT") ? sw - 10 - maxW : 10;
 		for (var info : infos) {
 			int x = cfg.targetHudPosition.name().endsWith("RIGHT") ? sw - 10 - c.font.width(info.t) : xB;
-			draw.drawString(c.font, info.t, x, y, cfg.targetHudColor, true);
-			Draw.drawArrow(draw, x + c.font.width("XX ") - 4, y + 4, info.y, info.p, cfg.targetHudColor);
+			g.drawString(c.font, info.t, x, y, cfg.targetHudColor, true);
+			Draw.drawArrow(g, x + c.font.width("XX ") - 4, y + 4, info.y, info.p, cfg.targetHudColor);
 			y += 12;
 		}
 	}

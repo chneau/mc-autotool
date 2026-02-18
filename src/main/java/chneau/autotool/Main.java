@@ -21,14 +21,14 @@ public class Main implements ClientModInitializer {
 				.forEach(Module::register);
 		configKey = KeyMappingHelper.registerKeyMapping(new KeyMapping("key.mc-autotool.config",
 				InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_O, KeyMapping.Category.MISC));
-		ClientTickEvents.END_CLIENT_TICK.register(Safe.tick("Main.ConfigKey", client -> {
+		ClientTickEvents.END_CLIENT_TICK.register(Safe.tick("Main.ConfigKey", c -> {
 			while (configKey.consumeClick()) {
-				var w = client.getWindow();
+				var w = c.getWindow();
 				if ((InputConstants.isKeyDown(w, GLFW.GLFW_KEY_LEFT_CONTROL)
 						|| InputConstants.isKeyDown(w, GLFW.GLFW_KEY_RIGHT_CONTROL))
 						&& (InputConstants.isKeyDown(w, GLFW.GLFW_KEY_LEFT_SHIFT)
 								|| InputConstants.isKeyDown(w, GLFW.GLFW_KEY_RIGHT_SHIFT)))
-					client.setScreen(new ConfigScreen(client.screen, client.options));
+					c.setScreen(new ConfigScreen(c.screen, c.options));
 			}
 		}));
 	}

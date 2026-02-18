@@ -7,29 +7,29 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.AbstractFurnaceBlock;
 public class AutoRefill extends BaseModule implements Safe.PlayerUseBlock {
-	private ItemStack lastHeld = ItemStack.EMPTY;
+	private ItemStack last = ItemStack.EMPTY;
 	@Override
-	public InteractionResult interact(Player p, Level w, InteractionHand h, BlockHitResult bhr) {
+	public InteractionResult interact(Player p, Level w, InteractionHand h, BlockHitResult b) {
 		var mode = config().autoRefill;
 		if (mode == Config.RefillMode.OFF || h != InteractionHand.MAIN_HAND
-				|| w.getBlockState(bhr.getBlockPos()).getBlock() instanceof AbstractFurnaceBlock)
+				|| w.getBlockState(b.getBlockPos()).getBlock() instanceof AbstractFurnaceBlock)
 			return InteractionResult.PASS;
 		var inv = p.getInventory();
-		var slot = inv.getSelectedSlot();
-		var stack = inv.getItem(slot);
-		var target = stack.isEmpty() ? lastHeld : stack;
+		int sIdx = inv.getSelectedSlot();
+		var stack = inv.getItem(sIdx);
+		var target = stack.isEmpty() ? last : stack;
 		if (target.isEmpty() || (mode == Config.RefillMode.SMART && !stack.isEmpty() && stack.getCount() > 1)) {
 			if (!stack.isEmpty())
-				lastHeld = stack.copy();
+				last = stack.copy();
 			return InteractionResult.PASS;
 		}
 		for (int i = 0; i < inv.getContainerSize(); i++)
-			if (i != slot && !inv.getItem(i).isEmpty() && Util.areItemsEqual(target, inv.getItem(i))) {
-				inv.setItem(slot, inv.getItem(i).copy());
+			if (i != sIdx && !inv.getItem(i).isEmpty() && Util.areItemsEqual(target, inv.getItem(i))) {
+				inv.setItem(sIdx, inv.getItem(i).copy());
 				inv.setItem(i, ItemStack.EMPTY);
 				break;
 			}
-		lastHeld = inv.getItem(slot).copy();
+		last = inv.getItem(sIdx).copy();
 		return InteractionResult.PASS;
 	}
 }

@@ -5,28 +5,27 @@ import net.minecraft.world.inventory.AbstractFurnaceMenu;
 import java.util.HashSet;
 public class AutoDeposit extends BaseModule implements Safe.ContainerScreenInit {
 	@Override
-	public void afterInit(Minecraft client,
-			net.minecraft.client.gui.screens.inventory.AbstractContainerScreen<?> screen, int w, int h) {
-		var mode = config().autoDeposit;
-		if (mode == Config.DepositMode.OFF)
+	public void afterInit(Minecraft c, net.minecraft.client.gui.screens.inventory.AbstractContainerScreen<?> s, int w,
+			int h) {
+		var m = config().autoDeposit;
+		if (m == Config.DepositMode.OFF)
 			return;
-		boolean furnace = screen.getMenu() instanceof AbstractFurnaceMenu;
-		if ((furnace && (mode == Config.DepositMode.FURNACE || mode == Config.DepositMode.ALL))
-				|| (!furnace && (mode == Config.DepositMode.CHEST || mode == Config.DepositMode.ALL)))
-			Util.addButton(screen, screen, "D", "Deposit Items", 20,
-					() -> Safe.run(name, () -> handle(client, furnace)));
+		boolean f = s.getMenu() instanceof AbstractFurnaceMenu;
+		if ((f && (m == Config.DepositMode.FURNACE || m == Config.DepositMode.ALL))
+				|| (!f && (m == Config.DepositMode.CHEST || m == Config.DepositMode.ALL)))
+			Util.addButton(s, s, "D", "Deposit Items", 20, () -> Safe.run(name, () -> handle(c, f)));
 	}
-	private void handle(Minecraft client, boolean furnace) {
-		var menu = client.player.containerMenu;
+	private void handle(Minecraft c, boolean f) {
+		var m = c.player.containerMenu;
 		var items = new HashSet<>();
-		for (var s : menu.slots)
+		for (var s : m.slots)
 			if (!(s.container instanceof Inventory) && !s.getItem().isEmpty())
 				items.add(s.getItem().getItem());
-		for (int i = 0; i < menu.slots.size(); i++) {
-			var s = menu.getSlot(i);
+		for (int i = 0; i < m.slots.size(); i++) {
+			var s = m.getSlot(i);
 			if (s.container instanceof Inventory && !s.getItem().isEmpty()
-					&& (furnace || items.contains(s.getItem().getItem())))
-				Util.quickMove(client, menu.containerId, i);
+					&& (f || items.contains(s.getItem().getItem())))
+				Util.quickMove(c, m.containerId, i);
 		}
 	}
 }

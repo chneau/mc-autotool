@@ -15,57 +15,49 @@ public class Scanner {
 	public record Target(String category, String name, Vec3 pos, int priority) {
 	}
 	public static Map<String, List<Target>> scanEntities(Minecraft client, Config config) {
-		Map<String, List<Target>> results = new HashMap<>();
+		Map<String, List<Target>> res = new HashMap<>();
 		if (client.level == null || client.player == null)
-			return results;
+			return res;
 		for (var e : client.level.entitiesForRendering()) {
 			if (!(e instanceof LivingEntity l) || !l.isAlive() || l == client.player)
 				continue;
-			String cat = null;
-			int prio = 100;
-			if (config.targetMonster > 0 && l instanceof Monster) {
-				cat = "Monster";
-				prio = 10;
-			} else if (config.targetPlayer > 0 && l instanceof Player) {
-				cat = "Player";
-				prio = 5;
-			} else if (config.targetPassive > 0) {
-				cat = "Passive";
-				prio = 50;
-			}
+			String cat = (config.targetMonster > 0 && l instanceof Monster)
+					? "Monster"
+					: (config.targetPlayer > 0 && l instanceof Player)
+							? "Player"
+							: (config.targetPassive > 0) ? "Passive" : null;
 			if (cat != null)
-				results.computeIfAbsent(cat, k -> new ArrayList<>())
-						.add(new Target(cat, l.getName().getString(), l.position(), prio));
+				res.computeIfAbsent(cat, k -> new ArrayList<>())
+						.add(new Target(cat, l.getName().getString(), l.position(), cat.equals("Monster") ? 10 : 5));
 		}
-		return results;
+		return res;
 	}
-	private record BlockRule(Predicate<BlockState> check, String cat, String name, int prio) {
+	private record Rule(Predicate<BlockState> check, String cat, String name, int prio) {
 	}
 	public static Map<String, List<Target>> scanBlocks(Minecraft client, Config config) {
-		Map<String, List<Target>> results = new HashMap<>();
+		Map<String, List<Target>> res = new HashMap<>();
 		if (client.level == null || client.player == null)
-			return results;
-		var rules = new ArrayList<BlockRule>();
+			return res;
+		List<Rule> rules = new ArrayList<>();
 		if (config.targetDiamond > 0)
-			rules.add(new BlockRule(s -> s.is(Blocks.DIAMOND_ORE) || s.is(Blocks.DEEPSLATE_DIAMOND_ORE), "Diamond",
+			rules.add(new Rule(s -> s.is(Blocks.DIAMOND_ORE) || s.is(Blocks.DEEPSLATE_DIAMOND_ORE), "Diamond",
 					"Diamond Ore", 20));
 		if (config.targetEmerald > 0)
-			rules.add(new BlockRule(s -> s.is(Blocks.EMERALD_ORE) || s.is(Blocks.DEEPSLATE_EMERALD_ORE), "Emerald",
+			rules.add(new Rule(s -> s.is(Blocks.EMERALD_ORE) || s.is(Blocks.DEEPSLATE_EMERALD_ORE), "Emerald",
 					"Emerald Ore", 25));
 		if (config.targetGold > 0)
-			rules.add(new BlockRule(
+			rules.add(new Rule(
 					s -> s.is(Blocks.GOLD_ORE) || s.is(Blocks.DEEPSLATE_GOLD_ORE) || s.is(Blocks.NETHER_GOLD_ORE),
 					"Gold", "Gold Ore", 35));
 		if (config.targetIron > 0)
-			rules.add(new BlockRule(s -> s.is(Blocks.IRON_ORE) || s.is(Blocks.DEEPSLATE_IRON_ORE), "Iron", "Iron Ore",
-					40));
+			rules.add(new Rule(s -> s.is(Blocks.IRON_ORE) || s.is(Blocks.DEEPSLATE_IRON_ORE), "Iron", "Iron Ore", 40));
 		if (config.targetDebris > 0)
-			rules.add(new BlockRule(s -> s.is(Blocks.ANCIENT_DEBRIS), "Debris", "Ancient Debris", 15));
+			rules.add(new Rule(s -> s.is(Blocks.ANCIENT_DEBRIS), "Debris", "Ancient Debris", 15));
 		if (config.targetChest > 0)
-			rules.add(new BlockRule(s -> s.is(Blocks.CHEST) || s.is(Blocks.TRAPPED_CHEST) || s.is(Blocks.BARREL)
+			rules.add(new Rule(s -> s.is(Blocks.CHEST) || s.is(Blocks.TRAPPED_CHEST) || s.is(Blocks.BARREL)
 					|| s.is(BlockTags.SHULKER_BOXES), "Chest", null, 30));
 		if (config.targetSpawner > 0)
-			rules.add(new BlockRule(s -> s.is(Blocks.SPAWNER), "Spawner", "Mob Spawner", 22));
+			rules.add(new Rule(s -> s.is(Blocks.SPAWNER), "Spawner", "Mob Spawner", 22));
 		BlockPos p = client.player.blockPosition();
 		for (int x = -16; x <= 16; x++)
 			for (int y = -16; y <= 16; y++)
@@ -74,13 +66,13 @@ public class Scanner {
 					var state = client.level.getBlockState(pos);
 					for (var r : rules)
 						if (r.check.test(state)) {
-							results.computeIfAbsent(r.cat, k -> new ArrayList<>())
+							res.computeIfAbsent(r.cat, k -> new ArrayList<>())
 									.add(new Target(r.cat,
 											r.name == null ? state.getBlock().getName().getString() : r.name,
 											Vec3.atCenterOf(pos), r.prio));
 							break;
 						}
 				}
-		return results;
+		return res;
 	}
 }

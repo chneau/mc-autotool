@@ -15,21 +15,21 @@ public class AutoFish extends BaseModule implements ClientTickEvents.EndTick {
 		} catch (Exception ignored) {
 		}
 	}
-	private int recastTicks = -1;
+	private int recast = -1;
 	@Override
-	public void onEndTick(Minecraft client) {
+	public void onEndTick(Minecraft c) {
 		if (config().autoFish == Config.FishMode.OFF)
 			return;
-		var p = client.player;
+		var p = c.player;
 		if (!(p.getMainHandItem().is(Items.FISHING_ROD) || p.getOffhandItem().is(Items.FISHING_ROD))) {
-			recastTicks = -1;
+			recast = -1;
 			return;
 		}
-		if (recastTicks > 0 && --recastTicks == 0)
-			use(client);
+		if (recast > 0 && --recast == 0)
+			use(c);
 		else if (p.fishing != null && DB != null && p.fishing.getEntityData().get(DB)) {
-			use(client);
-			recastTicks = 40;
+			use(c);
+			recast = 40;
 		}
 	}
 	private void use(Minecraft c) {

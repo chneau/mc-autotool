@@ -22,15 +22,15 @@ public class Util {
 	}
 	public static ScreenArea getScreenArea(AbstractContainerScreen<?> s) {
 		try {
-			var lP = AbstractContainerScreen.class.getDeclaredField("leftPos");
-			lP.setAccessible(true);
-			var tP = AbstractContainerScreen.class.getDeclaredField("topPos");
-			tP.setAccessible(true);
-			var iW = AbstractContainerScreen.class.getDeclaredField("imageWidth");
-			iW.setAccessible(true);
-			var iH = AbstractContainerScreen.class.getDeclaredField("imageHeight");
-			iH.setAccessible(true);
-			return new ScreenArea(lP.getInt(s), tP.getInt(s), iW.getInt(s), iH.getInt(s));
+			var l = AbstractContainerScreen.class.getDeclaredField("leftPos");
+			l.setAccessible(true);
+			var t = AbstractContainerScreen.class.getDeclaredField("topPos");
+			t.setAccessible(true);
+			var w = AbstractContainerScreen.class.getDeclaredField("imageWidth");
+			w.setAccessible(true);
+			var h = AbstractContainerScreen.class.getDeclaredField("imageHeight");
+			h.setAccessible(true);
+			return new ScreenArea(l.getInt(s), t.getInt(s), w.getInt(s), h.getInt(s));
 		} catch (Exception e) {
 			return new ScreenArea(0, 0, 0, 0);
 		}
@@ -50,13 +50,13 @@ public class Util {
 					c.player.sendSystemMessage(Component.literal(m).withStyle(net.minecraft.ChatFormatting.RED));
 			});
 	}
-	public static void selectSlot(Minecraft c, int slot) {
+	public static void selectSlot(Minecraft c, int s) {
 		var p = c.player;
-		if (p == null || p.getInventory().getSelectedSlot() == slot)
+		if (p == null || p.getInventory().getSelectedSlot() == s)
 			return;
-		p.getInventory().setSelectedSlot(slot);
+		p.getInventory().setSelectedSlot(s);
 		if (p.connection != null)
-			p.connection.send(new net.minecraft.network.protocol.game.ServerboundSetCarriedItemPacket(slot));
+			p.connection.send(new net.minecraft.network.protocol.game.ServerboundSetCarriedItemPacket(s));
 	}
 	public static BlockPos getTargetedBlock(Minecraft c) {
 		return c.hitResult instanceof BlockHitResult bhr ? bhr.getBlockPos() : null;
