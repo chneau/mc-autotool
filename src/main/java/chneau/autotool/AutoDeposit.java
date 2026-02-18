@@ -14,30 +14,12 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 public class AutoDeposit {
-	private static Field leftPosField;
-	private static Field topPosField;
-	private static Field imageWidthField;
-
-	static {
-		try {
-			leftPosField = AbstractContainerScreen.class.getDeclaredField("leftPos");
-			leftPosField.setAccessible(true);
-			topPosField = AbstractContainerScreen.class.getDeclaredField("topPos");
-			topPosField.setAccessible(true);
-			imageWidthField = AbstractContainerScreen.class.getDeclaredField("imageWidth");
-			imageWidthField.setAccessible(true);
-		} catch (Exception e) {
-			Main.LOGGER.error("Failed to access AbstractContainerScreen fields", e);
-		}
-	}
-
 	public void register() {
 		ScreenEvents.AFTER_INIT.register((client, screen, width, height) -> {
 			if (screen instanceof AbstractContainerScreen<?> containerScreen) {
@@ -62,20 +44,14 @@ public class AutoDeposit {
 				return;
 		}
 
-		try {
-			int leftPos = leftPosField.getInt(containerScreen);
-			int topPos = topPosField.getInt(containerScreen);
-			int imageWidth = imageWidthField.getInt(containerScreen);
+		var area = Util.getScreenArea(containerScreen);
 
-			// Position button at the top right of the container area
-			Button depositButton = Button.builder(Component.literal("D"), (btn) -> {
-				handleDeposit(client, containerScreen, isFurnace);
-			}).bounds(leftPos + imageWidth - 20, topPos + 5, 15, 15).build();
+		// Position button at the top right of the container area
+		Button depositButton = Button.builder(Component.literal("D"), (btn) -> {
+			handleDeposit(client, containerScreen, isFurnace);
+		}).bounds(area.left() + area.width() - 20, area.top() + 5, 15, 15).build();
 
-			Screens.getWidgets(screen).add(depositButton);
-		} catch (Exception e) {
-			Main.LOGGER.error("Failed to add deposit button", e);
-		}
+		Screens.getWidgets(screen).add(depositButton);
 	}
 
 	private void handleDeposit(Minecraft client, AbstractContainerScreen<?> screen, boolean isFurnace) {

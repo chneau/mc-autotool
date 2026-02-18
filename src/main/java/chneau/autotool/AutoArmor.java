@@ -1,39 +1,46 @@
 package chneau.autotool;
 
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents.EndTick;
+import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
+import net.fabricmc.fabric.api.client.screen.v1.Screens;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.gui.screens.inventory.InventoryScreen;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.component.DataComponents;
 
-public class AutoArmor implements EndTick {
-	private int lastInventoryChangeCount = -1;
-
+public class AutoArmor {
 	public void register() {
-		ClientTickEvents.END_CLIENT_TICK.register(this);
+		ScreenEvents.AFTER_INIT.register((client, screen, width, height) -> {
+			if (screen instanceof InventoryScreen inventoryScreen) {
+				setupButton(client, inventoryScreen, screen);
+			}
+		});
 	}
 
-	@Override
-	public void onEndTick(Minecraft client) {
+	private void setupButton(Minecraft client, AbstractContainerScreen<?> containerScreen, Screen screen) {
 		var mode = ConfigManager.getConfig().autoArmor;
 		if (mode == Config.ArmorMode.OFF)
 			return;
 
+		var area = Util.getScreenArea(containerScreen);
+
+		// Position button at the top right of the container area, to the left of Sort
+		// button
+		Button armorButton = Button.builder(Component.literal("A"), (btn) -> {
+			handleAutoArmor(client, mode);
+		}).bounds(area.left() + area.width() - 60, area.top() + 5, 15, 15).build();
+
+		Screens.getWidgets(screen).add(armorButton);
+	}
+
+	private void handleAutoArmor(Minecraft client, Config.ArmorMode mode) {
 		var player = client.player;
 		if (player == null || client.gameMode == null)
 			return;
-
-		int currentChangeCount = player.getInventory().getTimesChanged();
-
-		// If inventory hasn't changed, only check once every 20 ticks (1 second)
-		if (currentChangeCount == lastInventoryChangeCount) {
-			if (!Throttler.shouldRun(this, 20)) {
-				return;
-			}
-		}
-
-		lastInventoryChangeCount = currentChangeCount;
 
 		var menu = player.inventoryMenu;
 

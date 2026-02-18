@@ -14,10 +14,43 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import java.lang.reflect.Field;
+
 /**
  * Utility class for common Minecraft client-side operations.
  */
 public class Util {
+	private static Field leftPosField;
+	private static Field topPosField;
+	private static Field imageWidthField;
+
+	static {
+		try {
+			leftPosField = AbstractContainerScreen.class.getDeclaredField("leftPos");
+			leftPosField.setAccessible(true);
+			topPosField = AbstractContainerScreen.class.getDeclaredField("topPos");
+			topPosField.setAccessible(true);
+			imageWidthField = AbstractContainerScreen.class.getDeclaredField("imageWidth");
+			imageWidthField.setAccessible(true);
+		} catch (Exception e) {
+			Main.LOGGER.error("Failed to access AbstractContainerScreen fields", e);
+		}
+	}
+
+	public record ScreenArea(int left, int top, int width) {
+	}
+
+	public static ScreenArea getScreenArea(AbstractContainerScreen<?> screen) {
+		try {
+			return new ScreenArea(leftPosField.getInt(screen), topPosField.getInt(screen),
+					imageWidthField.getInt(screen));
+		} catch (Exception e) {
+			Main.LOGGER.error("Failed to get screen area", e);
+			return new ScreenArea(0, 0, 0);
+		}
+	}
+
 	private Util() {
 	}
 

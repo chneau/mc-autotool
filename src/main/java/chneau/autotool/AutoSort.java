@@ -11,28 +11,10 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.AbstractFurnaceMenu;
 import net.minecraft.world.item.ItemStack;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
 public class AutoSort {
-	private static Field leftPosField;
-	private static Field topPosField;
-	private static Field imageWidthField;
-
-	static {
-		try {
-			leftPosField = AbstractContainerScreen.class.getDeclaredField("leftPos");
-			leftPosField.setAccessible(true);
-			topPosField = AbstractContainerScreen.class.getDeclaredField("topPos");
-			topPosField.setAccessible(true);
-			imageWidthField = AbstractContainerScreen.class.getDeclaredField("imageWidth");
-			imageWidthField.setAccessible(true);
-		} catch (Exception e) {
-			Main.LOGGER.error("Failed to access AbstractContainerScreen fields", e);
-		}
-	}
-
 	public void register() {
 		ScreenEvents.AFTER_INIT.register((client, screen, width, height) -> {
 			if (screen instanceof AbstractContainerScreen<?> containerScreen) {
@@ -51,21 +33,15 @@ public class AutoSort {
 			return;
 		}
 
-		try {
-			int leftPos = leftPosField.getInt(containerScreen);
-			int topPos = topPosField.getInt(containerScreen);
-			int imageWidth = imageWidthField.getInt(containerScreen);
+		var area = Util.getScreenArea(containerScreen);
 
-			// Position button at the top right of the container area, to the left of
-			// Deposit button
-			Button sortButton = Button.builder(Component.literal("S"), (btn) -> {
-				sortInventory(client, mode);
-			}).bounds(leftPos + imageWidth - 40, topPos + 5, 15, 15).build();
+		// Position button at the top right of the container area, to the left of
+		// Deposit button
+		Button sortButton = Button.builder(Component.literal("S"), (btn) -> {
+			sortInventory(client, mode);
+		}).bounds(area.left() + area.width() - 40, area.top() + 5, 15, 15).build();
 
-			Screens.getWidgets(screen).add(sortButton);
-		} catch (Exception e) {
-			Main.LOGGER.error("Failed to add sort button", e);
-		}
+		Screens.getWidgets(screen).add(sortButton);
 	}
 
 	private void sortInventory(Minecraft client, Config.SortMode mode) {
