@@ -1,0 +1,68 @@
+name: Publish
+
+on:
+  push:
+    branches:
+      - 'v26.1'
+      - 'v1.21'
+      - 'v1.20'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Minecraft version to publish'
+        required: true
+        default: 'all'
+        type: choice 
+        options:
+          - 'all'
+          - '26.1'
+          - '1.21'
+          - '1.20'
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - id: set-matrix
+        run: |
+          if [ "${{ github.event_name }}" == "push" ]; then
+            VERSION="${{ github.ref_name }}"
+            echo "matrix=[\"${VERSION#v}\"]" >> $GITHUB_OUTPUT
+          elif [ "${{ github.event.inputs.version }}" == "all" ]; then
+            echo 'matrix=["26.1", "1.21", "1.20", "1.19", "1.18", "1.17"]' >> $GITHUB_OUTPUT
+          else
+            echo 'matrix=["${{ github.event.inputs.version }}"]' >> $GITHUB_OUTPUT
+          fi
+
+  publish:
+    needs: prepare
+    name: Publish for Minecraft ${{ matrix.version }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    strategy:
+      fail-fast: false
+      matrix:
+        version: ${{ fromJson(needs.prepare.outputs.matrix) }}
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v6
+        with:
+          ref: v${{ matrix.version }}
+      - name: Build
+        run: |
+          curl https://mise.run | sh
+          mise exec java@${{ (matrix.version >= '1.21' && '25') || (matrix.version == '1.18' && '25') || (matrix.version >= '1.18' && '17') || '16' }} -- ./gradlew build
+          mv build/libs/$(ls build/libs/ | head -n 1) build/libs/autotool.jar
+          echo "JAR_PATH=build/libs/autotool.jar" >> $GITHUB_ENV
+      - name: Upload Release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ${{ env.JAR_PATH }}
+          tag: ${{ matrix.version }}
+          overwrite: true
+          make_latest: ${{ matrix.version == '26.1' }}
+          release_name: Autotool for Minecraft ${{ matrix.version }}
