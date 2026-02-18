@@ -4,7 +4,7 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents.EndTic
 import net.minecraft.client.Minecraft;
 public class AutoSprint implements EndTick {
 	public void register() {
-		ClientTickEvents.END_CLIENT_TICK.register(client -> Safe.run("AutoSprint", () -> this.onEndTick(client)));
+		ClientTickEvents.END_CLIENT_TICK.register(Safe.tick("AutoSprint", this));
 	}
 	@Override
 	public void onEndTick(Minecraft client) {

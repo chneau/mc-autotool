@@ -4,7 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 public class AutoStep {
 	public void register() {
-		ClientEntityEvents.ENTITY_LOAD.register((entity, world) -> Safe.run("AutoStep", () -> {
+		ClientEntityEvents.ENTITY_LOAD.register(Safe.load("AutoStep", (entity, world) -> {
 			if (Util.isCurrentPlayer(entity)) {
 				update();
 			}

@@ -11,7 +11,7 @@ public class AutoEat implements EndTick {
 	private boolean isEating = false;
 	private double lastX, lastY, lastZ;
 	public void register() {
-		ClientTickEvents.END_CLIENT_TICK.register(client -> Safe.run("AutoEat", () -> this.onEndTick(client)));
+		ClientTickEvents.END_CLIENT_TICK.register(Safe.tick("AutoEat", this));
 	}
 	@Override
 	public void onEndTick(Minecraft client) {

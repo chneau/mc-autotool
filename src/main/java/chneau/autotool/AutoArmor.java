@@ -9,7 +9,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.component.DataComponents;
 public class AutoArmor {
 	public void register() {
-		ScreenEvents.AFTER_INIT.register((client, screen, width, height) -> Safe.run("AutoArmor.ScreenInit", () -> {
+		ScreenEvents.AFTER_INIT.register(Safe.screen("AutoArmor.ScreenInit", (client, screen, width, height) -> {
 			if (screen instanceof InventoryScreen inventoryScreen) {
 				setupButton(client, inventoryScreen, screen);
 			}

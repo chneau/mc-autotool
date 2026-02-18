@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 public class AutoSort {
 	public void register() {
-		ScreenEvents.AFTER_INIT.register((client, screen, width, height) -> Safe.run("AutoSort.ScreenInit", () -> {
+		ScreenEvents.AFTER_INIT.register(Safe.screen("AutoSort.ScreenInit", (client, screen, width, height) -> {
 			if (screen instanceof AbstractContainerScreen<?> containerScreen) {
 				setupButton(client, containerScreen, screen);
 			}

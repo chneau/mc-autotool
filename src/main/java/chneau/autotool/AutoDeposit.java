@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Set;
 public class AutoDeposit {
 	public void register() {
-		ScreenEvents.AFTER_INIT.register((client, screen, width, height) -> Safe.run("AutoDeposit.ScreenInit", () -> {
+		ScreenEvents.AFTER_INIT.register(Safe.screen("AutoDeposit.ScreenInit", (client, screen, width, height) -> {
 			if (screen instanceof AbstractContainerScreen<?> containerScreen) {
 				setupButton(client, containerScreen, screen);
 			}

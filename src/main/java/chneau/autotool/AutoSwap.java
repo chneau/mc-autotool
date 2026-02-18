@@ -28,12 +28,9 @@ public class AutoSwap implements AttackBlockCallback, AttackEntityCallback, EndT
 		return ConfigManager.getConfig().autoSwap == Config.Strategy.BEST ? best : first;
 	}
 	public void register() {
-		AttackBlockCallback.EVENT.register((player, world, hand, pos, dir) -> Safe.call("AutoSwap.AttackBlock",
-				() -> this.interact(player, world, hand, pos, dir), InteractionResult.PASS));
-		AttackEntityCallback.EVENT
-				.register((player, world, hand, entity, hitResult) -> Safe.call("AutoSwap.AttackEntity",
-						() -> this.interact(player, world, hand, entity, hitResult), InteractionResult.PASS));
-		ClientTickEvents.END_CLIENT_TICK.register(client -> Safe.run("AutoSwap.Tick", () -> this.onEndTick(client)));
+		AttackBlockCallback.EVENT.register(Safe.attackBlock("AutoSwap.AttackBlock", this));
+		AttackEntityCallback.EVENT.register(Safe.attackEntity("AutoSwap.AttackEntity", this));
+		ClientTickEvents.END_CLIENT_TICK.register(Safe.tick("AutoSwap.Tick", this));
 	}
 	@Override
 	public InteractionResult interact(Player player, Level world, InteractionHand hand, BlockPos blockPos,

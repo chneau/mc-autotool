@@ -29,7 +29,7 @@ public class Main implements ClientModInitializer {
 		(new AutoDeposit()).register();
 		configKey = KeyMappingHelper.registerKeyMapping(new KeyMapping("key.mc-autotool.config",
 				InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_O, KeyMapping.Category.MISC));
-		ClientTickEvents.END_CLIENT_TICK.register(client -> Safe.run("Main.ConfigKey", () -> {
+		ClientTickEvents.END_CLIENT_TICK.register(Safe.tick("Main.ConfigKey", client -> {
 			while (configKey.consumeClick()) {
 				var window = client.getWindow();
 				boolean ctrl = InputConstants.isKeyDown(window, GLFW.GLFW_KEY_LEFT_CONTROL)

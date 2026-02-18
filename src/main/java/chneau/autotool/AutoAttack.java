@@ -15,7 +15,7 @@ public class AutoAttack implements EndTick {
 	private ItemStack lastStack = ItemStack.EMPTY;
 	private long cachedDelay = 0;
 	public void register() {
-		ClientTickEvents.END_CLIENT_TICK.register(client -> Safe.run("AutoAttack", () -> this.onEndTick(client)));
+		ClientTickEvents.END_CLIENT_TICK.register(Safe.tick("AutoAttack", this));
 	}
 	@Override
 	public void onEndTick(Minecraft client) {
