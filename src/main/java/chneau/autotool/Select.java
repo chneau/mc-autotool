@@ -9,4 +9,8 @@ public interface Select {
 	public int selectTool(Inventory inventory, BlockState bState);
 
 	public int selectWeapon(Inventory inventory);
+
+	public int selectAnyTool(Inventory inventory, BlockState bState);
+
+	public int selectAnyWeapon(Inventory inventory);
 }
