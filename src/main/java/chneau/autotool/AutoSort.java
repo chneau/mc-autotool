@@ -35,11 +35,11 @@ public class AutoSort {
 
 		var area = Util.getScreenArea(containerScreen);
 
-		// Position button at the top right of the container area, to the left of
+		// Position button above the top right of the container area, to the left of
 		// Deposit button
 		Button sortButton = Button.builder(Component.literal("S"), (btn) -> {
 			sortInventory(client, mode);
-		}).bounds(area.left() + area.width() - 40, area.top() + 5, 15, 15).build();
+		}).bounds(area.left() + area.width() - 40, area.topAbove(), 15, 15).build();
 
 		Screens.getWidgets(screen).add(sortButton);
 	}

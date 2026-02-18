@@ -46,10 +46,10 @@ public class AutoDeposit {
 
 		var area = Util.getScreenArea(containerScreen);
 
-		// Position button at the top right of the container area
+		// Position button above the top right of the container area
 		Button depositButton = Button.builder(Component.literal("D"), (btn) -> {
 			handleDeposit(client, containerScreen, isFurnace);
-		}).bounds(area.left() + area.width() - 20, area.top() + 5, 15, 15).build();
+		}).bounds(area.left() + area.width() - 20, area.topAbove(), 15, 15).build();
 
 		Screens.getWidgets(screen).add(depositButton);
 	}

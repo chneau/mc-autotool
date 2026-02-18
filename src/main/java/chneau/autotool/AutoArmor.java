@@ -28,11 +28,12 @@ public class AutoArmor {
 
 		var area = Util.getScreenArea(containerScreen);
 
-		// Position button at the top right of the container area, to the left of Sort
+		// Position button above the top right of the container area, to the left of
+		// Sort
 		// button
 		Button armorButton = Button.builder(Component.literal("A"), (btn) -> {
 			handleAutoArmor(client, mode);
-		}).bounds(area.left() + area.width() - 60, area.top() + 5, 15, 15).build();
+		}).bounds(area.left() + area.width() - 60, area.topAbove(), 15, 15).build();
 
 		Screens.getWidgets(screen).add(armorButton);
 	}

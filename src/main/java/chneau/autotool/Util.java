@@ -38,17 +38,36 @@ public class Util {
 		}
 	}
 
-	public record ScreenArea(int left, int top, int width) {
+	public record ScreenArea(int left, int top, int width, int height) {
+
+		public int topAbove() {
+
+			return top - 18;
+
+		}
+
 	}
 
 	public static ScreenArea getScreenArea(AbstractContainerScreen<?> screen) {
+
 		try {
+
+			Field imageHeightField = AbstractContainerScreen.class.getDeclaredField("imageHeight");
+
+			imageHeightField.setAccessible(true);
+
 			return new ScreenArea(leftPosField.getInt(screen), topPosField.getInt(screen),
-					imageWidthField.getInt(screen));
+
+					imageWidthField.getInt(screen), imageHeightField.getInt(screen));
+
 		} catch (Exception e) {
+
 			Main.LOGGER.error("Failed to get screen area", e);
-			return new ScreenArea(0, 0, 0);
+
+			return new ScreenArea(0, 0, 0, 0);
+
 		}
+
 	}
 
 	private Util() {
