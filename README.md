@@ -180,9 +180,9 @@ Displays real-time tracking information for entities and valuable resources on y
   - **Global Limit**: Automatically displays up to the 5 physically closest targets across all enabled categories.
 
 ---
- 
- ## 📜 Changelog
- 
+
+## 📜 Changelog
+
 - New 2026-02-15: Added Auto Target, Auto Step, and Auto Deposit features; improved Auto Attack with proximity targeting; updated for Minecraft 26.1
 - New 2026-02-14: Updated for 1.21.1 and added comprehensive Auto features (Eat, Sort, Armor, Fish, etc.)
 - New 2023-10-20: Updated for 1.20
@@ -225,6 +225,40 @@ rm -rf .gradle bin build .project .classpath
 ### Preferred Mods & Commands (1.16)
 
 ```bash
+# cool game rules
+/gamerule mob_griefing false
+/gamerule keep_inventory true
+/team add noff
+/team modify noff friendlyFire false
+/team join noff @a
+
+# EFFECTS
+/effect give @a haste 999999 20 true
+/effect give @a saturation 999999 10 true
+/effect give @a speed 999999 1 true
+/effect clear @p
+
+############################################## OTHER
+
+# helper
+https://www.digminecraft.com/generators/give_tool.php
+
+# god stuff
+/give @p netherite_sword[enchantments={sharpness:5,unbreaking:3,looting:3}] 1
+/give @p netherite_pickaxe[enchantments={efficiency:5,unbreaking:3,fortune:3}] 1
+/give @p netherite_shovel[enchantments={efficiency:5,unbreaking:3,fortune:3}] 1
+/give @p netherite_axe[enchantments={smite:5,efficiency:5,unbreaking:3,fortune:3}] 1
+/give @p netherite_hoe[enchantments={efficiency:5,unbreaking:3,fortune:3}] 1
+
+# shaders
+Sildurs Vibrant Shaders v1.28 High-Motionblur.zip
+
+# resource pack
+realistico 8
+
+# fov
+100
+
 # mods 1.16
 appleskin-mc1.16-fabric-1.0.11.jar
 autotool-mcv1.16.jar
@@ -237,46 +271,6 @@ mousewheelie-1.5.3+mc1.16.2-pre1.jar
 optifabric-1.4.3.jar
 OptiFine_1.16.2_HD_U_G3.jar
 
-# shaders
-Sildurs Vibrant Shaders v1.28 High-Motionblur.zip
-
-# resource pack
-realistico 8
-
-# fov
-100
-
-# cool game rules
-/gamerule mobGriefing false
-/gamerule keepInventory true
-/team add noff
-/team modify noff friendlyFire false
-/team join noff @a
-
-# god stuff
-/give @p netherite_sword{Unbreakable:1,Enchantments:[{id:sharpness,lvl:9},{id:fire_aspect,lvl:9},{id:looting,lvl:9},{id:sweeping,lvl:9}]}
-/give @p netherite_sword{Unbreakable:1,Enchantments:[{id:sharpness,lvl:9999},{id:fire_aspect,lvl:9},{id:looting,lvl:9},{id:sweeping,lvl:9}]}
-/give @p netherite_pickaxe{Unbreakable:1,Enchantments:[{id:efficiency,lvl:9},{id:fortune,lvl:9}]}
-/give @p netherite_shovel{Unbreakable:1,Enchantments:[{id:efficiency,lvl:5},{id:fortune,lvl:9}]}
-/give @p netherite_axe{Unbreakable:1,Enchantments:[{id:efficiency,lvl:9},{id:fortune,lvl:9}]}
-/give @p netherite_hoe{Unbreakable:1,Enchantments:[{id:efficiency,lvl:9},{id:fortune,lvl:9}]}
-
-# ARMOR WITH MODIFIED ELYTRA
-/give @p netherite_helmet{Unbreakable:1,Enchantments:[{id:aqua_affinity,lvl:9},{id:blast_protection,lvl:9},{id:fire_protection,lvl:9},{id:projectile_protection,lvl:9},{id:protection,lvl:9},{id:respiration,lvl:9},{id:thorns,lvl:9}]}
-/give @p elytra{Unbreakable:1,AttributeModifiers:[{AttributeName:"generic.armor",Amount:12,UUIDLeast:1,UUIDMost:1,Slot:"chest"}],Enchantments:[{id:fire_protection,lvl:9},{id:projectile_protection,lvl:9},{id:protection,lvl:9},{id:thorns,lvl:9}]}
-/give @p netherite_boots{Unbreakable:1,Enchantments:[{id:blast_protection,lvl:9},{id:depth_strider,lvl:9},{id:feather_falling,lvl:9},{id:fire_protection,lvl:9},{id:projectile_protection,lvl:9},{id:protection,lvl:9},{id:thorns,lvl:9}]}
-/give @p netherite_leggings{Unbreakable:1,Enchantments:[{id:blast_protection,lvl:9},{id:fire_protection,lvl:9},{id:projectile_protection,lvl:9},{id:protection,lvl:9},{id:thorns,lvl:9}]}
-/give @p trident{Unbreakable:1,Enchantments:[{id:channeling,lvl:9},{id:impaling,lvl:9},{id:loyalty,lvl:9},{id:riptide,lvl:9},{id:sharpness,lvl:9},{id:looting,lvl:9}]}
-
-# OTHER
-/give @p bow{Unbreakable:1,Enchantments:[{id:infinity,lvl:9},{id:flame,lvl:9},{id:punch,lvl:9},{id:power,lvl:9},{id:looting,lvl:9},{id:multishot,lvl:10},{id:piercing,lvl:10},{id:quick_charge,lvl:10}]}
-/give @p spectral_arrow 64
-/give @p enchanted_golden_apple 64
-
-# EFFECTS
-/effect give @a haste 999999 255 true
-/effect give @p night_vision 999999 255 true
-/effect clear @p
 ```
 
 </details>
