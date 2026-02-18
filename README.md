@@ -12,7 +12,7 @@ If you already have **Fabric** installed, you can quickly download the latest ve
 # For the latest version (Minecraft 26.1)
 mkdir -Force "$env:APPDATA\.minecraft\mods"
 irm https://github.com/chneau/mc-autotool/releases/latest/download/autotool.jar -OutFile "$env:APPDATA\.minecraft\mods\autotool.jar"
-irm https://github.com/FabricMC/fabric-api/releases/download/0.143.4%2B26.1/fabric-api-0.143.4+26.1.jar -OutFile "$env:APPDATA\.minecraft\mods\fabric-api.jar"
+irm https://github.com/FabricMC/fabric-api/releases/download/0.143.5%2B26.1/fabric-api-0.143.5+26.1.jar -OutFile "$env:APPDATA\.minecraft\mods\fabric-api.jar"
 ```
 
 > **Note:** To install a specific version, simply replace `latest` in the URL with the version number (e.g., `1.21`, `1.20`).
