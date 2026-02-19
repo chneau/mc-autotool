@@ -23,7 +23,7 @@ public abstract class BaseConfigScreen extends OptionsSubScreen {
 				? OptionInstance.noTooltip()
 				: OptionInstance.cachedConstantTooltip(Component.literal(tooltip));
 		return new OptionInstance<>(name, tooltipSupplier,
-				(caption, value) -> Component.literal(value.name().replace('_', ' ')),
+				(caption, value) -> Component.literal(value == null ? "Unknown" : value.name().replace('_', ' ')),
 				new OptionInstance.Enum<>(Arrays.asList(values), Codec.INT.xmap(i -> values[i], Enum::ordinal)),
 				currentValue, setter);
 	}
