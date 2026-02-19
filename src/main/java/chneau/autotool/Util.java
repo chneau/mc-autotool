@@ -37,7 +37,7 @@ public class Util {
 	}
 	public static void addButton(Screen s, AbstractContainerScreen<?> cs, String l, String t, int r, Runnable a) {
 		var area = getScreenArea(cs);
-		Screens.getWidgets(s)
+		Screens.getButtons(s)
 				.add(Button.builder(Component.literal(l), b -> a.run())
 						.bounds(area.left() + area.width() - r, area.topAbove(), 15, 15)
 						.tooltip(Tooltip.create(Component.literal(t))).build());
@@ -47,7 +47,8 @@ public class Util {
 		if (c.player != null)
 			c.execute(() -> {
 				if (c.player != null)
-					c.player.sendSystemMessage(Component.literal(m).withStyle(net.minecraft.ChatFormatting.RED));
+					c.player.displayClientMessage(Component.literal(m).withStyle(net.minecraft.ChatFormatting.RED),
+							false);
 			});
 	}
 	public static void selectSlot(Minecraft c, int s) {
@@ -64,15 +65,15 @@ public class Util {
 	public static boolean isCurrentPlayer(net.minecraft.world.entity.Entity o) {
 		return Minecraft.getInstance().player != null && Minecraft.getInstance().player.equals(o);
 	}
-	public static void click(Minecraft c, int id, int s, int b, net.minecraft.world.inventory.ContainerInput t) {
+	public static void click(Minecraft c, int id, int s, int b, net.minecraft.world.inventory.ClickType t) {
 		if (c.gameMode != null && c.player != null)
-			c.gameMode.handleContainerInput(id, s, b, t, c.player);
+			c.gameMode.handleInventoryMouseClick(id, s, b, t, c.player);
 	}
 	public static void quickMove(Minecraft c, int id, int s) {
-		click(c, id, s, 0, net.minecraft.world.inventory.ContainerInput.QUICK_MOVE);
+		click(c, id, s, 0, net.minecraft.world.inventory.ClickType.QUICK_MOVE);
 	}
 	public static void pickup(Minecraft c, int id, int s) {
-		click(c, id, s, 0, net.minecraft.world.inventory.ContainerInput.PICKUP);
+		click(c, id, s, 0, net.minecraft.world.inventory.ClickType.PICKUP);
 	}
 	public static void swap(Minecraft c, int id, int f, int t) {
 		if (c.player.inventoryMenu.getSlot(t).getItem().isEmpty())
