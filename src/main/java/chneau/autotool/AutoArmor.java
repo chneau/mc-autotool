@@ -1,16 +1,25 @@
 package chneau.autotool;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.component.DataComponents;
-public class AutoArmor extends BaseModule implements Safe.ContainerScreenInit {
+
+public class AutoArmor extends BaseModule implements Safe.ContainerScreenInit, ClientTickEvents.EndTick {
 	@Override
 	public void afterInit(Minecraft c, net.minecraft.client.gui.screens.inventory.AbstractContainerScreen<?> s, int w,
 			int h) {
 		if (s instanceof InventoryScreen inv && config().autoArmor != Config.ArmorMode.OFF)
 			Util.addButton(s, inv, "A", "Equip Best Armor", 60, () -> Safe.run(name, () -> handle(c)));
 	}
+
+	@Override
+	public void onEndTick(Minecraft client) {
+		if (config().autoArmor != Config.ArmorMode.OFF && client.screen == null && Throttler.shouldRun(this, 10))
+			handle(client);
+	}
+
 	private void handle(Minecraft c) {
 		var p = c.player;
 		if (p == null || c.gameMode == null)
