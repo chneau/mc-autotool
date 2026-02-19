@@ -12,10 +12,9 @@ public class ConfigScreen extends BaseConfigScreen {
 	@Override
 	protected void addOptions() {
 		Config config = ConfigManager.getConfig();
-		this.list.addSmall(
-				createEnumOption("Auto Attack",
-						"Attack entities you look at using cooldown. SWORD mode only with swords.",
-						Config.AttackMode.values(), config.autoAttack, v -> config.autoAttack = v),
+		this.list.addSmall(createEnumOption("Auto Attack",
+				"Attack entities using cooldown. SWORD mode only with swords. OMNI mode switches to best sword for enemies.",
+				Config.AttackMode.values(), config.autoAttack, v -> config.autoAttack = v),
 				createEnumOption("Auto Farm", "Harvest mature crops in a 3x3 area. BOTH mode also replants.",
 						Config.FarmMode.values(), config.autoFarm, v -> config.autoFarm = v));
 		this.list.addSmall(

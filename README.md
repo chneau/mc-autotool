@@ -50,11 +50,11 @@ Maintains your momentum without you having to hold down the sprint key.
 
 ### ⚔️ Auto Attack
 Automatically attacks entities you are looking at, respecting weapon cool-downs for maximum damage.
-- **Trigger**: Looking at a living entity.
+- **Trigger**: Looking at a living entity or an enemy being nearby.
 - **Options**:
   - `OFF`: Disable auto-attack.
   - `SWORD`: Only auto-attacks when you are holding a sword.
-  - `ALL`: Auto-attacks with any item in your hand.
+  - `OMNI`: (Default) Auto-attacks enemies with the best sword (switches automatically). For non-enemies, requires holding a sword and looking at them.
 
 ### 🍎 Auto Eat
 Keeps you fed and healthy without manual intervention.

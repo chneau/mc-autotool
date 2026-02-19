@@ -4,7 +4,7 @@ public class Config {
 		OFF, FIRST, BEST
 	}
 	public enum AttackMode {
-		OFF, SWORD, ALL
+		OFF, SWORD, OMNI
 	}
 	public enum SprintMode {
 		OFF, ON, HUNGER_50
@@ -37,7 +37,7 @@ public class Config {
 		OFF, CHEST, FURNACE, ALL
 	}
 	public Strategy autoSwap = Strategy.BEST;
-	public AttackMode autoAttack = AttackMode.SWORD;
+	public AttackMode autoAttack = AttackMode.OMNI;
 	public FarmMode autoFarm = FarmMode.BOTH;
 	public RefillMode autoRefill = RefillMode.ON;
 	public SprintMode autoSprint = SprintMode.ON;
