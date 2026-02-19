@@ -4,7 +4,7 @@ public class Config {
 		OFF, FIRST, BEST
 	}
 	public enum AttackMode {
-		OFF, SWORD, OMNI
+		OFF, SWORD, OMNI, OMNI_ALL
 	}
 	public enum SprintMode {
 		OFF, ON, HUNGER_50

@@ -16,18 +16,21 @@ public class AutoAttack extends BaseModule implements ClientTickEvents.EndTick {
 		if (m == Config.AttackMode.OFF)
 			return;
 		var p = c.player;
-		if (p.getInventory() == null || c.level == null)
+		if (p == null || p.getInventory() == null || c.level == null)
 			return;
 		var t = (c.hitResult instanceof EntityHitResult ehr) ? ehr.getEntity() : null;
 		if (t == null)
 			for (var e : c.level.entitiesForRendering())
-				if (e instanceof Monster mo && mo.isAlive() && mo.distanceTo(p) <= 3.5) {
-					t = mo;
-					break;
+				if (e instanceof LivingEntity le && le.isAlive() && le != p && le.distanceTo(p) <= 3.5) {
+					if (m == Config.AttackMode.OMNI_ALL || le instanceof Monster) {
+						t = le;
+						break;
+					}
 				}
 		if (!(t instanceof LivingEntity le) || !le.isAlive())
 			return;
 		var isMonster = t instanceof Monster;
+		var isOmniAll = m == Config.AttackMode.OMNI_ALL;
 		var isFocused = c.hitResult instanceof EntityHitResult ehr && ehr.getEntity() == t;
 		var h = p.getMainHandItem();
 		if (m == Config.AttackMode.SWORD) {
@@ -35,8 +38,8 @@ public class AutoAttack extends BaseModule implements ClientTickEvents.EndTick {
 				return;
 			if (!isMonster && !isFocused)
 				return;
-		} else if (m == Config.AttackMode.OMNI) {
-			if (isMonster) {
+		} else if (m == Config.AttackMode.OMNI || m == Config.AttackMode.OMNI_ALL) {
+			if (isMonster || isOmniAll) {
 				var s = Select.find(p.getInventory(), Select.HOTBAR_SIZE,
 						stack -> stack.is(ItemTags.SWORDS)
 								? Util.getWeaponDamage(stack) * Util.getWeaponSpeed(stack)
@@ -51,7 +54,7 @@ public class AutoAttack extends BaseModule implements ClientTickEvents.EndTick {
 					return;
 			}
 		}
-		if (isMonster || isFocused) {
+		if (isMonster || isFocused || isOmniAll) {
 			if (!Util.areItemsEqual(h, lastStack)) {
 				lastStack = h.copy();
 				delay = (long) (1000.0 / Util.getWeaponSpeed(h));
