@@ -4,7 +4,7 @@ public class Config {
 		OFF, FIRST, BEST
 	}
 	public enum AttackMode {
-		OFF, SWORD, ALL
+		OFF, SWORD, OMNI
 	}
 	public enum SprintMode {
 		OFF, ON, HUNGER_50
@@ -37,7 +37,7 @@ public class Config {
 		OFF, CHEST, FURNACE, ALL
 	}
 	public Strategy autoSwap = Strategy.BEST;
-	public AttackMode autoAttack = AttackMode.SWORD;
+	public AttackMode autoAttack = AttackMode.OMNI;
 	public FarmMode autoFarm = FarmMode.BOTH;
 	public RefillMode autoRefill = RefillMode.ON;
 	public SprintMode autoSprint = SprintMode.ON;
@@ -45,8 +45,8 @@ public class Config {
 	public SortMode autoSort = SortMode.ALL;
 	public ArmorMode autoArmor = ArmorMode.SMART;
 	public FishMode autoFish = FishMode.ON;
-	public int targetMonster = 1, targetPassive = 0, targetPlayer = 0, targetDiamond = 0, targetEmerald = 0,
-			targetGold = 0, targetIron = 0, targetDebris = 0, targetChest = 0, targetSpawner = 0, targetLimit = 5,
+	public int targetMonster = 1, targetPassive = 1, targetPlayer = 1, targetDiamond = 0, targetEmerald = 0,
+			targetGold = 0, targetIron = 0, targetDebris = 0, targetChest = 1, targetSpawner = 1, targetLimit = 5,
 			targetHudColor = 0xFFFFFFFF;
 	public HudPosition targetHudPosition = HudPosition.TOP_LEFT;
 	public StepMode autoStep = StepMode.ON;
