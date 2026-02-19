@@ -51,6 +51,32 @@ public class Config {
 	public HudPosition targetHudPosition = HudPosition.TOP_LEFT;
 	public StepMode autoStep = StepMode.ON;
 	public DepositMode autoDeposit = DepositMode.ALL;
+	public void validate() {
+		if (autoSwap == null)
+			autoSwap = Strategy.BEST;
+		if (autoAttack == null)
+			autoAttack = AttackMode.OMNI;
+		if (autoFarm == null)
+			autoFarm = FarmMode.BOTH;
+		if (autoRefill == null)
+			autoRefill = RefillMode.ON;
+		if (autoSprint == null)
+			autoSprint = SprintMode.ON;
+		if (autoEat == null)
+			autoEat = EatMode.SMART;
+		if (autoSort == null)
+			autoSort = SortMode.ALL;
+		if (autoArmor == null)
+			autoArmor = ArmorMode.SMART;
+		if (autoFish == null)
+			autoFish = FishMode.ON;
+		if (targetHudPosition == null)
+			targetHudPosition = HudPosition.TOP_LEFT;
+		if (autoStep == null)
+			autoStep = StepMode.ON;
+		if (autoDeposit == null)
+			autoDeposit = DepositMode.ALL;
+	}
 	public void resetToDefault() {
 		var d = new Config();
 		for (var f : getClass().getFields())

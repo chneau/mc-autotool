@@ -19,6 +19,10 @@ public class ConfigManager {
 		if (Files.exists(CONFIG_PATH)) {
 			try (var reader = Files.newBufferedReader(CONFIG_PATH)) {
 				instance = GSON.fromJson(reader, Config.class);
+				if (instance == null) {
+					instance = new Config();
+				}
+				instance.validate();
 			} catch (Exception e) {
 				Main.LOGGER.error("Failed to load config, using defaults", e);
 				instance = new Config();

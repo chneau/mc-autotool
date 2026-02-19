@@ -31,7 +31,7 @@ jobs:
             VERSION="${{ github.ref_name }}"
             echo "matrix=[\"${VERSION#v}\"]" >> $GITHUB_OUTPUT
           elif [ "${{ github.event.inputs.version }}" == "all" ]; then
-            echo 'matrix=["26.1", "1.21", "1.20", "1.19", "1.18", "1.17"]' >> $GITHUB_OUTPUT
+            echo 'matrix=["26.1", "1.21", "1.20"]' >> $GITHUB_OUTPUT
           else
             echo 'matrix=["${{ github.event.inputs.version }}"]' >> $GITHUB_OUTPUT
           fi
