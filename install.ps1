@@ -1,6 +1,6 @@
 [CmdletBinding()]
 param(
-    [Alias("v", "version")]
+    [Alias("v", "MCVersion", "mc")]
     [string]$Version = "latest",
     [switch]$Latest,
     [switch]$NoFabric,
@@ -48,9 +48,21 @@ if ($Latest -or $Version -eq "latest" -or [string]::IsNullOrWhiteSpace($Version)
 # 2. Install Fabric Profile (if needed)
 if (-not $NoFabric) {
     Write-Host "[2/4] Setting up Fabric Loader profile for Minecraft $TargetVersion..." -ForegroundColor Yellow
+    $javaPath = $null
     $javaCmd = Get-Command "java" -ErrorAction SilentlyContinue
-    if (-not $javaCmd) {
-        Write-Warning "Java was not found in your PATH. Skipping automatic Fabric profile installation."
+    if ($javaCmd) {
+        $javaPath = "java"
+    } else {
+        # Search common Java locations and Minecraft launcher runtime
+        $foundJava = Get-ChildItem -Path "$env:LOCALAPPDATA\Packages\*\LocalCache\Local\runtime", "$env:APPDATA\.minecraft\runtime", "C:\Program Files (x86)\Minecraft Launcher\runtime", "C:\Program Files\Java", "C:\Program Files\Eclipse Adoptium", "C:\Program Files\Microsoft" -Filter "java.exe" -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1 -ExpandProperty FullName
+        if ($foundJava) {
+            $javaPath = $foundJava
+            Write-Host "  -> Found Minecraft/system Java: $javaPath" -ForegroundColor Gray
+        }
+    }
+
+    if (-not $javaPath) {
+        Write-Warning "Java was not found. Skipping automatic Fabric profile installation."
         Write-Warning "Please install Fabric manually from https://fabricmc.net/use/installer/"
     } else {
         try {
@@ -64,8 +76,12 @@ if (-not $NoFabric) {
             Write-Host "  -> Downloading Fabric Installer..." -ForegroundColor Gray
             Invoke-WebRequest -Uri $installerUrl -OutFile $tempInstaller -UseBasicParsing
 
-            Write-Host "  -> Running Fabric Installer for client..." -ForegroundColor Gray
-            $process = Start-Process -FilePath "java" -ArgumentList "-jar", "`"$tempInstaller`"", "client", "-mcversion", "$TargetVersion", "-dir", "`"$MinecraftDir`"" -NoNewWindow -Wait -PassThru
+            # Determine mcversion argument (support snapshots e.g. 26.4-snapshot-1)
+            $mcVerArg = $TargetVersion
+            if ($TargetVersion -eq "26.4") { $mcVerArg = "26.4-snapshot-1" }
+
+            Write-Host "  -> Running Fabric Installer for Minecraft $mcVerArg..." -ForegroundColor Gray
+            $process = Start-Process -FilePath $javaPath -ArgumentList "-jar", "`"$tempInstaller`"", "client", "-mcversion", "$mcVerArg", "-dir", "`"$MinecraftDir`"" -NoNewWindow -Wait -PassThru
 
             if ($process.ExitCode -eq 0) {
                 Write-Host "  -> Fabric profile successfully installed!" -ForegroundColor Green
@@ -83,6 +99,10 @@ if (-not $NoFabric) {
 
 # 3. Download Fabric API
 Write-Host "[3/4] Fetching compatible Fabric API..." -ForegroundColor Yellow
+$fapiUrl = $null
+$fapiVersionStr = ""
+
+# Try Modrinth exact match
 try {
     $modrinthApi = "https://api.modrinth.com/v2/project/fabric-api/version?game_versions=%5B%22$TargetVersion%22%5D&loaders=%5B%22fabric%22%5D"
     $fapiVersions = Invoke-RestMethod -Uri $modrinthApi -Headers @{"User-Agent"="mc-autotool-installer"} -UseBasicParsing
@@ -90,15 +110,48 @@ try {
         $primaryFile = ($fapiVersions[0].files | Where-Object { $_.primary -eq $true } | Select-Object -First 1)
         if (-not $primaryFile) { $primaryFile = $fapiVersions[0].files[0] }
         $fapiUrl = $primaryFile.url
-        $fapiDest = Join-Path $ModsDir "fabric-api.jar"
-        Write-Host "  -> Downloading Fabric API ($($fapiVersions[0].version_number))..." -ForegroundColor Gray
-        Invoke-WebRequest -Uri $fapiUrl -OutFile $fapiDest -UseBasicParsing
-        Write-Host "  -> Fabric API installed to $fapiDest" -ForegroundColor Green
-    } else {
-        Write-Warning "Could not find Fabric API build for Minecraft $TargetVersion on Modrinth."
+        $fapiVersionStr = $fapiVersions[0].version_number
     }
-} catch {
-    Write-Warning "Failed to download Fabric API: $_"
+} catch {}
+
+# Fallback 1: Search Modrinth for matching version
+if (-not $fapiUrl) {
+    try {
+        $modrinthApi = "https://api.modrinth.com/v2/project/fabric-api/version?loaders=%5B%22fabric%22%5D"
+        $fapiVersions = Invoke-RestMethod -Uri $modrinthApi -Headers @{"User-Agent"="mc-autotool-installer"} -UseBasicParsing
+        $matchedVersion = $fapiVersions | Where-Object { ($_.game_versions -contains $TargetVersion) -or ($_.version_number -like "*+$TargetVersion*") -or ($_.game_versions -contains "$TargetVersion-snapshot-1") } | Select-Object -First 1
+        if ($matchedVersion) {
+            $primaryFile = ($matchedVersion.files | Where-Object { $_.primary -eq $true } | Select-Object -First 1)
+            if (-not $primaryFile) { $primaryFile = $matchedVersion.files[0] }
+            $fapiUrl = $primaryFile.url
+            $fapiVersionStr = $matchedVersion.version_number
+        }
+    } catch {}
+}
+
+# Fallback 2: Check Maven repository metadata
+if (-not $fapiUrl) {
+    try {
+        $cleanVer = $TargetVersion.Split('-')[0]
+        $mavenUrl = "https://maven.fabricmc.net/net/fabricmc/fabric-api/fabric-api/maven-metadata.xml"
+        $metaContent = (Invoke-WebRequest -Uri $mavenUrl -UseBasicParsing).Content
+        [xml]$mavenXml = $metaContent
+        $versionNodes = @($mavenXml.metadata.versioning.versions.version) | Where-Object { $_ -like "*+$TargetVersion*" -or $_ -like "*+$cleanVer*" }
+        if ($versionNodes -and $versionNodes.Count -gt 0) {
+            $latestMavenVer = $versionNodes[-1]
+            $fapiUrl = "https://maven.fabricmc.net/net/fabricmc/fabric-api/fabric-api/$latestMavenVer/fabric-api-$latestMavenVer.jar"
+            $fapiVersionStr = $latestMavenVer
+        }
+    } catch {}
+}
+
+if ($fapiUrl) {
+    $fapiDest = Join-Path $ModsDir "fabric-api.jar"
+    Write-Host "  -> Downloading Fabric API ($fapiVersionStr)..." -ForegroundColor Gray
+    Invoke-WebRequest -Uri $fapiUrl -OutFile $fapiDest -UseBasicParsing
+    Write-Host "  -> Fabric API installed to $fapiDest" -ForegroundColor Green
+} else {
+    Write-Warning "Could not find Fabric API build for Minecraft $TargetVersion."
 }
 
 # 4. Download mc-autotool
@@ -114,7 +167,7 @@ try {
     Invoke-WebRequest -Uri $autotoolUrl -OutFile $autotoolDest -UseBasicParsing
     Write-Host "  -> Autotool installed to $autotoolDest" -ForegroundColor Green
 } catch {
-    Write-Warning "Failed to download autotool from $autotoolUrl: $_"
+    Write-Warning "Failed to download autotool from $($autotoolUrl): $_"
 }
 
 Write-Host "========================================" -ForegroundColor Cyan
