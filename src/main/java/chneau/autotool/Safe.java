@@ -1,6 +1,6 @@
 package chneau.autotool;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.*;
-import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
+import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElement;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.fabricmc.fabric.api.event.player.*;
 import net.minecraft.client.Minecraft;
@@ -102,7 +102,7 @@ public class Safe {
 				? attackEntity(n, (p2, w2, h2, e2, r2) -> o.interact(p2, w2, h2, e2, r2)).interact(p, w, h, e, r)
 				: InteractionResult.PASS;
 	}
-	public static HudRenderCallback hud(String n, HudRenderCallback o) {
-		return (d, t) -> run(n, () -> o.onHudRender(d, t));
+	public static HudElement hud(String n, HudElement o) {
+		return (d, t) -> run(n, () -> o.extractRenderState(d, t));
 	}
 }

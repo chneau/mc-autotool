@@ -16,7 +16,7 @@ public class AutoArmor extends BaseModule implements Safe.ContainerScreenInit, C
 
 	@Override
 	public void onEndTick(Minecraft client) {
-		if (config().autoArmor != Config.ArmorMode.OFF && client.screen == null && Throttler.shouldRun(this, 10))
+		if (config().autoArmor != Config.ArmorMode.OFF && client.gui.screen() == null && Throttler.shouldRun(this, 10))
 			handle(client);
 	}
 

@@ -1,18 +1,18 @@
 package chneau.autotool;
-import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
+import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElement;
 import net.minecraft.client.DeltaTracker;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.util.Mth;
 import java.util.*;
-public class AutoTarget extends BaseModule implements HudRenderCallback {
+public class AutoTarget extends BaseModule implements HudElement {
 	private long lastBS = 0;
 	private volatile Map<String, List<Scanner.Target>> bTargets = new HashMap<>();
 	private Map<String, List<Scanner.Target>> eTargets = new HashMap<>();
 	private boolean scanning = false;
 	@Override
-	public void onHudRender(GuiGraphics g, DeltaTracker dt) {
+	public void extractRenderState(GuiGraphicsExtractor g, DeltaTracker dt) {
 		var c = client();
-		if (c.player == null || c.level == null || c.options.hideGui)
+		if (c.player == null || c.level == null || c.gui.hud.isHidden())
 			return;
 		var cfg = config();
 		if (Throttler.shouldRun(this, 10))
@@ -52,7 +52,7 @@ public class AutoTarget extends BaseModule implements HudRenderCallback {
 				xB = cfg.targetHudPosition.name().endsWith("RIGHT") ? sw - 10 - maxW : 10;
 		for (var info : infos) {
 			int x = cfg.targetHudPosition.name().endsWith("RIGHT") ? sw - 10 - c.font.width(info.t) : xB;
-			g.drawString(c.font, info.t, x, y, cfg.targetHudColor, true);
+			g.text(c.font, info.t, x, y, cfg.targetHudColor, true);
 			Draw.drawArrow(g, x + c.font.width("XX ") - 4, y + 4, info.y, info.p, cfg.targetHudColor);
 			y += 12;
 		}

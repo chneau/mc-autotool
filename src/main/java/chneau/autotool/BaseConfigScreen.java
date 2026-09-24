@@ -25,7 +25,7 @@ public abstract class BaseConfigScreen extends OptionsSubScreen {
 		return new OptionInstance<>(name, tooltipSupplier,
 				(caption, value) -> Component.literal(value == null ? "Unknown" : value.name().replace('_', ' ')),
 				new OptionInstance.Enum<>(Arrays.asList(values), Codec.INT.xmap(i -> values[i], Enum::ordinal)),
-				currentValue, setter);
+				currentValue, setter::accept);
 	}
 	protected OptionInstance<Integer> createIntOption(String key, String tooltip, int currentValue,
 			Consumer<Integer> setter) {
@@ -39,13 +39,13 @@ public abstract class BaseConfigScreen extends OptionsSubScreen {
 		return new OptionInstance<>(key, tooltipSupplier,
 				(caption, value) -> CommonComponents.optionNameValue(caption,
 						Component.literal(value == 0 ? "Off" : value.toString())),
-				new OptionInstance.IntRange(0, max), Codec.INT, currentValue, setter);
+				new OptionInstance.IntRange(0, max), Codec.INT, currentValue, setter::accept);
 	}
 	@Override
 	public void onClose() {
 		ConfigManager.save();
 		AutoStep.update();
-		this.minecraft.setScreen(this.lastScreen);
+		this.minecraft.gui.setScreen(this.lastScreen);
 	}
 	protected void addFooterButtons(Button... buttons) {
 		net.minecraft.client.gui.layouts.LinearLayout linearLayout = net.minecraft.client.gui.layouts.LinearLayout

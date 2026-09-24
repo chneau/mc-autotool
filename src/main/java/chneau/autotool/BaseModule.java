@@ -1,9 +1,11 @@
 package chneau.autotool;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.*;
-import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
+import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElement;
+import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.fabricmc.fabric.api.event.player.*;
 import net.minecraft.client.Minecraft;
+import net.minecraft.resources.Identifier;
 public abstract class BaseModule implements Module {
 	protected final String name = getClass().getSimpleName();
 	protected static Config config() {
@@ -34,7 +36,8 @@ public abstract class BaseModule implements Module {
 			ClientEntityEvents.ENTITY_LOAD.register(Safe.playerLoad(name, m));
 		if (this instanceof Safe.ContainerScreenInit m)
 			ScreenEvents.AFTER_INIT.register(Safe.containerScreen(name, m));
-		if (this instanceof HudRenderCallback m)
-			HudRenderCallback.EVENT.register(Safe.hud(name, m));
+		if (this instanceof HudElement m)
+			HudElementRegistry.addLast(Identifier.fromNamespaceAndPath("chneau_autotool", name.toLowerCase()),
+					Safe.hud(name, m));
 	}
 }

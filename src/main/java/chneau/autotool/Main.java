@@ -28,7 +28,7 @@ public class Main implements ClientModInitializer {
 						|| InputConstants.isKeyDown(w, GLFW.GLFW_KEY_RIGHT_CONTROL))
 						&& (InputConstants.isKeyDown(w, GLFW.GLFW_KEY_LEFT_SHIFT)
 								|| InputConstants.isKeyDown(w, GLFW.GLFW_KEY_RIGHT_SHIFT)))
-					c.setScreen(new ConfigScreen(c.screen, c.options));
+					c.gui.setScreen(new ConfigScreen(c.gui.screen(), c.options));
 			}
 		}));
 	}
