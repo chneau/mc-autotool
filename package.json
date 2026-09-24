@@ -6,6 +6,6 @@
 		"clean": "./gradlew clean",
 		"gen": "./gradlew genSources",
 		"cleanBuild": "./gradlew build --refresh-dependencies",
-		"upgrade": "./gradlew wrapper --gradle-version 9.3.1"
+		"upgrade": "./gradlew wrapper --gradle-version 9.8.0"
 	}
 }

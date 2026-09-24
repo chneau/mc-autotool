@@ -5,6 +5,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.SwingAnimation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.phys.EntityHitResult;
 public class AutoAttack extends BaseModule implements ClientTickEvents.EndTick {
@@ -63,7 +64,7 @@ public class AutoAttack extends BaseModule implements ClientTickEvents.EndTick {
 			if (now - last >= delay && c.gameMode != null) {
 				c.gameMode.attack(p, t);
 				p.resetAttackStrengthTicker();
-				p.swing(InteractionHand.MAIN_HAND);
+				p.swing(InteractionHand.MAIN_HAND, SwingAnimation.DEFAULT, false);
 				last = now;
 			}
 		}
