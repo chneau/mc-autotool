@@ -13,9 +13,12 @@ Run this in **PowerShell** to automatically set up the Fabric profile, install t
 irm https://raw.githubusercontent.com/chneau/mc-autotool/master/install.ps1 | iex
 ```
 
-To install for a specific Minecraft version (e.g. `26.2` or `26.3`), pass the `-Version` parameter:
+To install for a specific Minecraft version (e.g. `26.3`, `26.2`, `26.1`), pass the `-Version` parameter:
 
 ```powershell
+# Install for Minecraft 26.3
+& ([scriptblock]::Create((irm https://raw.githubusercontent.com/chneau/mc-autotool/master/install.ps1))) -Version 26.3
+
 # Install for Minecraft 26.2
 & ([scriptblock]::Create((irm https://raw.githubusercontent.com/chneau/mc-autotool/master/install.ps1))) -Version 26.2
 ```
