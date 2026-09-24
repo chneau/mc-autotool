@@ -6,16 +6,37 @@ A powerful utility mod for Minecraft that automates tedious tasks like tool swap
 
 > **Important:** It is required to install a **Fabric profile** using the [Fabric Installer](https://fabricmc.net/use/installer/) before proceeding.
 
-If you already have **Fabric** installed, you can quickly download the latest version of Autotool (**26.1**) by running this command in PowerShell:
+If you already have **Fabric** installed, you can quickly download the latest version of Autotool (**26.4**) by running this command in PowerShell:
 
 ```powershell
-# For the latest version (Minecraft 26.1)
+# For the latest version (Minecraft 26.4)
 mkdir -Force "$env:APPDATA\.minecraft\mods"
 irm https://github.com/chneau/mc-autotool/releases/latest/download/autotool.jar -OutFile "$env:APPDATA\.minecraft\mods\autotool.jar"
-irm https://github.com/FabricMC/fabric-api/releases/download/0.143.5%2B26.1/fabric-api-0.143.5+26.1.jar -OutFile "$env:APPDATA\.minecraft\mods\fabric-api.jar"
+irm https://github.com/FabricMC/fabric-api/releases/download/0.161.1%2B26.4/fabric-api-0.161.1+26.4.jar -OutFile "$env:APPDATA\.minecraft\mods\fabric-api.jar"
 ```
 
-> **Note:** To install a specific version, simply replace `latest` in the URL with the version number (e.g., `1.21`, `1.20`).
+> **Note:** To install a specific version, simply replace `latest` in the URL with the version number (e.g., `26.3`, `26.2`, `26.1`, `1.21`, `1.20`).
+
+```powershell
+# Example for Minecraft 26.3
+mkdir -Force "$env:APPDATA\.minecraft\mods"
+irm https://github.com/chneau/mc-autotool/releases/download/26.3/autotool.jar -OutFile "$env:APPDATA\.minecraft\mods\autotool.jar"
+irm https://github.com/FabricMC/fabric-api/releases/download/0.161.0%2B26.3/fabric-api-0.161.0+26.3.jar -OutFile "$env:APPDATA\.minecraft\mods\fabric-api.jar"
+```
+
+```powershell
+# Example for Minecraft 26.2
+mkdir -Force "$env:APPDATA\.minecraft\mods"
+irm https://github.com/chneau/mc-autotool/releases/download/26.2/autotool.jar -OutFile "$env:APPDATA\.minecraft\mods\autotool.jar"
+irm https://github.com/FabricMC/fabric-api/releases/download/0.161.0%2B26.2/fabric-api-0.161.0+26.2.jar -OutFile "$env:APPDATA\.minecraft\mods\fabric-api.jar"
+```
+
+```powershell
+# Example for Minecraft 26.1
+mkdir -Force "$env:APPDATA\.minecraft\mods"
+irm https://github.com/chneau/mc-autotool/releases/download/26.1/autotool.jar -OutFile "$env:APPDATA\.minecraft\mods\autotool.jar"
+irm https://github.com/FabricMC/fabric-api/releases/download/0.143.7%2B26.1/fabric-api-0.143.7+26.1.jar -OutFile "$env:APPDATA\.minecraft\mods\fabric-api.jar"
+```
 
 ```powershell
 # Example for Minecraft 1.21
@@ -43,8 +64,8 @@ rm "$env:APPDATA\.minecraft\mods\autotool.jar"
 
 ## 📅 Roadmap & Versions
 
-- **Current Stable**: Supports Minecraft 26.1 (Cute Companions)
-- **Previous Version**: Minecraft 1.21.1
+- **Current Stable**: Supports Minecraft 26.4
+- **Previous Versions**: Minecraft 26.3, 26.2, 26.1, 1.21.1, 1.20.6
 
 ## 🛠 How to Access Settings
 
@@ -187,6 +208,9 @@ Displays real-time tracking information for entities and valuable resources on y
 
 ## 📜 Changelog
 
+- New 2026-09-25: Updated for Minecraft 26.4 (`26.4-snapshot-1`) with Loom 1.18.
+- New 2026-09-25: Updated for Minecraft 26.3; migrated input keys to `InputConstants` and updated attack animations.
+- New 2026-09-25: Updated for Minecraft 26.2; migrated HUD rendering to `HudElement` and `GuiGraphicsExtractor`, and updated screen APIs.
 - New 2026-02-18: Refactored Auto Sort and Auto Armor to be button-triggered; added tooltips and improved button positioning; enhanced Auto Swap and Auto Refill with broken item replacement; improved Auto Target with RGB axes and F1 hiding logic.
 - New 2026-02-15: Added Auto Target, Auto Step, and Auto Deposit features; improved Auto Attack with proximity targeting; updated for Minecraft 26.1
 - New 2026-02-14: Updated for 1.21.1 and added comprehensive Auto features (Eat, Sort, Armor, Fish, etc.)
@@ -205,7 +229,7 @@ Displays real-time tracking information for entities and valuable resources on y
 ## 🔗 Other Versions
 
 Links to branch-specific code:
-[v1.14](https://github.com/chneau/mc-autotool/tree/v1.14) | [v1.15](https://github.com/chneau/mc-autotool/tree/v1.15) | [v1.16](https://github.com/chneau/mc-autotool/tree/v1.16) | [v1.17](https://github.com/chneau/mc-autotool/tree/v1.17) | [v1.18](https://github.com/chneau/mc-autotool/tree/v1.18) | [v1.19](https://github.com/chneau/mc-autotool/tree/v1.19) | [v1.20](https://github.com/chneau/mc-autotool/tree/v1.20) | [v1.21](https://github.com/chneau/mc-autotool/tree/v1.21) | [v26.1](https://github.com/chneau/mc-autotool/tree/v26.1)
+[v1.14](https://github.com/chneau/mc-autotool/tree/v1.14) | [v1.15](https://github.com/chneau/mc-autotool/tree/v1.15) | [v1.16](https://github.com/chneau/mc-autotool/tree/v1.16) | [v1.17](https://github.com/chneau/mc-autotool/tree/v1.17) | [v1.18](https://github.com/chneau/mc-autotool/tree/v1.18) | [v1.19](https://github.com/chneau/mc-autotool/tree/v1.19) | [v1.20](https://github.com/chneau/mc-autotool/tree/v1.20) | [v1.21](https://github.com/chneau/mc-autotool/tree/v1.21) | [v26.1](https://github.com/chneau/mc-autotool/tree/v26.1) | [v26.2](https://github.com/chneau/mc-autotool/tree/v26.2) | [v26.3](https://github.com/chneau/mc-autotool/tree/v26.3) | [v26.4](https://github.com/chneau/mc-autotool/tree/v26.4)
 
 ## 💡 Inspiration
 
