@@ -4,16 +4,32 @@ A powerful utility mod for Minecraft that automates tedious tasks like tool swap
 
 ## 🚀 Quick Install (Windows)
 
-> **Important:** It is required to install a **Fabric profile** using the [Fabric Installer](https://fabricmc.net/use/installer/) before proceeding.
+### ⚡ Automatic One-Liner (Installs Fabric + Fabric API + Autotool)
 
-If you already have **Fabric** installed, you can quickly download the latest version of Autotool (**26.4**) by running this command in PowerShell:
+Run this in **PowerShell** to automatically set up the Fabric profile, install the matching Fabric API, and download Autotool:
 
 ```powershell
-# For the latest version (Minecraft 26.4)
-mkdir -Force "$env:APPDATA\.minecraft\mods"
-irm https://github.com/chneau/mc-autotool/releases/latest/download/autotool.jar -OutFile "$env:APPDATA\.minecraft\mods\autotool.jar"
-irm https://github.com/FabricMC/fabric-api/releases/download/0.161.1%2B26.4/fabric-api-0.161.1+26.4.jar -OutFile "$env:APPDATA\.minecraft\mods\fabric-api.jar"
+# Install for the latest supported Minecraft version (26.4)
+irm https://raw.githubusercontent.com/chneau/mc-autotool/master/install.ps1 | iex
 ```
+
+To install for a specific Minecraft version (e.g. `26.2` or `26.3`), pass the `-Version` parameter:
+
+```powershell
+# Install for Minecraft 26.2
+& ([scriptblock]::Create((irm https://raw.githubusercontent.com/chneau/mc-autotool/master/install.ps1))) -Version 26.2
+```
+
+From **Command Prompt (`cmd.exe`)**:
+```cmd
+powershell -ExecutionPolicy Bypass -Command "irm https://raw.githubusercontent.com/chneau/mc-autotool/master/install.ps1 | iex"
+```
+
+---
+
+### 📦 Manual Installation
+
+If you already have **Fabric** installed, you can manually download the mod and Fabric API:
 
 > **Note:** To install a specific version, simply replace `latest` in the URL with the version number (e.g., `26.3`, `26.2`, `26.1`, `1.21`, `1.20`).
 
