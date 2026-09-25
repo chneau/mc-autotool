@@ -31,22 +31,16 @@ Write-Host "========================================" -ForegroundColor Cyan
 
 # 1. Resolve Target Version
 $releaseInfo = $null
+try {
+    $releaseInfo = Invoke-RestMethod -Uri "https://api.github.com/repos/chneau/mc-autotool/releases/latest" -Headers @{"User-Agent"="mc-autotool-installer"} -UseBasicParsing
+} catch {}
+
 if ($Latest -or $Version -eq "latest" -or [string]::IsNullOrWhiteSpace($Version)) {
-    Write-Host "[1/4] Resolving latest mc-autotool release..." -ForegroundColor Yellow
-    try {
-        $releaseInfo = Invoke-RestMethod -Uri "https://api.github.com/repos/chneau/mc-autotool/releases/latest" -Headers @{"User-Agent"="mc-autotool-installer"} -UseBasicParsing
-        $TargetVersion = $releaseInfo.tag_name
-        Write-Host "  -> Latest version resolved: $TargetVersion" -ForegroundColor Green
-    } catch {
-        $TargetVersion = "26.4"
-        Write-Host "  -> Could not query GitHub API, defaulting to $TargetVersion" -ForegroundColor DarkYellow
-    }
+    $TargetVersion = "26.4"
+    Write-Host "[1/4] Selected version: $TargetVersion (latest)" -ForegroundColor Green
 } else {
     $TargetVersion = $Version.TrimStart("v")
     Write-Host "[1/4] Selected version: $TargetVersion" -ForegroundColor Green
-    try {
-        $releaseInfo = Invoke-RestMethod -Uri "https://api.github.com/repos/chneau/mc-autotool/releases/tags/$TargetVersion" -Headers @{"User-Agent"="mc-autotool-installer"} -UseBasicParsing
-    } catch {}
 }
 
 # 2. Install Fabric Profile (if needed)
@@ -163,7 +157,7 @@ Write-Host "[4/4] Checking mc-autotool ($TargetVersion)..." -ForegroundColor Yel
 
 $autotoolAsset = $null
 if ($releaseInfo -and $releaseInfo.assets) {
-    $autotoolAsset = $releaseInfo.assets | Where-Object { $_.name -eq "autotool.jar" } | Select-Object -First 1
+    $autotoolAsset = $releaseInfo.assets | Where-Object { $_.name -eq "autotool-$TargetVersion.jar" -or ($TargetVersion -eq "26.4" -and $_.name -eq "autotool.jar") } | Select-Object -First 1
 }
 
 $remoteDateStr = ""
@@ -179,10 +173,10 @@ if ($autotoolAsset) {
 
 $autotoolUrl = if ($autotoolAsset -and $autotoolAsset.browser_download_url) {
     $autotoolAsset.browser_download_url
-} elseif ($TargetVersion -eq "latest" -or ($releaseInfo -and $releaseInfo.tag_name -eq $TargetVersion)) {
+} elseif ($TargetVersion -eq "26.4" -or $TargetVersion -eq "latest") {
     "https://github.com/chneau/mc-autotool/releases/latest/download/autotool.jar"
 } else {
-    "https://github.com/chneau/mc-autotool/releases/download/$TargetVersion/autotool.jar"
+    "https://github.com/chneau/mc-autotool/releases/latest/download/autotool-$TargetVersion.jar"
 }
 
 $autotoolDest = Join-Path $ModsDir "autotool.jar"

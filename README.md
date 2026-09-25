@@ -36,41 +36,32 @@ powershell -ExecutionPolicy Bypass -Command "irm mc.neau.pro | iex"
 
 If you already have **Fabric** installed, you can manually download the mod and Fabric API:
 
-> **Note:** To install a specific version, simply replace `latest` in the URL with the version number (e.g., `26.3`, `26.2`, `26.1`, `1.21`, `1.20`).
+```powershell
+# Example for Minecraft 26.4 (Latest)
+mkdir -Force "$env:APPDATA\.minecraft\mods"
+irm https://github.com/chneau/mc-autotool/releases/latest/download/autotool.jar -OutFile "$env:APPDATA\.minecraft\mods\autotool.jar"
+irm https://github.com/FabricMC/fabric-api/releases/download/0.161.1%2B26.4/fabric-api-0.161.1+26.4.jar -OutFile "$env:APPDATA\.minecraft\mods\fabric-api.jar"
+```
 
 ```powershell
 # Example for Minecraft 26.3
 mkdir -Force "$env:APPDATA\.minecraft\mods"
-irm https://github.com/chneau/mc-autotool/releases/download/26.3/autotool.jar -OutFile "$env:APPDATA\.minecraft\mods\autotool.jar"
+irm https://github.com/chneau/mc-autotool/releases/latest/download/autotool-26.3.jar -OutFile "$env:APPDATA\.minecraft\mods\autotool.jar"
 irm https://github.com/FabricMC/fabric-api/releases/download/0.161.0%2B26.3/fabric-api-0.161.0+26.3.jar -OutFile "$env:APPDATA\.minecraft\mods\fabric-api.jar"
 ```
 
 ```powershell
 # Example for Minecraft 26.2
 mkdir -Force "$env:APPDATA\.minecraft\mods"
-irm https://github.com/chneau/mc-autotool/releases/download/26.2/autotool.jar -OutFile "$env:APPDATA\.minecraft\mods\autotool.jar"
+irm https://github.com/chneau/mc-autotool/releases/latest/download/autotool-26.2.jar -OutFile "$env:APPDATA\.minecraft\mods\autotool.jar"
 irm https://github.com/FabricMC/fabric-api/releases/download/0.161.0%2B26.2/fabric-api-0.161.0+26.2.jar -OutFile "$env:APPDATA\.minecraft\mods\fabric-api.jar"
 ```
 
 ```powershell
 # Example for Minecraft 26.1
 mkdir -Force "$env:APPDATA\.minecraft\mods"
-irm https://github.com/chneau/mc-autotool/releases/download/26.1/autotool.jar -OutFile "$env:APPDATA\.minecraft\mods\autotool.jar"
+irm https://github.com/chneau/mc-autotool/releases/latest/download/autotool-26.1.jar -OutFile "$env:APPDATA\.minecraft\mods\autotool.jar"
 irm https://github.com/FabricMC/fabric-api/releases/download/0.143.7%2B26.1/fabric-api-0.143.7+26.1.jar -OutFile "$env:APPDATA\.minecraft\mods\fabric-api.jar"
-```
-
-```powershell
-# Example for Minecraft 1.21
-mkdir -Force "$env:APPDATA\.minecraft\mods"
-irm https://github.com/chneau/mc-autotool/releases/download/1.21/autotool.jar -OutFile "$env:APPDATA\.minecraft\mods\autotool.jar"
-irm https://github.com/FabricMC/fabric-api/releases/download/0.141.2%2B1.21.11/fabric-api-0.141.2+1.21.11.jar -OutFile "$env:APPDATA\.minecraft\mods\fabric-api.jar"
-```
-
-```powershell
-# Example for Minecraft 1.20
-mkdir -Force "$env:APPDATA\.minecraft\mods"
-irm https://github.com/chneau/mc-autotool/releases/download/1.20/autotool.jar -OutFile "$env:APPDATA\.minecraft\mods\autotool.jar"
-irm https://github.com/FabricMC/fabric-api/releases/download/0.98.0%2B1.20.6/fabric-api-0.98.0+1.20.6.jar -OutFile "$env:APPDATA\.minecraft\mods\fabric-api.jar"
 ```
 
 ### 🗑️ How to Remove
@@ -83,10 +74,12 @@ rm "$env:APPDATA\.minecraft\mods\autotool.jar"
 
 ---
 
-## 📅 Roadmap & Versions
+## 📅 Supported Minecraft Versions
 
-- **Current Stable**: Supports Minecraft 26.4
-- **Previous Versions**: Minecraft 26.3, 26.2, 26.1, 1.21.1, 1.20.6
+- **Minecraft 26.4** (Latest)
+- **Minecraft 26.3**
+- **Minecraft 26.2**
+- **Minecraft 26.1**
 
 ## 🛠 How to Access Settings
 
