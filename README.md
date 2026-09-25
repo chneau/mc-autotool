@@ -56,9 +56,9 @@ rm "$env:APPDATA\.minecraft\mods\autotool.jar"
 
 ## 🛠 How to Access Settings
 
-You can open the configuration menu at any time in two ways:
-1. Press the key shortcut: **`Ctrl + Shift + O`**
-2. Type either client command in in-game chat: **`/autotool`** or **`/at`**
+You can open the configuration menu at any time by typing either client command in in-game chat:
+- **`/autotool`**
+- **`/at`**
 
 ---
 
