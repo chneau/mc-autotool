@@ -195,9 +195,3 @@ Compiled mod JARs will be generated in `versions/<mc-version>/build/libs/`.
 ## 💡 Inspiration
 
 Inspired by `ControlPack` by uyjulian (<https://github.com/uyjulian/ControlPack>).
-
----
-
-## 📜 License
-
-This project is licensed under the MIT License.
