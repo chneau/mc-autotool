@@ -69,6 +69,7 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: ${{ env.JAR_PATH }}
           tag: ${{ matrix.version }}
+          target_commit: v${{ matrix.version }}
           overwrite: true
           make_latest: ${{ matrix.version == '26.4' }}
           release_name: Autotool for Minecraft ${{ matrix.version }}
