@@ -44,7 +44,11 @@ public class ConfigScreen extends BaseConfigScreen {
 				null);
 		this.list.addBig(new OptionInstance<>("Targeting Settings...", OptionInstance.noTooltip(),
 				(caption, value) -> Component.empty(), OptionInstance.BOOLEAN_VALUES, true,
+//? if >=26.2 {
 				(v) -> this.minecraft.gui.setScreen(new TargetConfigScreen(this, this.options))));
+//?} else {
+/*				(v) -> this.minecraft.setScreen(new TargetConfigScreen(this, this.options))));
+*///?}
 	}
 	@Override
 	protected void addFooter() {
@@ -52,7 +56,11 @@ public class ConfigScreen extends BaseConfigScreen {
 			ConfigManager.getConfig().resetToDefault();
 			ConfigManager.save();
 			AutoStep.update();
+//? if >=26.2 {
 			this.minecraft.gui.setScreen(new ConfigScreen(this.lastScreen, this.options));
+//?} else {
+/*			this.minecraft.setScreen(new ConfigScreen(this.lastScreen, this.options));
+*///?}
 		}).width(150).build(), Button.builder(CommonComponents.GUI_DONE, (button) -> {
 			this.onClose();
 		}).width(150).build());

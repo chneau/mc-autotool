@@ -17,7 +17,7 @@ stonecutter {
     centralScript = "build.gradle"
 
     create(getRootProject()) {
-        versions '26.4', '26.3', '26.2'
+        versions '26.4', '26.3', '26.2', '26.1'
     }
 }
 

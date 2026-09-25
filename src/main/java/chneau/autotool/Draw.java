@@ -1,5 +1,9 @@
 package chneau.autotool;
+//? if >=26.2 {
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+//?} else {
+/*import net.minecraft.client.gui.GuiGraphics;
+*///?}
 import net.minecraft.world.phys.Vec3;
 import java.util.*;
 public class Draw {
@@ -14,7 +18,11 @@ public class Draw {
 		cone(p, 0.2f, 0.6f, 0.15f, 8, 0xFFFF0000);
 		return p;
 	}
+//? if >=26.2 {
 	public static void drawArrow(GuiGraphicsExtractor g, int x, int y, float yaw, float pitch, int bc) {
+//?} else {
+/*	public static void drawArrow(GuiGraphics g, int x, int y, float yaw, float pitch, int bc) {
+*///?}
 		float s = 8f, yr = (float) Math.toRadians(yaw), pr = (float) Math.toRadians(pitch);
 		Vec3 ld = new Vec3(0.2, -0.5, -1).normalize();
 		List<ProjPoly> proj = new ArrayList<>();
@@ -45,12 +53,20 @@ public class Draw {
 		return (c & 0xFF000000) | ((int) ((c >> 16 & 0xFF) * b) << 16) | ((int) ((c >> 8 & 0xFF) * b) << 8)
 				| (int) ((c & 0xFF) * b);
 	}
+//? if >=26.2 {
 	private static void drawPoly(GuiGraphicsExtractor g, Vec3[] v, int c) {
+//?} else {
+/*	private static void drawPoly(GuiGraphics g, Vec3[] v, int c) {
+*///?}
 		tri(g, v[0], v[1], v[2], c);
 		if (v.length == 4)
 			tri(g, v[2], v[3], v[0], c);
 	}
+//? if >=26.2 {
 	private static void tri(GuiGraphicsExtractor g, Vec3 v1, Vec3 v2, Vec3 v3, int c) {
+//?} else {
+/*	private static void tri(GuiGraphics g, Vec3 v1, Vec3 v2, Vec3 v3, int c) {
+*///?}
 		int x1 = (int) v1.x, y1 = (int) v1.y, x2 = (int) v2.x, y2 = (int) v2.y, x3 = (int) v3.x, y3 = (int) v3.y;
 		if (y1 > y2) {
 			int t = y1;

@@ -1,19 +1,37 @@
 package chneau.autotool;
+//? if >=26.2 {
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElement;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+//?} else {
+/*import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
+import net.minecraft.client.DeltaTracker;
+import net.minecraft.client.gui.GuiGraphics;
+*///?}
 import net.minecraft.util.Mth;
 import java.util.*;
+//? if >=26.2 {
 public class AutoTarget extends BaseModule implements HudElement {
+//?} else {
+/*public class AutoTarget extends BaseModule implements HudRenderCallback {
+*///?}
 	private long lastBS = 0;
 	private volatile Map<String, List<Scanner.Target>> bTargets = new HashMap<>();
 	private Map<String, List<Scanner.Target>> eTargets = new HashMap<>();
 	private boolean scanning = false;
+//? if >=26.2 {
 	@Override
 	public void extractRenderState(GuiGraphicsExtractor g, DeltaTracker dt) {
 		var c = client();
 		if (c.player == null || c.level == null || c.gui.hud.isHidden())
 			return;
+//?} else {
+/*	@Override
+	public void onHudRender(GuiGraphics g, DeltaTracker dt) {
+		var c = client();
+		if (c.player == null || c.level == null || c.options.hideGui)
+			return;
+*///?}
 		var cfg = config();
 		if (Throttler.shouldRun(this, 10))
 			eTargets = Scanner.scanEntities(c, cfg);
@@ -52,7 +70,11 @@ public class AutoTarget extends BaseModule implements HudElement {
 				xB = cfg.targetHudPosition.name().endsWith("RIGHT") ? sw - 10 - maxW : 10;
 		for (var info : infos) {
 			int x = cfg.targetHudPosition.name().endsWith("RIGHT") ? sw - 10 - c.font.width(info.t) : xB;
+//? if >=26.2 {
 			g.text(c.font, info.t, x, y, cfg.targetHudColor, true);
+//?} else {
+/*			g.drawString(c.font, info.t, x, y, cfg.targetHudColor, true);
+*///?}
 			Draw.drawArrow(g, x + c.font.width("XX ") - 4, y + 4, info.y, info.p, cfg.targetHudColor);
 			y += 12;
 		}

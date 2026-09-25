@@ -45,7 +45,11 @@ public abstract class BaseConfigScreen extends OptionsSubScreen {
 	public void onClose() {
 		ConfigManager.save();
 		AutoStep.update();
+//? if >=26.2 {
 		this.minecraft.gui.setScreen(this.lastScreen);
+//?} else {
+/*		this.minecraft.setScreen(this.lastScreen);
+*///?}
 	}
 	protected void addFooterButtons(Button... buttons) {
 		net.minecraft.client.gui.layouts.LinearLayout linearLayout = net.minecraft.client.gui.layouts.LinearLayout

@@ -16,7 +16,11 @@ public class AutoSort extends BaseModule implements Safe.ContainerScreenInit {
 		var mode = config().autoSort;
 		if (p == null || c.gameMode == null)
 			return;
+//? if >=26.2 {
 		if (c.gui.screen() instanceof InventoryScreen) {
+//?} else {
+/*		if (c.screen instanceof InventoryScreen) {
+*///?}
 			if (mode == Config.SortMode.INVENTORY || mode == Config.SortMode.BOTH || mode == Config.SortMode.ALL)
 				sort(c, 9, 35);
 			if (mode == Config.SortMode.HOTBAR || mode == Config.SortMode.BOTH || mode == Config.SortMode.ALL)

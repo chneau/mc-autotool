@@ -59,8 +59,8 @@ class FabricApiResolver {
 }
 
 def currentVersion = project.hasProperty('stonecutter') ? stonecutter.current.version : '26.4'
-def mcVer = project.findProperty('minecraft_version') ?: (currentVersion == '26.4' ? '26.4-snapshot-1' : currentVersion)
-def fapiVer = project.findProperty('fabric_api_version') ?: FabricApiResolver.get(currentVersion)
+def mcVer = project.findProperty('minecraft_version') ?: (currentVersion == '26.4' ? '26.4-snapshot-1' : (currentVersion == '26.1' ? '26.1-snapshot-10' : currentVersion))
+def fapiVer = project.findProperty('fabric_api_version') ?: (currentVersion == '26.1' ? '0.143.7+26.1' : FabricApiResolver.get(currentVersion))
 
 dependencies {
 	minecraft "com.mojang:minecraft:${mcVer}"

@@ -18,7 +18,11 @@ public class AutoEat extends BaseModule implements ClientTickEvents.EndTick {
 		var p = c.player;
 		boolean act = p.getX() != lx || p.getY() != ly || p.getZ() != lz || c.options.keyAttack.isDown()
 				|| (c.options.keyUse.isDown() && !eating) || c.options.keyJump.isDown() || c.options.keyShift.isDown()
+//? if >=26.2 {
 				|| c.options.keySprint.isDown() || c.gui.screen() != null;
+//?} else {
+/*				|| c.options.keySprint.isDown() || c.screen != null;
+*///?}
 		lx = p.getX();
 		ly = p.getY();
 		lz = p.getZ();

@@ -1,6 +1,10 @@
 package chneau.autotool;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.*;
+//? if >=26.2 {
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElement;
+//?} else {
+/*import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
+*///?}
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.fabricmc.fabric.api.event.player.*;
 import net.minecraft.client.Minecraft;
@@ -102,7 +106,13 @@ public class Safe {
 				? attackEntity(n, (p2, w2, h2, e2, r2) -> o.interact(p2, w2, h2, e2, r2)).interact(p, w, h, e, r)
 				: InteractionResult.PASS;
 	}
+//? if >=26.2 {
 	public static HudElement hud(String n, HudElement o) {
 		return (d, t) -> run(n, () -> o.extractRenderState(d, t));
 	}
+//?} else {
+/*	public static HudRenderCallback hud(String n, HudRenderCallback o) {
+		return (d, t) -> run(n, () -> o.onHudRender(d, t));
+	}
+*///?}
 }

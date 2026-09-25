@@ -30,7 +30,11 @@ public class Main implements ClientModInitializer {
 					var command = net.fabricmc.fabric.api.client.command.v2.ClientCommands.literal("autotool")
 							.executes(context -> {
 								var c = context.getSource().getClient();
+//? if >=26.2 {
 								c.execute(() -> c.gui.setScreen(new ConfigScreen(c.gui.screen(), c.options)));
+//?} else {
+/*								c.execute(() -> c.setScreen(new ConfigScreen(c.screen, c.options)));
+*///?}
 								return 1;
 							});
 					dispatcher.register(command);
@@ -45,13 +49,20 @@ public class Main implements ClientModInitializer {
 						&& (InputConstants.isKeyDown(InputConstants.KEY_LSHIFT)
 								|| InputConstants.isKeyDown(InputConstants.KEY_RSHIFT)))
 					c.gui.setScreen(new ConfigScreen(c.gui.screen(), c.options));
-//?} else {
+//?} elif >=26.2 {
 /*				var w = c.getWindow();
 				if ((InputConstants.isKeyDown(w, org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT_CONTROL)
 						|| InputConstants.isKeyDown(w, org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT_CONTROL))
 						&& (InputConstants.isKeyDown(w, org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT_SHIFT)
 								|| InputConstants.isKeyDown(w, org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT_SHIFT)))
 					c.gui.setScreen(new ConfigScreen(c.gui.screen(), c.options));
+*///?} else {
+/*				var w = c.getWindow();
+				if ((InputConstants.isKeyDown(w, org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT_CONTROL)
+						|| InputConstants.isKeyDown(w, org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT_CONTROL))
+						&& (InputConstants.isKeyDown(w, org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT_SHIFT)
+								|| InputConstants.isKeyDown(w, org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT_SHIFT)))
+					c.setScreen(new ConfigScreen(c.screen, c.options));
 *///?}
 			}
 		}));
