@@ -18,3 +18,24 @@ subprojects { subproject ->
     }
 }
 
+def VISIBLE_TASKS = [
+    'buildAll',
+    'clean',
+    'run26.4',
+    'run26.3',
+    'run26.2',
+    'run26.1'
+] as Set
+
+gradle.projectsEvaluated {
+    allprojects { p ->
+        p.tasks.configureEach { task ->
+            if (!VISIBLE_TASKS.contains(task.name)) {
+                task.group = null
+            }
+        }
+    }
+}
+
+
+
