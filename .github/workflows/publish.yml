@@ -3,6 +3,9 @@ name: Publish
 on:
   push:
     branches:
+      - 'v26.4'
+      - 'v26.3'
+      - 'v26.2'
       - 'v26.1'
       - 'v1.21'
       - 'v1.20'
@@ -15,6 +18,9 @@ on:
         type: choice 
         options:
           - 'all'
+          - '26.4'
+          - '26.3'
+          - '26.2'
           - '26.1'
           - '1.21'
           - '1.20'
@@ -31,7 +37,7 @@ jobs:
             VERSION="${{ github.ref_name }}"
             echo "matrix=[\"${VERSION#v}\"]" >> $GITHUB_OUTPUT
           elif [ "${{ github.event.inputs.version }}" == "all" ]; then
-            echo 'matrix=["26.1", "1.21", "1.20", "1.19", "1.18", "1.17"]' >> $GITHUB_OUTPUT
+            echo 'matrix=["26.4", "26.3", "26.2", "26.1", "1.21", "1.20", "1.19", "1.18", "1.17"]' >> $GITHUB_OUTPUT
           else
             echo 'matrix=["${{ github.event.inputs.version }}"]' >> $GITHUB_OUTPUT
           fi
@@ -64,5 +70,5 @@ jobs:
           file: ${{ env.JAR_PATH }}
           tag: ${{ matrix.version }}
           overwrite: true
-          make_latest: ${{ matrix.version == '26.1' }}
+          make_latest: ${{ matrix.version == '26.4' }}
           release_name: Autotool for Minecraft ${{ matrix.version }}
