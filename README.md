@@ -177,13 +177,8 @@ This project uses [Stonecutter](https://stonecutter.kikugie.dev/) to build acros
 ./gradlew buildAll
 ```
 Compiled mod JARs will be generated in `versions/<mc-version>/build/libs/`.
-
 ### Run Minecraft Client for Testing
 ```bash
-# Run latest active version (26.4)
-./gradlew runClient
-
-# Run specific version
 ./gradlew run26.4
 ./gradlew run26.3
 ./gradlew run26.2

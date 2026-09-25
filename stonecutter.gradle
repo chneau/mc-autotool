@@ -10,27 +10,11 @@ tasks.register('buildAll') {
     dependsOn stonecutter.tasks.named('build')
 }
 
-tasks.register('runClient') {
-    group = 'fabric'
-    description = 'Runs Minecraft client for a specific version (-Pmc=26.3 or -Pversion=26.3, defaults to 26.4)'
-    def target = project.findProperty('mc') ?: project.findProperty('version') ?: '26.4'
-    dependsOn ":${target}:runClient"
-}
-
 subprojects { subproject ->
-    tasks.register("runClient-${subproject.name}") {
-        group = 'fabric'
-        description = "Runs Minecraft client for ${subproject.name}"
-        dependsOn ":${subproject.name}:runClient"
-    }
-    tasks.register("run-${subproject.name}") {
-        group = 'fabric'
-        description = "Runs Minecraft client for ${subproject.name}"
-        dependsOn ":${subproject.name}:runClient"
-    }
     tasks.register("run${subproject.name}") {
         group = 'fabric'
         description = "Runs Minecraft client for ${subproject.name}"
         dependsOn ":${subproject.name}:runClient"
     }
 }
+
