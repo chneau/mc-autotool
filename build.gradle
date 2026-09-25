@@ -1,0 +1,69 @@
+plugins {
+	id 'net.fabricmc.fabric-loom' version "${loom_version}"
+	id "com.diffplug.spotless" version "8.2.1"
+}
+
+java {
+	sourceCompatibility = JavaVersion.VERSION_21
+	targetCompatibility = JavaVersion.VERSION_21
+}
+
+spotless {
+	java {
+		target 'src/*/java/**/*.java'
+		eclipse()
+		removeUnusedImports()
+		trimTrailingWhitespace()
+		endWithNewline()
+	}
+}
+
+base {
+	archivesName = project.archives_base_name
+}
+
+loom {
+	runs {
+		client {
+			client()
+			runDir rootProject.file("run").absolutePath
+			programArgs "--quickPlaySingleplayer", "New World"
+		}
+	}
+}
+
+version = project.mod_version
+group = project.maven_group
+
+class FabricApiResolver {
+	private static Map<String, String> cache = null
+
+	static synchronized String get(String mcVersion) {
+		if (cache == null) {
+			cache = [:]
+			try {
+				def lines = new URL("https://maven.fabricmc.net/jdlist.txt").text.readLines()
+				for (line in lines) {
+					if (line.startsWith("fabric-api-")) {
+						def ver = line.substring("fabric-api-".length())
+						def idx = ver.indexOf('+')
+						if (idx != -1) {
+							cache[ver.substring(idx + 1)] = ver
+						}
+					}
+				}
+			} catch (Exception ignored) {}
+		}
+		return cache[mcVersion]
+	}
+}
+
+def currentVersion = project.hasProperty('stonecutter') ? stonecutter.current.version : '26.4'
+def mcVer = project.findProperty('minecraft_version') ?: (currentVersion == '26.4' ? '26.4-snapshot-1' : (currentVersion == '26.1' ? '26.1-snapshot-10' : currentVersion))
+def fapiVer = project.findProperty('fabric_api_version') ?: (currentVersion == '26.1' ? '0.143.7+26.1' : FabricApiResolver.get(currentVersion))
+
+dependencies {
+	minecraft "com.mojang:minecraft:${mcVer}"
+	implementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	implementation "net.fabricmc.fabric-api:fabric-api:${fapiVer}"
+}

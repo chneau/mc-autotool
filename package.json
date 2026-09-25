@@ -1,0 +1,11 @@
+{
+	"scripts": {
+		"format": "./gradlew spotlessApply",
+		"start": "./gradlew runClient",
+		"build": "./gradlew buildAll",
+		"clean": "./gradlew clean",
+		"gen": "./gradlew genSources",
+		"cleanBuild": "./gradlew buildAll --refresh-dependencies",
+		"upgrade": "./gradlew wrapper --gradle-version 9.8.0"
+	}
+}

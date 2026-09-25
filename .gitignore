@@ -1,9 +1,23 @@
-# Ignore everything
-*
-!.gitignore
-!LICENSE
-!README.md
-!/.github/
-!/.github/workflows/
-!/.github/workflows/publish.yml
-!install.ps1
+# gradle
+.gradle/
+build/
+versions/
+out/
+classes/
+
+# idea
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# vscode
+.settings/
+.vscode/
+bin/
+.classpath
+.project
+
+# fabric
+run/
+private/
