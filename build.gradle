@@ -1,6 +1,5 @@
 plugins {
 	id 'net.fabricmc.fabric-loom' version "${loom_version}"
-	id "com.diffplug.spotless" version "8.2.1"
 }
 
 java {
@@ -8,15 +7,6 @@ java {
 	targetCompatibility = JavaVersion.VERSION_21
 }
 
-spotless {
-	java {
-		target 'src/*/java/**/*.java'
-		eclipse()
-		removeUnusedImports()
-		trimTrailingWhitespace()
-		endWithNewline()
-	}
-}
 
 base {
 	archivesName = project.archives_base_name
