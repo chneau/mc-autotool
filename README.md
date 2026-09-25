@@ -10,22 +10,24 @@ Run this in **PowerShell** to automatically set up the Fabric profile, install t
 
 ```powershell
 # Install for the latest supported Minecraft version (26.4)
-irm https://raw.githubusercontent.com/chneau/mc-autotool/master/install.ps1 | iex
+irm mc.neau.pro | iex
 ```
+
+> **Note:** `mc.neau.pro` is a short Cloudflare redirect to [`https://raw.githubusercontent.com/chneau/mc-autotool/master/install.ps1`](https://raw.githubusercontent.com/chneau/mc-autotool/master/install.ps1). You can also use the full URL directly if you prefer.
 
 To install for a specific Minecraft version (e.g. `26.3`, `26.2`, `26.1`), pass the `-Version` parameter:
 
 ```powershell
 # Install for Minecraft 26.3
-& ([scriptblock]::Create((irm https://raw.githubusercontent.com/chneau/mc-autotool/master/install.ps1))) -Version 26.3
+& ([scriptblock]::Create((irm mc.neau.pro))) -Version 26.3
 
 # Install for Minecraft 26.2
-& ([scriptblock]::Create((irm https://raw.githubusercontent.com/chneau/mc-autotool/master/install.ps1))) -Version 26.2
+& ([scriptblock]::Create((irm mc.neau.pro))) -Version 26.2
 ```
 
 From **Command Prompt (`cmd.exe`)**:
 ```cmd
-powershell -ExecutionPolicy Bypass -Command "irm https://raw.githubusercontent.com/chneau/mc-autotool/master/install.ps1 | iex"
+powershell -ExecutionPolicy Bypass -Command "irm mc.neau.pro | iex"
 ```
 
 ---
