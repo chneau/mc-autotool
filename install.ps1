@@ -30,6 +30,7 @@ Write-Host "   mc-autotool Automatic Installer      " -ForegroundColor Cyan
 Write-Host "========================================" -ForegroundColor Cyan
 
 # 1. Resolve Target Version
+$releaseInfo = $null
 if ($Latest -or $Version -eq "latest" -or [string]::IsNullOrWhiteSpace($Version)) {
     Write-Host "[1/4] Resolving latest mc-autotool release..." -ForegroundColor Yellow
     try {
@@ -43,6 +44,9 @@ if ($Latest -or $Version -eq "latest" -or [string]::IsNullOrWhiteSpace($Version)
 } else {
     $TargetVersion = $Version.TrimStart("v")
     Write-Host "[1/4] Selected version: $TargetVersion" -ForegroundColor Green
+    try {
+        $releaseInfo = Invoke-RestMethod -Uri "https://api.github.com/repos/chneau/mc-autotool/releases/tags/$TargetVersion" -Headers @{"User-Agent"="mc-autotool-installer"} -UseBasicParsing
+    } catch {}
 }
 
 # 2. Install Fabric Profile (if needed)
@@ -155,17 +159,61 @@ if ($fapiUrl) {
 }
 
 # 4. Download mc-autotool
-Write-Host "[4/4] Downloading Autotool for Minecraft $TargetVersion..." -ForegroundColor Yellow
-$autotoolUrl = if ($TargetVersion -eq "latest" -or ($releaseInfo -and $releaseInfo.tag_name -eq $TargetVersion)) {
+Write-Host "[4/4] Checking mc-autotool ($TargetVersion)..." -ForegroundColor Yellow
+
+$autotoolAsset = $null
+if ($releaseInfo -and $releaseInfo.assets) {
+    $autotoolAsset = $releaseInfo.assets | Where-Object { $_.name -eq "autotool.jar" } | Select-Object -First 1
+}
+
+$remoteDateStr = ""
+if ($autotoolAsset) {
+    $rawDate = if ($autotoolAsset.updated_at) { $autotoolAsset.updated_at } else { $autotoolAsset.created_at }
+    if ($rawDate) {
+        try {
+            $parsedDate = [DateTime]::Parse($rawDate).ToLocalTime()
+            $remoteDateStr = $parsedDate.ToString("yyyy-MM-dd HH:mm:ss")
+        } catch {}
+    }
+}
+
+$autotoolUrl = if ($autotoolAsset -and $autotoolAsset.browser_download_url) {
+    $autotoolAsset.browser_download_url
+} elseif ($TargetVersion -eq "latest" -or ($releaseInfo -and $releaseInfo.tag_name -eq $TargetVersion)) {
     "https://github.com/chneau/mc-autotool/releases/latest/download/autotool.jar"
 } else {
     "https://github.com/chneau/mc-autotool/releases/download/$TargetVersion/autotool.jar"
 }
 
 $autotoolDest = Join-Path $ModsDir "autotool.jar"
+$localFileExists = Test-Path $autotoolDest
+
+if ($localFileExists) {
+    $localDate = (Get-Item $autotoolDest).LastWriteTime.ToString("yyyy-MM-dd HH:mm:ss")
+    if ($remoteDateStr) {
+        Write-Host "  -> Current local file: dated $localDate" -ForegroundColor DarkGray
+        Write-Host "  -> Latest release build: dated $remoteDateStr" -ForegroundColor Cyan
+    } else {
+        Write-Host "  -> Current local file: dated $localDate" -ForegroundColor DarkGray
+    }
+} else {
+    if ($remoteDateStr) {
+        Write-Host "  -> Release build: dated $remoteDateStr" -ForegroundColor Cyan
+    }
+}
+
 try {
+    if ($localFileExists) {
+        Write-Host "  -> Updating autotool.jar..." -ForegroundColor Gray
+    } else {
+        Write-Host "  -> Downloading autotool.jar..." -ForegroundColor Gray
+    }
     Invoke-WebRequest -Uri $autotoolUrl -OutFile $autotoolDest -UseBasicParsing
-    Write-Host "  -> Autotool installed to $autotoolDest" -ForegroundColor Green
+    if ($localFileExists) {
+        Write-Host "  -> Autotool successfully updated at $autotoolDest" -ForegroundColor Green
+    } else {
+        Write-Host "  -> Autotool installed to $autotoolDest" -ForegroundColor Green
+    }
 } catch {
     Write-Warning "Failed to download autotool from $($autotoolUrl): $_"
 }
