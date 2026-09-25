@@ -20,6 +20,18 @@ public class Main implements ClientModInitializer {
 				.forEach(Module::register);
 		configKey = KeyMappingHelper.registerKeyMapping(new KeyMapping("key.mc-autotool.config",
 				InputConstants.Type.KEYBOARD, InputConstants.KEY_O, KeyMapping.Category.MISC));
+		net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback.EVENT
+				.register((dispatcher, registryAccess) -> {
+					var command = net.fabricmc.fabric.api.client.command.v2.ClientCommands.literal("autotool")
+							.executes(context -> {
+								var c = context.getSource().getClient();
+								c.execute(() -> c.gui.setScreen(new ConfigScreen(c.gui.screen(), c.options)));
+								return 1;
+							});
+					dispatcher.register(command);
+					dispatcher.register(net.fabricmc.fabric.api.client.command.v2.ClientCommands.literal("at")
+							.executes(command.getCommand()));
+				});
 		ClientTickEvents.END_CLIENT_TICK.register(Safe.tick("Main.ConfigKey", c -> {
 			while (configKey.consumeClick()) {
 				if ((InputConstants.isKeyDown(InputConstants.KEY_LCONTROL)
