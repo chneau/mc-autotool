@@ -175,5 +175,5 @@ Write-Host " Installation Complete!" -ForegroundColor Green
 Write-Host " 1. Open Minecraft Launcher" -ForegroundColor White
 Write-Host " 2. Select the Fabric profile for $TargetVersion" -ForegroundColor White
 Write-Host " 3. Launch the game" -ForegroundColor White
-Write-Host " Press 'Ctrl + Shift + O' in-game to configure Autotool." -ForegroundColor Yellow
+Write-Host " Press 'Ctrl + Shift + O' or type '/autotool' in-game to configure Autotool." -ForegroundColor Yellow
 Write-Host "========================================" -ForegroundColor Cyan
