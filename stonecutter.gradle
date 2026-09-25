@@ -9,3 +9,10 @@ tasks.register('buildAll') {
     description = 'Builds all Stonecutter versions'
     dependsOn stonecutter.tasks.named('build')
 }
+
+tasks.register('runClient') {
+    group = 'fabric'
+    description = 'Runs Minecraft client for a specific version (-Pmc=26.3 or -Pversion=26.3, defaults to 26.4)'
+    def target = project.findProperty('mc') ?: project.findProperty('version') ?: '26.4'
+    dependsOn ":${target}:runClient"
+}

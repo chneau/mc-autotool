@@ -1,7 +1,7 @@
 {
 	"scripts": {
 		"format": "./gradlew spotlessApply",
-		"start": "bun run run.ts",
+		"start": "./gradlew runClient",
 		"build": "./gradlew buildAll",
 		"clean": "./gradlew clean",
 		"gen": "./gradlew genSources",
